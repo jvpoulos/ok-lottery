@@ -12,7 +12,6 @@ r.prob <- c(0.0125,0.025,0.05,0.1) # effect size for binary response
 s.size <- c(500, 1000, 2000, 4000, 8000, 13000) # sample size
 
 lambda <- 0.001 # decay rate of exponential function
-n <- 6500 # county pop. size
 comply <- 0.9 # compliance rate
 amp <- c(0,1,3) # amplify to affect noise
 
@@ -30,8 +29,8 @@ SimRegression <- function(r.prob,s.size,lambda,comply,amp){
   county <- c(rep("El Reno", n), 
               rep("Lawton", n)) # county names
   
-  draw <- c(sample(c(1:n), n, replace=FALSE),
-            sample(c(1:n), n, replace=FALSE))  # sample draw number
+  draw <- c(sample(c(1:6500), n, replace=FALSE),
+            sample(c(1:6500), n, replace=FALSE))  # sample draw number
   
   complier <- c(rbinom(n, 1, comply), 
                 rbinom(n, 1, comply)) # draw compliers from binom dis
