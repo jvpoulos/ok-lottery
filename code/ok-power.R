@@ -22,7 +22,7 @@ grid.bin <- expand.grid("r.prob"=r.prob, "s.size"=s.size, "amp"=amp)
 
 # Define regression simulation function
 
-SimRegression <- function(r.prob,s.size,lambda,n,comply,amp){
+SimRegression <- function(r.prob,s.size,lambda,comply,amp){
   # Simulate draw number, compliers, and response independently by county
   
   n <- s.size/2 # split sample size by number of counties
@@ -62,7 +62,6 @@ p.vals.bin <- replicate(L,
                            SimRegression(grid.bin$r.prob[i],
                                          grid.bin$s.size[i],
                                          lambda, 
-                                         n, 
                                          comply,
                                          grid.bin$amp[i])}))
 
