@@ -22,12 +22,12 @@ grid.bin <- expand.grid("r.prob"=r.prob, "s.size"=s.size, "amp"=amp)
 # Define regression simulation function
 
 SimRegression <- function(r.prob,s.size,lambda,comply,amp){
-  # Simulate draw number, compliers, and response independently by county
+  # Simulate draw number, compliers, and response independently by district
   
   n <- s.size/2 # split sample size by number of counties
   
-  county <- c(rep("El Reno", n), 
-              rep("Lawton", n)) # county names
+  district <- c(rep("El Reno", n), 
+              rep("Lawton", n)) # district names
   
   draw <- c(sample(c(1:6500), n, replace=FALSE),
             sample(c(1:6500), n, replace=FALSE))  # sample draw number
@@ -44,7 +44,7 @@ SimRegression <- function(r.prob,s.size,lambda,comply,amp){
   # Tranform inputs 
   draw.scaled <- (draw-mean(draw))/(2*sd(draw)) # center and divide by 2 sds
   complier.center <- complier-mean(complier) # center binary variables
-  lawton <- ifelse(county=="Lawton",1,0)
+  lawton <- ifelse(district=="Lawton",1,0)
   lawton.center <- lawton-mean(lawton)
   
   # Fit the model
