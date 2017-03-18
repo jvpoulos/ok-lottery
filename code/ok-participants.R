@@ -34,6 +34,7 @@ lawtonA$State.or.Territory[lawtonA$State.or.Territory=="Indian Trritory"] <- "In
 lawtonA$State.or.Territory[lawtonA$State.or.Territory=="Indtan Territory"] <- "Indian Territory"
 lawtonA$State.or.Territory[lawtonA$State.or.Territory=="NANA"] <- NA
 lawtonA$State.or.Territory[lawtonA$State.or.Territory=="Kasnas"] <- "Kansas"
+lawtonA$State.or.Territory[lawtonA$State.or.Territory=="D C  Alabama"] <- "Alabama"
 
 # Clean Lawton B
 lawtonB <- CleanLawton(lawtonB)
@@ -82,6 +83,9 @@ elreno <- rbind(elreno, c(6476, "Andrew Guthrie", "Harrison", "O.T.",""))
 elreno <- rbind(elreno, c(6615, "Nobleboy Conklin", "Cropper", "O.T.",""))
 elreno <- rbind(elreno, c(7115, "Chas. H. Smith,", "Hobart", "O.T.",""))
 elreno <- rbind(elreno, c(7510, "Abraham Zahb", "Hydro", "O.T.",""))
+
+# Clean el reno
+elreno <- CleanElreno(elreno)
 
 # Verify no drawing # duplicates
 elreno$Number <- as.numeric(elreno$Number)

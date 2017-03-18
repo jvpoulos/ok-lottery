@@ -106,16 +106,45 @@ StState <- function(state) {
   # for 1901 lottery lists
   state <- gsub("[[:punct:]]", " ", state)
   state <- trimws(Capwords(gsub("[^[:alpha:] ]", "",state)))
+  state[state==""] <- NA # make blank missing
+  state <- gsub("Al.*", "Alabama", state)
+  state <- gsub("Ariz.*", "Arizona", state)
+  state <- gsub("Ark.*", "Arkansas", state)
+  state <- gsub("Colo.*", "Colorado", state)
+  state <- gsub("Ga.*", "Georgia", state)
   state <- gsub("Indian territory.*", "Indian Territory", state)
   state <- gsub("Indain Territory", "Indian Territory", state)
+  state <- gsub("I T", "Indian Territory", state)
   state <- gsub("Ok.*", "Oklahoma Territory", state)
+  state <- gsub("O T", "Oklahoma Territory", state)
+  state <- gsub("Ia$", "Iowa", state)
   state <- gsub("Ill.*", "Illinois", state)
   state <- gsub("ILLinois", "Illinois", state)
-  state <- gsub("Kandas", "Kansas", state)
-  state <- gsub("Kansas.*", "Kansas", state)
-  state <- gsub("Kentucky.*", "Kentucky", state)
+  state <- gsub("Ind$", "Indiana", state)
+  state <- gsub("Kan.*", "Kansas", state)
+  state <- gsub("Kent.*", "Kentucky", state)
+  state <- gsub("Ky", "Kentucky", state)
+  state <- gsub("La$", "Louisiana", state)
+  state <- gsub("Mass.*", "Massachusetts", state)
+  state <- gsub("Md.*", "Maryland", state)
+  state <- gsub("Mich.*", "Michigan", state)
+  state <- gsub("Minn.*", "Minnesota", state)
+  state <- gsub("Miss$", "Mississippi", state)
+  state <- gsub("Mo$", "Missouri", state)
+  state <- gsub("N  J", "New Jersey", state)
+  state <- gsub("N  M", "New Mexico", state)
+  state <- gsub("N  Y", "New York", state)
+  state <- gsub("N Y", "New Jersey", state)
   state <- gsub("Missouri.*", "Missouri", state)
-  state <- gsub("Texas.*", "Texas", state)
+  state <- gsub("Neb.*", "Nebraska", state)
+  state <- gsub("Pa.*", "Pennsylvania", state)
+  state <- gsub("S  D", "South Dakota", state)
+  state <- gsub("Va$", "Virginia", state)
+  state <- gsub("W  Va", "West Virginia", state)
+  state <- gsub("W  Virginia", "West Virginia", state)
+  state <- gsub("Tex.*", "Texas", state)
+  state <- gsub("Ten.*", "Tennessee", state)
+  state <- gsub("NANA", NA, state)
 }
 
 CleanIpums <- function(ipums,one.perc=FALSE,complete=TRUE) {
@@ -185,4 +214,27 @@ CleanLawton <- function(lawton){
   lawton$time.lapse <- as.numeric(round(difftime(lawton$Filing.Date, 
                                                 as.POSIXct("August 6 1901",format="%B %d %Y",tz="UTC"), units = "days")))
   return(lawton)
+}
+
+CleanElreno <- function(elreno){
+  # Remove non-alphabetic characters from name and make all uppercase
+  elreno$Name<- trimws(toupper(gsub("[^[:alpha:] ]", "",elreno$Name))) 
+  
+  # Split first and middle name
+  elreno$first <- trimws(unlist(lapply(strsplit(elreno$Name," "), function(x) x[1])))
+  elreno$middle.name <- trimws(unlist(lapply(strsplit(elreno$Name," "), function(x) x[2])))
+  elreno$surname <- trimws(unlist(lapply(strsplit(elreno$Name," "), function(x) x[3])))
+  
+  elreno$surname[is.na(elreno$surname)] <- elreno$middle.name[is.na(elreno$surname)] # correct for those w/o middle name
+  elreno$middle.name[elreno$middle.name==elreno$surname] <- NA
+  
+  # Standardize first names
+  elreno$first <- StFirst(elreno$first)
+  
+  # Standardize state
+  elreno$State <- StState(elreno$State)
+  
+  # Standardize city
+  elreno$City <- StCounty(elreno$City)
+  return(elreno)
 }
