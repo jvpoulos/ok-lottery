@@ -147,46 +147,71 @@ StState <- function(state) {
   state <- gsub("NANA", NA, state)
 }
 
-CleanIpums <- function(ipums,one.perc=FALSE,complete=TRUE) {
-  if(one.perc){
-    # Subset to individuals with nonzero and nonmissing real property 
-    ipums <- subset(ipums, realprop>0)
-    
-    # Remove non-alphabetic characters from name and make all uppercase
-    ipums$surname<- trimws(toupper(gsub("[^[:alpha:] ]", "",ipums$namelast))) 
-    ipums$first <- trimws(toupper(gsub("[^[:alpha:] ]", "",ipums$namefrst))) 
-  }
+CleanCensus <- function(census) {
+  # Clean age
   
-  # Trim spaces in name
-  ipums$surname <- gsub(" ","",ipums$surname)
-  ipums$first <- gsub("  ", " ",ipums$first)
+  # Remove if month, week, or day in string
+  drop.age <- c(grep("m",  census$self_residence_info_age ,ignore.case=TRUE),
+                grep("w",  census$self_residence_info_age ,ignore.case=TRUE),
+                grep("d",  census$self_residence_info_age ,ignore.case=TRUE))
+  
+  census <- census[!rownames(census) %in% drop.age]
+  
+  #replace each fraction with its decimal form
+  census$self_residence_info_age = gsub("1/12", ".08333333", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("2/12", ".1666667", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("3/12", ".25", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("4/12", ".3333333", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("5/12", ".4166667", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("6/12", ".5", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("7/12", ".5833333", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("8/12", ".6666667", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("9/12", ".75", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("10/12", ".8333333", census$self_residence_info_age)
+  census$self_residence_info_age = gsub("11/12", ".9166667", census$self_residence_info_age)
+  
+  census$self_residence_info_age <- gsub("[^0-9.]", '', census$self_residence_info_age) # rm nonnumeric
+  
+  census$self_residence_info_age <- as.numeric(census$self_residence_info_age) # convert to numeric
+  
+  census$self_residence_info_age[census$self_residence_info_age > 100] <- NA # missing if over 100
+  
+  # Remove non-alphabetic characters from surname and make all uppercase
+  census$self_empty_name_surname<- trimws(toupper(gsub("[^[:alnum:] ]", "",census$self_empty_name_surname)))
+  census$self_empty_name_given<- trimws(toupper(gsub("[^[:alnum:] ]", "",census$self_empty_name_given)))
+  
+  # Create other common colnames
+  census$surname <- census$self_empty_name_surname
+  census$first <- census$self_empty_name_given
+  
+  census$state <- census$self_residence_place_state
+  census$birthplace <- census$self_birth_place_empty
+  census$county <- census$self_residence_place_county
   
   # Split first and middle name
-  ipums$first <- trimws(unlist(lapply(strsplit(ipums$first," "), function(x) x[1])))
-  ipums$middle.name <- trimws(unlist(lapply(strsplit(ipums$first," "), function(x) x[2])))
+  census$first <- trimws(word(census$self_empty_name_given, 1))
   
-  # Standardize first name
-  ipums$first <- StFirst(ipums$first)
+  census$middle.name <- NA
+  census$middle.name[vapply(strsplit(census$self_empty_name_given, "\\W+"), length, integer(1))>=2] <- trimws(word(census$self_empty_name_given[vapply(strsplit(census$self_empty_name_given, "\\W+"), length, integer(1))>=2], 2))
   
   # Drop obs with missing names
-  ipums$surname.length <- nchar(ipums$surname)
-  ipums$first.length <- nchar(ipums$first)
-  ipums <- subset(ipums, surname.length>2 & first.length>0)
+  census$surname.length <- nchar(census$surname)
+  census$first.length <- nchar(census$first)
+  census <- subset(census, surname.length>2 & first.length>0)
   
-  if(complete){
-
   # Standardize county
-  ipums$county <- StCounty(ipums$county)
-  }
+  census$county <- StCounty(census$county)
+  
+  # Standardize first
+  census$first <- StFirst(census$first)
   
   # Create soundex of first and surnames
-  ipums$sound.surname <- soundex(ipums$surname)
-  ipums$sound.first <- soundex(ipums$first)
+  census$sound.surname <- soundex(census$surname)
+  census$sound.first <- soundex(census$first)
   
-  # Create first name initial
-  ipums$first.initial <- substring(ipums$first, 1, 1) 
-  
-  return(ipums)
+  # Convert to dataframe
+  census <- data.frame(census)
+  return(census)
 }
 
 CleanLawton <- function(lawton){
