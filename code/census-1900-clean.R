@@ -8,4 +8,4 @@ unzip(paste0(data.directory, "census-1900-100-sample.csv.zip"), exdir=data.direc
 c.1900.s <- read.csv(paste0(data.directory,"census-1900-100-sample.csv"),header=TRUE, sep = ",") 
 
 # Clean
-c.1900.s <- CleanIpums(c.1900.s)
+c.1900.s <- CleanCensus(c.1900.s)
