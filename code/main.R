@@ -20,10 +20,10 @@ if(run.descriptive){
 }
 
 # Set directories
-data.directory <- "~/Dropbox/github/ok-lottery/data/"
-#data.directory <-  "/home/ec2-user/ok-lottery/data/" 
-code.directory <- "~/Dropbox/github/ok-lottery/code/"
-#code.directory <-  "/home/ec2-user/ok-lottery/code/"
+#data.directory <- "~/Dropbox/github/ok-lottery/data/"
+data.directory <-  "/home/ec2-user/ok-lottery/data/" 
+#code.directory <- "~/Dropbox/github/ok-lottery/code/"
+code.directory <-  "/home/ec2-user/ok-lottery/code/"
 
 setwd(code.directory)
 
@@ -40,6 +40,8 @@ source("census-1900-clean.R") # load 1900 100% sample and clean # States with 50
 # 22           Missouri 1224
 # 29 Oklahoma Territory 6713
 # 34              Texas 1164
+
+source("record-link.R") # Link participants to 1900 & 1910 Census
 
 if(run.descriptive){
   source("descriptive.R")

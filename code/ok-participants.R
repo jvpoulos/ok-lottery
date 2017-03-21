@@ -93,7 +93,7 @@ elreno$Number <- as.numeric(elreno$Number)
 elreno$Number[!is.na(elreno$Number) & duplicated(elreno$Number)] # 15 duplicates
 
 # Combine participants
-participants <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
+hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                             "first"= c(elreno$first, lawton$first),
                             "middle.name"= c(elreno$middle.name, lawton$middle.name),
                              "surname"= c(elreno$surname, lawton$Surname),
@@ -103,4 +103,4 @@ participants <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                              "city"= c(elreno$City, lawton$Place.of.Residence),
                            "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
 
-participants$lawton <- ifelse(!is.na(participants$comply),1,0)
+hs$lawton <- ifelse(!is.na(participants$comply),1,0)
