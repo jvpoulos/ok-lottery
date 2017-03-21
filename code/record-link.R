@@ -1,5 +1,8 @@
-## Link 1860 100% sample and slave sample to 1870 Census
+#####################################
+### Link participant records to census samples###
+#####################################
 
+## Link participants to 1900 census
 # Merge by soundex surname, first initial, state and county
 
 ipums.60 <- transform(ipums.60,merge.id=paste0(ipums.60$sound.surname, ipums.60$first.initial, " ", ipums.60$county, ", ", ipums.60$state))

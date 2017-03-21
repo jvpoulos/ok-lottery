@@ -226,6 +226,10 @@ CleanLawton <- function(lawton){
   # Standardize first names
   lawton$first <- StFirst(lawton$first)
   
+  # Create soundex of first and surnames
+  lawton$sound.surname <- soundex(lawton$Surname)
+  lawton$sound.first <- soundex(lawton$first)
+  
   # Standardize state
   lawton$State.or.Territory <- StState(lawton$State.or.Territory)
   
@@ -255,6 +259,10 @@ CleanElreno <- function(elreno){
   
   # Standardize first names
   elreno$first <- StFirst(elreno$first)
+  
+  # Create soundex of first and surnames
+  elreno$sound.surname <- soundex(elreno$surname)
+  elreno$sound.first <- soundex(elreno$first)
   
   # Standardize state
   elreno$State <- StState(elreno$State)

@@ -90,4 +90,17 @@ elreno <- CleanElreno(elreno)
 # Verify no drawing # duplicates
 elreno$Number <- as.numeric(elreno$Number)
 
-elreno$Number[!is.na(elreno$Number) & duplicated(elreno$Number)]
+elreno$Number[!is.na(elreno$Number) & duplicated(elreno$Number)] # 15 duplicates
+
+# Combine participants
+participants <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
+                            "first"= c(elreno$first, lawton$first),
+                            "middle.name"= c(elreno$middle.name, lawton$middle.name),
+                             "surname"= c(elreno$surname, lawton$Surname),
+                            "sound.surname" =c(elreno$sound.surname, lawton$sound.surname),   
+                            "sound.first"= c(elreno$sound.first, lawton$sound.first), 
+                             "state"= c(elreno$State, lawton$State.or.Territory),
+                             "city"= c(elreno$City, lawton$Place.of.Residence),
+                           "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
+
+participants$lawton <- ifelse(!is.na(participants$comply),1,0)

@@ -21,7 +21,9 @@ if(run.descriptive){
 
 # Set directories
 data.directory <- "~/Dropbox/github/ok-lottery/data/"
+#data.directory <-  "/home/ec2-user/ok-lottery/data/" 
 code.directory <- "~/Dropbox/github/ok-lottery/code/"
+#code.directory <-  "/home/ec2-user/ok-lottery/code/"
 
 setwd(code.directory)
 
@@ -32,7 +34,6 @@ source("SuperLearner.R")
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
 source("census-1900-clean.R") # load 1900 100% sample and clean # States with 500+ participants
-
 
 # 10   Indian Territory 1511
 # 13             Kansas 2500
