@@ -103,4 +103,4 @@ hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                              "city"= c(elreno$City, lawton$Place.of.Residence),
                            "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
 
-hs$lawton <- ifelse(!is.na(participants$comply),1,0)
+hs$lawton <- ifelse(!is.na(hs$comply),1,0)
