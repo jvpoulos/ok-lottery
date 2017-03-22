@@ -155,8 +155,10 @@ CleanCensus <- function(census) {
                 grep("w",  census$self_residence_info_age ,ignore.case=TRUE),
                 grep("d",  census$self_residence_info_age ,ignore.case=TRUE))
   
+  if(!is.integer(drop.age)){
   census <- census[!rownames(census) %in% drop.age]
-  
+  }
+
   #replace each fraction with its decimal form
   census$self_residence_info_age = gsub("1/12", ".08333333", census$self_residence_info_age)
   census$self_residence_info_age = gsub("2/12", ".1666667", census$self_residence_info_age)

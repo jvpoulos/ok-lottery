@@ -5,7 +5,6 @@ run.power <-FALSE
 require(reshape2)
 require(RecordLinkage)
 require(ggplot2)
-require(rdrobust)
 require(doParallel)
 require(data.table)
 require(caret)
