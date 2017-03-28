@@ -100,7 +100,7 @@ hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                             "sound.surname" =c(elreno$sound.surname, lawton$sound.surname),   
                             "sound.first"= c(elreno$sound.first, lawton$sound.first), 
                              "state"= c(elreno$State, lawton$State.or.Territory),
-                             "city"= c(elreno$City, lawton$Place.of.Residence),
+                             "county"= c(elreno$City, lawton$Place.of.Residence),
                            "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
 
 hs$lawton <- ifelse(!is.na(hs$comply),1,0)

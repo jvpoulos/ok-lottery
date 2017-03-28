@@ -8,6 +8,7 @@ require(ggplot2)
 require(doParallel)
 require(data.table)
 require(caret)
+require(stringr)
 
 if(run.descriptive){
   require(reporttools)
@@ -19,10 +20,10 @@ if(run.descriptive){
 }
 
 # Set directories
-#data.directory <- "~/Dropbox/github/ok-lottery/data/"
-data.directory <-  "/home/ec2-user/ok-lottery/data/" 
-#code.directory <- "~/Dropbox/github/ok-lottery/code/"
-code.directory <-  "/home/ec2-user/ok-lottery/code/"
+data.directory <- "~/Dropbox/github/ok-lottery/data/"
+#data.directory <-  "/home/ec2-user/ok-lottery/data/" 
+code.directory <- "~/Dropbox/github/ok-lottery/code/"
+#code.directory <-  "/home/ec2-user/ok-lottery/code/"
 
 setwd(code.directory)
 
@@ -32,15 +33,10 @@ source("SuperLearner.R")
 
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
-source("census-1900-clean.R") # load 1900 100% sample and clean # States with 500+ participants
+source("census-1900-clean.R") # load 1900 100% sample and clean
+source("census-1910-clean.R") # load 1910 100% sample and clean
 
-# 10   Indian Territory 1511
-# 13             Kansas 2500
-# 22           Missouri 1224
-# 29 Oklahoma Territory 6713
-# 34              Texas 1164
-
-source("record-link.R") # Link participants to 1900 & 1910 Census
+source("census-link.R") # Link participants to 1900 & 1910 Census
 
 if(run.descriptive){
   source("descriptive.R")

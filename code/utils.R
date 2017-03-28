@@ -5,6 +5,8 @@ Capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
+proper <-function(x) paste0(toupper(substr(x, 1, 1)), tolower(substring(x, 2)))
+
 FreqFunc <- function(x, n){
   tail(sort(table(unlist(strsplit(as.character(x), ", ")))), n)
 }
@@ -59,7 +61,6 @@ StFirst <- function(first) {
   first  <-gsub("RUSSEL$","RUSSELL", first)
   first  <-gsub("NIELL$","NIEL", first)
   first  <-gsub("RICH$","RICHARD", first)
-  first  <-gsub("EDW$","EDWIN", first)
   first  <-gsub("ALX$","ALEX", first)
   first  <-gsub("FREDERIC$","FREDERICK", first)
   first  <-gsub("ROB$","ROBERT", first)
@@ -88,43 +89,75 @@ StFirst <- function(first) {
   first  <-gsub("JOHNATHAN$","JONATHAN", first)
   first  <-gsub("JACK$","JOHN", first)
   first  <-gsub("EDWD$","EDWARD", first)
-  first  <-gsub("ED$","EDWARD", first)
-  first  <-gsub("BEN$","BENJAMIN", first)
-  first  <-gsub("REUBENJAMIN$","REUBEN", first)
-  first  <-gsub("ALFREDWARD$","ALFRED", first)
 }
 
 StCounty <- function(county) {
   county <- gsub("[[:punct:]]", " ", county)
-  county <- trimws(Capwords(gsub("[^[:alpha:] ]", "",county)))
+  county <- trimws(proper(Capwords(gsub("[^[:alpha:] ]", "",county))))
   county <- gsub("Petersburg  Independent City", "Petersburg", county)
   county <- gsub("Portsmouth  Independent City", "Portsmouth", county)
   county <- gsub("Alexandria  Independent City", "Alexandria", county)
 }
 
 StState <- function(state) {
-  # for 1901 lottery lists
   state <- gsub("[[:punct:]]", " ", state)
-  state <- trimws(Capwords(gsub("[^[:alpha:] ]", "",state)))
+  state <- trimws(proper(Capwords(gsub("[^[:alpha:] ]", "",state))))
   state[state==""] <- NA # make blank missing
   state <- gsub("Al.*", "Alabama", state)
   state <- gsub("Ariz.*", "Arizona", state)
   state <- gsub("Ark.*", "Arkansas", state)
+  state <- gsub("Aransas", "Arkansas", state)
+  state <- gsub("Austria.*", "Austria", state)
+  state <- gsub("At Sea.*", "At Sea", state)
+  state <- gsub("Cal.*", "California", state)
+  state <- gsub("Canada.*", "Canada", state)
+  state <- gsub("Ontario.*", "Canada", state)
   state <- gsub("Colo.*", "Colorado", state)
   state <- gsub("Ga.*", "Georgia", state)
+  state <- gsub("Wales*", "England", state)
+  state <- gsub("Wurtt*", "Germany", state)
+  state <- gsub("Bavaria.*", "Germany", state)
+  state <- gsub("Bohemia.*", "Bohemia", state)
   state <- gsub("Indian territory.*", "Indian Territory", state)
   state <- gsub("Indain Territory", "Indian Territory", state)
   state <- gsub("I T", "Indian Territory", state)
+  state <- gsub("Cher.*", "Indian Territory", state)
   state <- gsub("Ok.*", "Oklahoma Territory", state)
   state <- gsub("O T", "Oklahoma Territory", state)
+  state <- gsub("Chactaw.*", "Indian Territory", state)
+  state <- gsub("Choc.*", "Indian Territory", state)
+  state <- gsub("Chick.*", "Indian Territory", state)
+  state <- gsub("Creek.*", "Indian Territory", state)
+  state <- gsub("Kaw.*", "Indian Territory", state)
+  state <- gsub("I T", "Indian Territory", state)
+  state <- gsub("Indian T.*", "Indian Territory", state)
+  state <- gsub("Indian .*", "Indian Territory", state)
+  state <- gsub("Native.*", "Indian Territory", state)
+  state <- gsub("Cincinnati", "Ohio", state)
+  state <- gsub("Con.*", "Connecticut", state)
   state <- gsub("Ia$", "Iowa", state)
   state <- gsub("Ill.*", "Illinois", state)
-  state <- gsub("ILLinois", "Illinois", state)
+  state <- gsub("Ileinison", "Illinois", state)
+  state <- gsub("Ilenoise", "Illinois", state)
+  state <- gsub("Iindia", "Indiana", state)
+  state <- gsub("Iindiana", "Indiana", state)
+  state <- gsub("Imdiiana", "Indiana", state)
   state <- gsub("Ind$", "Indiana", state)
   state <- gsub("Kan.*", "Kansas", state)
   state <- gsub("Kent.*", "Kentucky", state)
   state <- gsub("Ky", "Kentucky", state)
+  state <- gsub("Flor.*", "Florida", state)
+  state <- gsub("Gem.*", "Germany", state)
+  state <- gsub("Ger.*", "Germany", state)
+  state <- gsub("Saxony*", "Germany", state)
+  state <- gsub("Silesia.*", "Germany", state)
+  state <- gsub("Switzerland*", "Switzerland", state)
+  state <- gsub("Syria.*", "Syria", state)
+  state <- gsub("Hesse.*", "Germany", state)
+  state <- gsub("Hungary.*", "Hungary", state)
+  state <- gsub("Geo.*", "Georgia", state)
   state <- gsub("La$", "Louisiana", state)
+  state <- gsub("Boston.*", "Massachusetts", state)
   state <- gsub("Mass.*", "Massachusetts", state)
   state <- gsub("Md.*", "Maryland", state)
   state <- gsub("Mich.*", "Michigan", state)
@@ -133,18 +166,28 @@ StState <- function(state) {
   state <- gsub("Mo$", "Missouri", state)
   state <- gsub("N  J", "New Jersey", state)
   state <- gsub("N  M", "New Mexico", state)
+  state <- gsub("Brook.*", "New York", state)
   state <- gsub("N  Y", "New York", state)
   state <- gsub("N Y", "New Jersey", state)
   state <- gsub("Missouri.*", "Missouri", state)
+  state <- gsub("Moravia.*", "Moravia", state)
   state <- gsub("Neb.*", "Nebraska", state)
   state <- gsub("Pa.*", "Pennsylvania", state)
+  state <- gsub("Poland.*", "Poland", state)
+  state <- gsub("Prussia.*", "Prussia", state)
+  state <- gsub("Russia.*", "Russia", state)
   state <- gsub("S  D", "South Dakota", state)
   state <- gsub("Va$", "Virginia", state)
   state <- gsub("W  Va", "West Virginia", state)
   state <- gsub("W  Virginia", "West Virginia", state)
   state <- gsub("Tex.*", "Texas", state)
+  state <- gsub("Dallas", "Texas", state)
   state <- gsub("Ten.*", "Tennessee", state)
+  state <- gsub("E Tennessee", "Tennessee", state)
+  state <- gsub("East Tennessee", "Tennessee", state)
   state <- gsub("NANA", NA, state)
+  state <- gsub("Unknown", NA, state)
+  state <- gsub("Unreadavle", NA, state)
 }
 
 CleanCensus <- function(census) {
@@ -178,6 +221,22 @@ CleanCensus <- function(census) {
   
   census$self_residence_info_age[census$self_residence_info_age > 100] <- NA # missing if over 100
   
+  # Subset to individuals 18+
+  census <- subset(census, self_residence_info_age>=18 & !is.na(self_residence_info_age)) # rm NAs
+  
+  # Clean & subset birth year
+  if(census$self_residence_date_year==1900){
+  census$birth.year <- as.numeric(str_sub(census$self_birth_date_empty, start= -4))
+  
+  census <- subset(census, !is.na(birth.year)) # rm NAs
+  }
+  if(census$self_residence_date_year==1910){
+    census$birth.year <- as.numeric(str_sub(census$general_fs_birth_year, start= -4))
+    
+    census <- subset(census, !is.na(birth.year)) # rm NAs
+  }
+  
+
   # Remove non-alphabetic characters from surname and make all uppercase
   census$self_empty_name_surname<- trimws(toupper(gsub("[^[:alnum:] ]", "",census$self_empty_name_surname)))
   census$self_empty_name_given<- trimws(toupper(gsub("[^[:alnum:] ]", "",census$self_empty_name_given)))
@@ -203,6 +262,13 @@ CleanCensus <- function(census) {
   
   # Standardize county
   census$county <- StCounty(census$county)
+  
+  census <- subset(census, nchar(county)>3 & !is.na(county)) # drop obs with missing
+  
+  # Standardize birthplace
+  census$birthplace <- StState(census$birthplace)
+  
+  census <- subset(census, nchar(birthplace)>3 & !is.na(birthplace)) # drop obs with missing
   
   # Standardize first
   census$first <- StFirst(census$first)
@@ -232,6 +298,10 @@ CleanLawton <- function(lawton){
   lawton$sound.surname <- soundex(lawton$Surname)
   lawton$sound.first <- soundex(lawton$first)
   
+  # Name lengths
+  lawton$surname.length <- nchar(lawton$Surname)
+  lawton$first.length <- nchar(lawton$first)
+  
   # Standardize state
   lawton$State.or.Territory <- StState(lawton$State.or.Territory)
   
@@ -258,6 +328,10 @@ CleanElreno <- function(elreno){
   
   elreno$surname[is.na(elreno$surname)] <- elreno$middle.name[is.na(elreno$surname)] # correct for those w/o middle name
   elreno$middle.name[elreno$middle.name==elreno$surname] <- NA
+  
+  # Name lengths
+  elreno$surname.length <- nchar(elreno$surname)
+  elreno$first.length <- nchar(elreno$first)
   
   # Standardize first names
   elreno$first <- StFirst(elreno$first)
