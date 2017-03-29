@@ -103,4 +103,8 @@ hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                              "county"= c(elreno$City, lawton$Place.of.Residence),
                            "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
 
-hs$lawton <- ifelse(!is.na(hs$comply),1,0)
+hs$lawton <- ifelse(!is.na(hs$comply),1,0) # lawton dummy
+
+# Create unique homesteader ID
+hs <- hs[order(hs$draw),]
+hs$hs.id <- 1:nrow(hs)
