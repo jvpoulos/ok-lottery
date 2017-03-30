@@ -91,7 +91,7 @@ fitSL.hs.link
 hs.link.pred.test <- predict(fitSL.hs.link, data.frame(X.hs.test))$pred
 
 # Add predictions to test data
-X.hs.test$is.link <- ifelse(as.numeric(hs.link.pred.test)>min(as.numeric(hs.link.pred.test)),1,0) 
+X.hs.test$is.link <- ifelse(as.numeric(hs.link.pred.test)>0.5,1,0) 
 
 df.hs.test$is.link <- 0 
 df.hs.test$is.link[df.hs.test$hs.link.id %in% df.hs.test$hs.link.id[X.hs.test$is.link==1]] <-1
@@ -105,7 +105,7 @@ hs.link.df <- hs.link.df[!duplicated(hs.link.df$PID),] # remove 1900 dups
 drops <- c(hs.features, "is.link","hs.link.id","sound.surname.1900","sound.first.1900")
 hs.link.df <- hs.link.df[ , !(names(hs.link.df) %in% drops)]
 
-# Out of 14,235 participants, 3,910 linked to 1900 Census ( 0.2746751)
+# Out of 14,235 participants, 2,610 linked to 1900 Census ( 0.1833509)
 # Bleakly (manual): 1,580/6,500 (0.2430769)
 
 ############################################################################################################################
@@ -197,7 +197,7 @@ fitSL.link
 link.pred.test <- predict(fitSL.link, data.frame(X.test))$pred
 
 # Add predictions to test data
-X.test$is.link <- ifelse(as.numeric(link.pred.test)>min(as.numeric(link.pred.test)),1,0)
+X.test$is.link <- ifelse(as.numeric(link.pred.test)>0.5,1,0)
 
 df.test$is.link <- 0
 df.test$is.link[df.test$link.id %in% df.test$link.id[X.test$is.link==1]] <-1
@@ -226,5 +226,5 @@ rm(tuneGrid,census.link,df,df.hs,df.hs.test,df.hs.train,hs.link.df,hs.link.pred.
 
 save.image(paste0(data.directory,"record-link.RData"))
            
-# Out of 3,910 linked to 1900 Census, 1,120 linked to 1910 census (0.286445)
+# Out of 2,619 linked to 1900 Census, 439 linked to 1910 census (0.1676212)
 # Bleakly (manual): 529/1580 (0.3348101)
