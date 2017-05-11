@@ -224,7 +224,7 @@ rm(tuneGrid,census.link,df,df.hs,df.hs.test,df.hs.train,hs.link.df,hs.link.pred.
    X.hs.test,X.hs.train,Y.hs.train,Y.train,df.test,df.train,link.pred.test,X.test,X.train,
    bound,bound.hs,continuous,drops, features,hs.features,hs.train.links,preProcValues,train.links) # clean up workspace
 
-save.image(paste0(data.directory,"record-link.RData"))
+save.image(paste0(data.directory,"census-link.RData"))
            
 # Out of 2,619 linked to 1900 Census, 439 linked to 1910 census (0.1676212)
 # Bleakly (manual): 529/1580 (0.3348101)
