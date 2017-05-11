@@ -97,6 +97,26 @@ StCounty <- function(county) {
   county <- gsub("Petersburg  Independent City", "Petersburg", county)
   county <- gsub("Portsmouth  Independent City", "Portsmouth", county)
   county <- gsub("Alexandria  Independent City", "Alexandria", county)
+  county <- gsub("Beckham.*", "Beckham", county)
+  county <- gsub("Blaine.*", "Blaine", county)
+  county <- gsub("Canadian.*", "Canadian", county)
+  county <- gsub("Cleveland.*", "Cleveland", county)
+  county <- gsub("Dewey.*", "Dewey", county)
+  county <- gsub("Ellis.*", "Ellis", county)
+  county <- gsub("Garfield.*", "Garfield", county)
+  county <- gsub("Greer.*", "Greer", county)
+  county <- gsub("Harper.*", "Harper", county)
+  county <- gsub("Jackson.*", "Jackson", county)
+  county <- gsub("Kay.*", "Kay", county)
+  county <- gsub("Kingfisher.*", "Kingfisher", county)
+  county <- gsub("Kiowa.*", "Kiowa", county)
+  county <- gsub("Logan.*", "Logan", county)
+  county <- gsub("Major.*", "Major", county)
+  county <- gsub("Osage.*", "Osage", county)
+  county <- gsub("Pontotoc.*", "Pontotoc", county)
+  county <- gsub("Pottawatomi.*", "Pottawatomie", county)
+  county <- gsub("Woods.*", "Woods", county)
+  county <- gsub("Roger.*", "Rorger Mills", county)
 }
 
 StState <- function(state) {
@@ -346,4 +366,28 @@ CleanElreno <- function(elreno){
   # Standardize city
   elreno$City <- StCounty(elreno$City)
   return(elreno)
+}
+
+CleanSales <- function(sales){
+
+  # Split first and middle name
+  sales$first <- trimws(unlist(lapply(strsplit(sales$Names,","), function(x) x[2])))
+  sales$surname <- trimws(unlist(lapply(strsplit(sales$Names,","), function(x) x[1])))
+  sales$middle.name <- trimws(unlist(lapply(strsplit(sales$first," "), function(x) x[2])))
+  sales$first <- trimws(unlist(lapply(strsplit(sales$first," "), function(x) x[1])))
+  
+  # Name lengths
+  sales$surname.length <- nchar(sales$surname)
+  sales$first.length <- nchar(sales$first)
+  
+  # Standardize first names
+  sales$first <- StFirst(sales$first)
+  
+  # Create soundex of first and surnames
+  sales$sound.surname <- soundex(sales$surname)
+  sales$sound.first <- soundex(sales$first)
+  
+  # Standardize county
+  sales$County <- StCounty(sales$County)
+  return(sales)
 }
