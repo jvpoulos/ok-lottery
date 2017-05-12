@@ -13,4 +13,4 @@ sales <- read.csv(paste0(data.directory,"glo-sales.csv"),
 sales <- sales[sales$Names != "" & sales$County != "",]
 
 # Clean
-c.1900.s <- CleanSales(sales)
+sales <- CleanSales(sales)
