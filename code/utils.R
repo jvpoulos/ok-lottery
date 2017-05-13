@@ -393,5 +393,8 @@ CleanSales <- function(sales){
   
   # Standardize county
   sales$County <- StCounty(sales$County)
+  
+  # Convert filing dates to POSIXct
+  sales$Date <- as.POSIXct(sales$Dat,format="%m/%d/%Y",tz="UTC")
   return(sales)
 }
