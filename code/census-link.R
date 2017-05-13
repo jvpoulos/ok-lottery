@@ -219,6 +219,14 @@ link.1900.1910 <- merge(hs.link.df, link.df, by=c("hs.id"), all.x=TRUE)
 # Write linked sample to file
 write.csv(link.1900.1910, paste0(data.directory,"linked-sample-00-10.csv"))
 
+# Merge 1910 transcriptions
+trans.1910 <- read.csv("~/Dropbox/github/ok-lottery/data/trans-1910.csv",
+                       stringsAsFactors=FALSE)[-c(1)]
+
+link.1900.1910 <- merge(link.1900.1910, trans.1910, 
+                        by=c("hs.id"),
+                        all.x = TRUE)
+
 # Save data image
 rm(tuneGrid,census.link,df,df.hs,df.hs.test,df.hs.train,hs.link.df,hs.link.pred.test,link.df,
    X.hs.test,X.hs.train,Y.hs.train,Y.train,df.test,df.train,link.pred.test,X.test,X.train,
