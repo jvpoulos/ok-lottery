@@ -1,0 +1,440 @@
+"","hs.id","english","occ","ind","work.status","unemp","unemp.wks","can.read","can.write","school","own","free","farm","farm.sched","farmer","employer","self"
+"3",4382,"English","Carpenter","House","Employee",0,NA,"Yes","yes ",NA,"0",NA,"0",NA,0,0,0
+"6",555,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes ",NA,"0",NA,"1",NA,1,1,0
+"7",5207,"English","Stockman","Cattle Ranch","Own Account",NA,NA,"Yes","yes ",NA,"1","1","1",NA,0,0,1
+"13",9257,"English","Laborer","Farming","Employee",0,25,"Yes","yes ","Yes",NA,NA,NA,NA,0,0,0
+"15",174,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1",NA,"1",NA,1,1,0
+"25",1551,"English","Machinist","Quarry","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"26",4858,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,1,0
+"29",5967,"English","Farmer","Farming","Employer",0,0,"Yes","yes",NA,"1","1","0",NA,1,1,0
+"39",1380,NA,NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"40",1701,"English","Salesman","Retail Store","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"43",2804,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,0,1
+"44",3159,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",NA,1,0,1
+"47",5658,"English","Carpenter","Railroad","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"52",8236,"English","Foreman","Heating Co","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"54",8598,"English","Motorman","Railway","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"55",9240,"English","Landlord","Rooms","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,1
+"76",2671,"English","Labor","Hod Carrier","Employee",0,0,"No","no",NA,"0",NA,"0",NA,0,0,0
+"85",3350,"English","Keeper","Hotel","Employer",NA,NA,"Yes","yes",NA,"1",NA,"0",NA,0,1,0
+"88",9736,"English","Druggist","Own Store","Own Account",NA,NA,"Yes","yes",NA,"1",NA,"0",NA,0,0,1
+"91",274,"English",NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"92",327,"English","Tinner","Catton Gen","Employer",NA,NA,"Yes","yes",NA,"1","0","1",NA,0,1,0
+"97",5632,"English","Own Income","",NA,NA,NA,NA,"yes","Yes","0",NA,"0",NA,0,NA,NA
+"101",8451,"English","Agent","Real Estate","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",NA,0,0,1
+"102",9398,"English",NA,"",NA,NA,NA,"Yes","yes","Yes",NA,NA,NA,NA,NA,NA,NA
+"105",7807,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"106",2532,"English",NA,"",NA,NA,NA,"No","no",NA,"1","1","0",NA,NA,NA,NA
+"110",5238,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"115",1939,"English","Marsall","City","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"117",8319,"English","Farmer","Farming",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,1,NA,NA
+"123",3624,"English","Barber","Own Shop","Own Account",NA,NA,"Yes","yes",NA,"1","0","0",NA,0,0,1
+"133",5893,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,1,0
+"137",8741,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0","1","1",NA,1,1,0
+"142",8316,"English","Laborer","Farming","Employee",1,16,"No","no",NA,NA,NA,NA,NA,0,0,0
+"153",4224,"English","Farmer","Farming","Employer",NA,NA,"No","no",NA,"1","1","1",NA,1,1,0
+"167",7591,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,NA,NA,NA,NA,1,0,1
+"195",5281,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,1,0
+"221",7171,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1",NA,NA,1,0,1
+"234",6972,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"239",12104,NA,NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"266",4031,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"269",9359,NA,NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"270",11352,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,0,1
+"271",1096,"English","Salesman","Grocery Store","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"272",6457,"English","Farmer","",NA,NA,NA,"Yes","yes",NA,"1","0","1",NA,1,NA,NA
+"273",15,"English","Stone Mason","Cutting And Laying","Own Account",0,10,"Yes","yes",NA,NA,NA,NA,NA,0,0,1
+"277",2695,"English","Proprietor","Restaurant","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,1
+"279",3568,"English","Laborer","Odd Jobs","Employee",0,32,"Yes","yes",NA,NA,NA,NA,NA,0,0,0
+"281",4214,"English",NA,"",NA,NA,NA,"Yes","yes",NA,NA,NA,NA,NA,NA,NA,NA
+"283",5900,"English","Farmer","Farming","Employer",NA,NA,"No","no",NA,"0",NA,"1",NA,1,1,0
+"284",5991,"English","Factory","Heading Fac","Employee",0,8,"No","no",NA,"0",NA,"0",NA,0,0,0
+"286",6268,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"288",7196,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,NA,NA,1,1,0
+"293",10021,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",NA,1,0,1
+"316",9973,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,1,0
+"318",7494,"English","Motorman","Street Railway","Employee",0,29,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"325",4851,"English",NA,"",NA,NA,NA,"Yes","yes",NA,NA,NA,NA,NA,NA,NA,NA
+"339",1097,"English","Farmer","Farming",NA,NA,NA,"Yes","yes",NA,"1","1","1",NA,1,NA,NA
+"345",12168,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,0,1
+"347",1781,"English","Farmer","Farming","Own Account",NA,NA,NA,"yes","Yes","1","1","1",NA,1,0,1
+"349",7246,"English","Operator","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",NA,0,0,1
+"350",1501,"English","Stenographer","Stave Factory","Employee",0,8,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"352",3224,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"362",3532,"English","Farmer","Farming","Own Account",0,0,"Yes","yes","No","1","1","1",NA,1,0,1
+"363",5597,"English","Roofing","Superintendent","Employee",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"369",1757,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,0,1
+"372",1671,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",NA,1,0,1
+"378",2178,"English","Carpenter","House","Employee",0,40,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"386",8364,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,1,0,1
+"387",10877,"English",NA,"Income",NA,NA,NA,"Yes","yes",NA,"0",NA,"0",NA,NA,NA,NA
+"389",12486,"English","Carpenter","House","Employee",0,12,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"391",8853,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,1,0
+"401",6469,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"0","1","1",NA,1,0,1
+"424",1173,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,NA,NA,"1",NA,1,0,1
+"433",10050,"English","Farmer","Farming","Own Account",NA,NA,"No","no",NA,"0",NA,"1",NA,1,0,1
+"434",10772,"English","Farmer","","Own Account",0,0,"Yes","yes",NA,"1","1","0",NA,1,0,1
+"449",11054,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"469",12225,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"476",7341,"English","Gardener","Own Land","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",NA,0,0,1
+"478",9704,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,1,0
+"485",8721,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,1,0,1
+"493",7631,"English","Spud Setter","City Insurance","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"497",11530,"English","Ryister Of Duds","County Co","Employee",0,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"499",8407,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","0","0",NA,0,NA,NA
+"501",6272,"English","Farmer","Farming","Employer",0,0,"Yes","yes",NA,"1","1","0",NA,1,1,0
+"505",10451,"English","Printer","Jo Work","Employer",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,1,0
+"514",8664,"English","Car Repair","Railroad","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"515",10225,"English","Seanstress","House","Own Account",0,NA,"Yes","yes",NA,"1","1","1",NA,0,0,1
+"517",13599,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",NA,1,0,1
+"521",10705,"English","Manager","Farming","Employee",0,0,"Yes","yes",NA,"0",NA,"1",NA,0,0,0
+"526",6557,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"532",3615,"English","Grocer","Grocery","Employer",0,0,"Yes","yes",NA,"1","1","0",NA,0,1,0
+"535",9373,"English","Farmer","Farming","Employer",0,0,"Yes","yes",NA,"1","0","1",NA,1,1,0
+"538",12761,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,0,1
+"550",14220,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",79,1,1,0
+"563",1898,"English","Painter","Odd Jobs","Own Account",NA,NA,"Yes","yes",NA,"1","0","0",NA,0,0,1
+"571",7877,"English","Driver","City Wagon","Employee",0,0,"Yes","yes",NA,"1","1","0",15,0,0,0
+"575",9453,"English","Farmer","Farming","Employee",NA,NA,"Yes","yes",NA,"1","0","1",97,1,0,0
+"578",11601,"English","Section Foreman","Railroad","Employee",0,0,"Yes","yes",NA,"0",NA,"0",10,0,0,0
+"579",12142,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",146,1,1,0
+"590",1683,"English",NA,"",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,NA,NA,NA
+"607",13419,"English","Railroad","Section Hand","Employee",0,0,"Yes","yes",NA,"0",NA,"0",10,0,0,0
+"616",11124,"English","Printer","Newspaper Office","Employee",0,15,"Yes","yes",NA,"0",NA,"0",3,0,0,0
+"620",3679,"English","Proprietor","Coal & Feed","Employer",NA,NA,"Yes","yes",NA,"1","0","0",NA,0,1,0
+"632",3209,"English","Laborer","Odd Jobs","Employee",0,0,"Yes","yes",NA,"1","1","0",15,0,0,0
+"633",3555,"English","Minister","ME South Methodist Church","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"662",4327,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",178,1,1,0
+"671",5775,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",27,1,0,1
+"672",7332,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",74,1,0,1
+"685",10635,"English",NA,"",NA,NA,NA,"Yes","yes",NA,NA,NA,NA,NA,NA,NA,NA
+"687",11465,"English","Cooper Flour Mill","","Employee",NA,NA,"Yes","yes",NA,"1","1","0",12,0,0,0
+"692",7372,"English","Own Income","",NA,1,0,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"704",3230,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",26,1,0,1
+"709",1230,"English","Real Estate","Own Office","Own Account",NA,NA,"Yes","yes",NA,"1",NA,"0",9,0,0,1
+"712",3374,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"722",3689,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",185,1,1,0
+"725",8255,"English","Driller","Gas Wells","Employee",1,15,"Yes","yes",NA,"1","1","1",217,0,0,0
+"730",14217,"English","Editor","Newspaper","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"731",3827,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes","Yes","0",NA,"1",61,1,1,0
+"736",8081,"English","Agent","Creamery","Employee",0,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"740",6219,"English","Farmer","General Hauling","Own Account",0,NA,"Yes","yes",NA,"1","1","0",15,1,0,1
+"761",10893,"English","Rate Clerk","Railroad","Employee",0,0,"Yes","yes",NA,NA,NA,"0",NA,0,0,0
+"762",2723,"English","Agent","Real Estate","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",NA,0,0,1
+"764",2335,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0","1","0",8,1,0,1
+"771",8288,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","0","0",NA,0,NA,NA
+"775",10007,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",90,1,0,1
+"785",3538,"English","Pensioner","",NA,NA,NA,"Yes","no",NA,"0",NA,"0",NA,0,NA,NA
+"792",1178,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",57,1,1,0
+"805",1741,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",34,1,1,0
+"806",4588,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",72,1,0,1
+"810",10916,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",181,1,1,0
+"833",4185,"English","Laborer","Odd Jobs","Employee",0,12,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"847",7190,"English","Lawyer","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"858",5888,"English","Laborer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",115,0,0,1
+"867",5265,"English","Plateman","St Car","Employee",0,0,"Yes","yes",NA,"0",NA,"1",19,0,0,0
+"873",1778,"English","Laundress","Families","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",2,0,0,1
+"879",6788,"English","Farmer","Farming","Own Account",NA,NA,"No","no",NA,"0",NA,"1",47,1,0,1
+"885",12750,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"892",11021,"English","Farmer","Farming","Own Account",0,0,"Yes","yes",NA,"1","0","1",27,1,0,1
+"894",8330,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",143,1,1,0
+"896",8003,"English","Grocer","Grocery Store","Employee",0,24,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"904",326,"English","Car Inspector","Railroad Co","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"906",3776,"English","Agent","Real Estate","Own Account",NA,NA,"Yes","yes",NA,NA,NA,NA,NA,0,0,1
+"918",1203,"English","Laborer","Electric Park","Employee",1,0,"Yes","yes",NA,"0",NA,"0",15,0,0,0
+"920",1456,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,NA,"0","1",166,1,0,1
+"923",4385,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1",NA,"0",NA,0,NA,NA
+"934",12821,"English","Driller","Cement Plant","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"936",1258,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",112,1,1,0
+"944",9853,"English","Farmer","Farming","Own Account",0,0,"Yes","yes",NA,"0",NA,"1",189,1,0,1
+"962",10282,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0","1","1",76,1,1,0
+"972",10498,"English","Real Estate","Selling Land","Own Account",NA,NA,"Yes","yes","No","1","1","0",11,0,0,1
+"977",8955,"English","Auctioneer","Public Sale","Employee",0,0,"Yes","yes","No","1","1","0",NA,0,0,0
+"1002",4328,"English","Farmer","Farming","Own Account",0,0,"Yes","yes",NA,"0",NA,"1",22,1,0,1
+"1012",4424,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",22,1,1,0
+"1014",9953,"English","Merchant","Jewelry","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",3,0,0,1
+"1026",10161,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",137,1,1,0
+"1027",10776,"English","Conductor","Railway","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"1043",273,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",97,1,1,0
+"1049",10187,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",321,1,0,1
+"1052",960,"English","Construction Foreman","Packing Plant","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"1054",10582,"English","General","Farming","Own Account",0,0,"Yes","yes",NA,"1","1","1",87,0,0,1
+"1057",3800,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",70,1,1,0
+"1061",281,"English",NA,"",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,NA,NA,NA
+"1063",5004,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",103,1,0,1
+"1065",10726,"English","Machinist","Packing House","Employee",0,0,"Yes","yes",NA,"0",NA,"0",3,0,0,0
+"1075",3234,"English",NA,"",NA,NA,NA,"Yes","yes",NA,"1","0","1",240,NA,NA,NA
+"1097",6572,"English","Cattle Salesman","Stockyard","Employee",0,0,"Yes","yes",NA,"1","0","0",NA,0,0,0
+"1098",11836,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",22,1,0,1
+"1102",3284,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",382,1,0,1
+"1120",4719,"English",NA,"",NA,NA,NA,"Yes","yes","Yes","1","1","0",NA,NA,NA,NA
+"1126",399,"English","Railway","Post Clerk","Employee",0,0,"Yes","yes","No","0",NA,"0",NA,0,0,0
+"1129",1940,"English","Farmer","","Own Account",NA,NA,"Yes","yes","Yes","1","1","1",42,1,0,1
+"1132",6456,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",118,1,0,1
+"1136",8671,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",23,1,1,0
+"1147",10075,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","1","1",44,1,1,0
+"1160",1936,"English","Constable","City","Employee",0,0,"Yes","yes",NA,"1","0","0",4,0,0,0
+"1164",1801,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",14,1,0,1
+"1165",5095,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,0,1
+"1167",5950,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,NA,NA
+"1178",2431,"English","Farmer","Working Out","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,1,0,0
+"1185",7315,"English","Farmer","Cattle","Own Account",0,0,"Yes","yes","Yes","1","1","1",NA,1,0,1
+"1190",1301,"English","Farmer","General","Own Account",0,0,"Yes","yes",NA,"1","0","1",45,1,0,1
+"1193",3684,"English","Engineer","Stationary","Employee",1,24,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"1196",6288,"English","Fireman","Brickyard","Employee",1,12,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"1198",7549,"English","Farmer","General","Employer",0,0,"Yes","yes",NA,"0",NA,"1",17,1,1,0
+"1201",8607,"English","Farmer","General","Employer",0,0,"Yes","yes",NA,"0",NA,"1",88,1,1,0
+"1203",9093,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",19,0,NA,NA
+"1207",11078,"English","Druggist","Drug Store","Employer",0,0,"Yes","yes",NA,"1","1","0",NA,0,1,0
+"1212",5458,"English","Laborer","Farming","Employee",NA,NA,"Yes","yes",NA,"0","1","0",NA,0,0,0
+"1217",2353,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","1","1",NA,1,1,0
+"1224",2381,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","1","1",117,1,1,0
+"1225",2746,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",147,1,1,0
+"1228",3809,"English","Taylor","Merchant","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,0,1
+"1229",4064,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","1","1",121,1,1,0
+"1231",4545,"English","Salesman","Retail Clothing","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"1234",5745,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","0","1",45,1,1,0
+"1237",7952,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"1246",12742,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",191,1,0,1
+"1257",4027,"English","Laborer","Odd Jobs","Employee",0,0,"Yes","yes",NA,"1","1","0",15,0,0,0
+"1262",6782,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"1264",3253,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",0,1,0,1
+"1270",8452,"English","Laborer","Lumber Mill",NA,1,36,"Yes","yes",NA,"1",NA,"0",NA,0,NA,NA
+"1276",9680,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",2,1,1,0
+"1279",10212,"English","Proprietor","Hardware Store","Employer",NA,NA,"Yes","yes",NA,"1","1","0",3,0,1,0
+"1280",3091,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"1",128,1,0,1
+"1282",9480,"English","Carpenter","House","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",12,0,0,1
+"1287",1830,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",64,1,1,0
+"1289",6065,"English","Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"1297",8797,NA,NA,"",NA,NA,NA,"Yes","yes",NA,"0",NA,"0",NA,NA,NA,NA
+"1301",12316,"English","Carpenter","House","Employee",0,0,"Yes","yes",NA,"0",NA,"0",NA,0,0,0
+"1302",1263,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",14,1,0,1
+"1316",2579,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","1","1",132,1,1,0
+"1318",9838,"English","Laborer","Odd Jobs","Employee",1,24,"Yes","yes",NA,"1","1","0",15,0,0,0
+"1340",8639,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",83,1,1,0
+"1347",6822,"English","Farmer","General","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",127,1,0,1
+"1354",11856,"English","Salesman","Piano Co","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"1365",10505,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",27,1,1,0
+"1375",4583,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",201,1,1,0
+"1389",5433,"English","Pensioner","",NA,NA,NA,"Yes","yes",NA,"0",NA,"0",NA,0,NA,NA
+"1390",11744,"English",NA,"Own Income",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,NA,NA,NA
+"1398",12252,"English","Commercial Traveler","Saddlery",NA,0,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"1405",3484,"English","Teamster","Cole Co","Employee",0,NA,"Yes","yes",NA,NA,NA,"0",NA,0,0,0
+"1406",7067,"English","Stone Cutter","","Employee",1,16,"Yes","yes",NA,"0",NA,"0",16,0,0,0
+"1409",8924,"English","Mail Carrier","Rural Route","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"1423",9568,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",72,1,1,0
+"1429",4661,"English","Farmer","Farming","Employee",NA,NA,"Yes","yes",NA,"0",NA,"0",2,1,0,0
+"1431",8336,"English","Country Office","","Employee",NA,NA,"Yes","yes",NA,"1","1","0",2,0,0,0
+"1432",535,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",91,1,1,0
+"1434",1608,"English","Real Estate","","Employee",NA,NA,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"1439",8400,"English","Farmer","Farming","Employer",NA,NA,"No","no",NA,"1","1","1",36,1,1,0
+"1442",10205,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","0",7,1,0,1
+"1446",1039,"English","Dairy Man","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",93,0,0,1
+"1447",4787,"English","Merchant","Dry Goods","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",2,0,0,1
+"1455",11627,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",86,1,0,1
+"1469",10609,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",19,1,0,1
+"1474",7717,"English","Clerk","Plumbing Shop","Employee",0,12,"Yes","yes",NA,NA,NA,"0",10,0,0,0
+"1488",10740,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",161,1,0,1
+"1491",8369,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","1","1",83,1,1,0
+"1499",10714,"English","Bookkeeper","Dry Goods Shop","Employee",0,0,"Yes","yes",NA,"1","1","0",10,0,0,0
+"1503",1535,"English","Laborer","Ice Plant","Employee",0,0,"Yes","yes",NA,"1","0","0",15,0,0,0
+"1507",6031,"English",NA,"",NA,NA,NA,"Yes","yes",NA,NA,NA,NA,NA,NA,NA,NA
+"1508",10414,"English","Teamster","Lumber Yard","Employee",0,0,"Yes","yes",NA,"0",NA,"0",13,0,0,0
+"1513",7582,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",243,1,1,0
+"1523",6477,"English","Merchant","Hardware Store","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",3,0,0,1
+"1532",3375,"English","Store Owner","General Store","Own Account",NA,NA,"Yes","yes",NA,"1",NA,"0",2,0,0,1
+"1534",12825,"English","Accountant","Gas Business","Employee",NA,NA,"Yes","yes",NA,"0",NA,"0",10,0,0,0
+"1540",7208,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",148,1,0,1
+"1542",1581,"English","Painter","Retail Store","Employee",0,0,"Yes","yes",NA,"0",NA,"0",14,0,0,0
+"1551",4404,"English","Engineer","Stationery Engine","Employee",0,0,"Yes","yes",NA,"0",NA,"0",12,0,0,0
+"1553",8444,"English","Own Income","",NA,NA,NA,"Yes","yes",NA,"1","1","0",NA,0,NA,NA
+"1555",6674,"English","Physician","","Own Account",NA,NA,"Yes","yes",NA,"1","1","0",NA,0,0,1
+"1559",10917,"English","Carpenter","Packing","Employer",0,NA,"Yes","yes",NA,"0",NA,"0",4,0,1,0
+"1561",793,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",87,1,1,0
+"1562",1653,"English","Farmer","Farming",NA,NA,NA,"Yes","yes",NA,"0",NA,"1",204,1,NA,NA
+"1569",4434,"English","Officer","Country Clerk","Employee",0,0,"Yes","yes",NA,"1","1","0",2,0,0,0
+"1572",5693,"English","Laborer","Working Out","Employee",0,NA,"Yes","yes",NA,"0",NA,"0",2,0,0,0
+"1573",6793,"English","Farmer","General","Employer",NA,NA,"Yes","yes",NA,"1","0","1",NA,1,1,0
+"1575",7165,"English","Farmer","","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",NA,1,0,1
+"1576",8118,"English","Farmer","Own Account",NA,NA,NA,"Yes","yes",NA,"1","0","1",36,1,NA,NA
+"1579",9789,"English","Blacksmith","General Repair","Own Account",0,0,"Yes","yes",NA,"1","1","0",12,0,0,1
+"1581",12419,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",121,1,0,1
+"1586",3961,"English","Laborer","City","Employee",1,0,"Yes","yes",NA,"1","1","0",5,0,0,0
+"1602",921,"English","Merchant","Coal Grain","Employer",NA,NA,"Yes","yes",NA,"1","1","0",1,0,1,0
+"1603",1548,"English","Walkin Wood","Salesman","Employee",NA,NA,"Yes","yes",NA,"0",NA,"0",6,0,0,0
+"1604",2195,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","1","1",36,1,0,1
+"1606",2984,"English","Farmer","Farming","Employer",NA,NA,"No","no",NA,"0",NA,"1",48,1,1,0
+"1619",9481,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",101,1,1,0
+"1620",10209,"English","Farmer","Farming",NA,NA,NA,"Yes","yes",NA,"1","1","1",73,1,NA,NA
+"1622",14080,"English",NA,"",NA,NA,NA,"Yes","yes",NA,"0",NA,"0",NA,NA,NA,NA
+"1625",6984,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",119,1,1,0
+"1626",7363,"English","Furniture","Municipal","Employee",0,0,"Yes","yes",NA,"1","1","0",NA,0,0,0
+"1628",14219,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",16,1,1,0
+"1630",4626,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"0",NA,"1",107,1,1,0
+"1640",12628,"English","Farmer","Farming","Employer",NA,NA,"Yes","yes",NA,"1","0","1",43,1,1,0
+"1653",275,"English","Butter","","Employee",0,0,"Yes","yes",NA,"0",NA,"0",5,0,0,0
+"1658",3501,"English","Proprietor","Hardware Store","Employer",0,0,"Yes","yes",NA,"1","1","0",4,0,1,0
+"1667",724,"English","Farmer","Farming","Own Account",NA,NA,"Yes","yes",NA,"1","0","1",25,1,0,1
+"1682",13146,"English","Sheep Herder","On Range","Employee",0,0,"Yes","yes",NA,"0",NA,"0",9,0,0,0
+"1689",9974,"English","Stock Buyer","Shipper","Own Account",NA,NA,"Yes","yes",NA,"0",NA,"0",4,0,0,1
+"1711",14151,"English","Farmer","Farming","Own Account",0,0,"Yes","yes",NA,"0",NA,"1",2,1,0,1
+"1712",9674,"English","Farmer","Farming","Employer",0,0,"Yes","Yes","No","1",NA,"1",47,1,1,0
+"1724",6975,"English","Contract Builder","Contractor","Employer",0,NA,"Yes","Yes","No","1",NA,"0",4,0,1,0
+"1729",937,"English","Butcher","Local Slengton","Own Account",0,NA,"Yes","Yes",NA,NA,NA,"0",5,0,0,1
+"1741",2101,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",46,1,1,0
+"1758",1879,"English","Own Income","None",NA,NA,NA,"Yes","Yes",NA,"0",NA,"0",0,0,NA,NA
+"1774",541,"English","Care Taker","Cemetery","Employee",NA,0,"Yes","Yes",NA,"1","1","0",3,0,0,0
+"1781",9355,"English","Commercial Traveler","Hardware Store","Employee",0,0,"Yes","Yes",NA,"1","0","1",3,0,0,0
+"1783",262,"English",NA,"None",NA,NA,0,"Yes","Yes",NA,NA,NA,NA,NA,NA,NA,NA
+"1787",11068,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes","No","1","1","1",23,1,1,0
+"1811",10807,"English","Commercial Traveler","Trunks","Employee",NA,0,"Yes","Yes",NA,"0",NA,"0",0,0,0,0
+"1827",3046,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","0",4,1,0,1
+"1829",5010,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",86,1,0,1
+"1833",4387,"English","Farmer","None",NA,NA,NA,"Yes","Yes",NA,"1","1","1",19,1,NA,NA
+"1838",5669,NA,NA,"NANA",NA,NA,NA,"Yes","Yes","Yes",NA,NA,NA,NA,NA,NA,NA
+"1845",10172,"English","Salesman","Retail Furniture","Employee",NA,0,"Yes","Yes",NA,NA,NA,"0",NA,0,0,0
+"1860",410,"English","Farmer","None","Own Account",NA,NA,"Yes","Yes","No","1","1","1",19,1,0,1
+"1867",5727,"English","Salesman","Dry Goods","Employee",NA,0,"Yes","Yes",NA,"1","1","0",6,0,0,0
+"1869",2311,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"1870",10485,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",54,1,1,0
+"1875",1792,"English","Carpenter","House","Own Account",0,0,"Yes","Yes","No","1","1","0",0,0,0,1
+"1886",2360,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","0",0,1,0,1
+"1888",9096,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",28,1,0,1
+"1910",4163,"English",NA,"None",NA,NA,NA,"No","no","No",NA,NA,NA,NA,NA,NA,NA
+"1913",1920,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",141,1,0,1
+"1914",5797,"English","Laborer","Odd Jobs","Employee",NA,0,"Yes","Yes",NA,"1","1","0",5,0,0,0
+"1925",8851,"English","Agent","Real Estate","Own Account",NA,0,"Yes","Yes",NA,NA,"1","0",NA,0,0,1
+"1928",6562,"English","Proprietor","Hotel","Employee",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"1934",3163,"English","Carpenter","House","Employee",NA,0,"Yes","Yes","No","1","1","0",NA,0,0,0
+"1951",11739,"English","Fireman","City Fire Department","Employee",NA,NA,"Yes","Yes",NA,"0",NA,"0",4,0,0,0
+"1965",2992,"English",NA,"NANA",NA,NA,NA,"Yes","Yes",NA,NA,NA,NA,NA,NA,NA,NA
+"1970",12494,"English","Farmer","Farming","Employer",NA,NA,NA,"Yes",NA,"0",NA,"1",NA,1,1,0
+"1974",5509,"English","Carpenter","House","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,1
+"1977",4486,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",81,1,1,0
+"2005",10567,"English","Salesman","General Store","Employee",NA,0,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2026",2617,"English","Retail Merchant","Books And Stationery","Employer",NA,NA,"Yes","Yes","No","1","1","1",137,0,1,0
+"2033",6314,"English","Engineer","Railroad","Employee",NA,0,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2034",6750,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",45,1,0,1
+"2035",8937,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",167,1,1,0
+"2039",13459,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",149,1,0,1
+"2045",7439,"English","Salesman","Farming","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2052",10948,"English","Farmer","Farming","Own Account",0,0,"Yes","Yes",NA,"1","0","1",80,1,0,1
+"2054",2075,"English","Laborer","NANA","Employee",0,0,"Yes","YEs",NA,NA,NA,NA,2,0,0,0
+"2060",1353,"English","Farmer","NANA",NA,NA,0,"Yes","Yes",NA,NA,NA,NA,100,1,NA,NA
+"2061",3577,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",33,1,0,1
+"2070",6348,"English","Doctor","Medicine","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2075",9180,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",124,1,0,1
+"2078",6745,"English","Farmer","Farming","Own Account",NA,0,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2096",2050,"English","Farmer","Farming","Own Account",NA,0,"Yes","Yes",NA,"1","1","0",NA,1,0,1
+"2098",10001,"English","Laborer","Working Out","Employee",NA,0,"No","No",NA,"1",NA,"1",119,0,0,0
+"2104",8943,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",121,1,0,1
+"2107",2118,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",5,1,0,1
+"2108",6100,"English","Traveling Salesman","Shoe","Employee",NA,NA,"Yes","Yes",NA,"1","1",NA,NA,0,0,0
+"2112",8826,"English","Manager","Reak Estate","Employee",0,NA,"Yes","Yes",NA,"1","1","0",11,0,0,0
+"2119",201,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",20,1,1,0
+"2120",238,NA,NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"2122",405,"English","Operator","Farming","Own Account",NA,NA,"Yes","No",NA,"0",NA,"1",13,0,0,1
+"2124",1226,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",146,1,0,1
+"2127",1918,"English","Laborer","RR Depot","Employee",NA,0,"Yes","Yes",NA,"1","1","0",5,0,0,0
+"2128",2186,"English","Secretary","Corporation","Employee",NA,0,"Yes","Yes",NA,"1","0","0",10,0,0,0
+"2129",2288,"English","Farmer","Farming","Employer",NA,0,"Yes","Yes",NA,"1","1","1",31,1,1,0
+"2133",3250,"English","Farmer","Farming","Own Account",NA,0,"Yes","Yes",NA,"1","1","1",201,1,0,1
+"2135",3537,"English","Farmer","Farming","Own Account",NA,0,"Yes","Yes",NA,"1","0","1",91,1,0,1
+"2136",3719,"English","Farmer","Farming","Employee",NA,0,"Yes","Yes",NA,"1","1","1",12,1,0,0
+"2139",4194,"English","Farmer","Farming","Employer",NA,0,"Yes","Yes",NA,"0",NA,"1",281,1,1,0
+"2143",5985,"English","Farmer","NANA","Own Account",NA,0,"Yes","Yes",NA,"0",NA,"1",70,1,0,1
+"2146",6189,"English","Farmer","Farming","Own Account",NA,0,"Yes","Yes",NA,"0",NA,"1",39,1,0,1
+"2152",6960,"English","Carpenter","Rail Road","Employee",0,0,"Yes","Yes","No","0",NA,"0",2,0,0,0
+"2153",7327,"English","Farmer","Farming","Employer",0,0,"Yes","Yes","No","1","0","1",212,1,1,0
+"2154",7407,"English","Laborer","Odd Jobs","Employee",0,0,"Yes","Yes","No","0",NA,"0",16,0,0,0
+"2160",7713,"English","Farmer","Working Out","Employee",0,0,"Yes","Yes","No",NA,NA,NA,NA,1,0,0
+"2164",8508,"English","Farmer","NANA","Employer",0,0,"Yes","Yes","No","1","1","0",7,1,1,0
+"2168",9200,"English","Farmer","Farming","Employer",0,0,"Yes","Yes","No","0",NA,"1",23,1,1,0
+"2174",11878,"English","Farmer","Agriculture","Own Account",0,0,"Yes","Yes","No","1","1","1",87,1,0,1
+"2178",12585,"English","Conductor","Railroad","Employee",0,0,"Yes","Yes","No","1","0","0",0,0,0,0
+"2185",9833,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1",NA,"1",117,1,0,1
+"2188",829,"English","Farmer","Sestwin Rail Road","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,1,0,0
+"2191",10057,"English","Broker","Rail Road Tickets","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2195",414,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2198",10484,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2199",2938,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes","No","0",NA,"1",NA,1,1,0
+"2202",8029,"English","Farmer","Farming","Own Account",0,0,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2208",11822,"English","Carpenter","House","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2211",10403,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,1,0
+"2212",5912,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",48,1,1,0
+"2214",5347,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",1,1,0,1
+"2218",12202,"English","Farmer","Manager","Employer",0,NA,"Yes","Yes",NA,"1","1","1",41,1,1,0
+"2234",11058,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2240",716,"English","Steward","Asylum","Employee",0,0,"Yes","Yes",NA,NA,NA,NA,NA,0,0,0
+"2245",8182,"English","Butcher","Retail Meat Market","Employer",NA,NA,"Yes","Yes",NA,"1","0","0",NA,0,1,0
+"2251",12400,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2252",6962,"English","Farmer","Farming","Own Account",0,0,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2253",1980,NA,NA,"",NA,NA,NA,NA,"",NA,NA,NA,NA,NA,NA,NA,NA
+"2256",12482,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2258",8257,"English","Surveyor","N/A","Employee",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2270",565,"English","Card Writer","General Practice","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,1
+"2271",570,"English","Minister","Methodist","Employee",0,0,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2272",4030,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",77,1,0,1
+"2283",10747,"English","Real Estaate","Selling Land","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2289",7217,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2292",1423,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2294",1951,"English","Laborer","Teaming","Employee",0,10,"No","No",NA,"0",NA,"0",NA,0,0,0
+"2296",4322,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2297",4847,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2309",4998,"English","Farmer","General","Own Account",0,0,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2311",7676,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2316",11558,"English","Farmer","Farming","Employer",NA,NA,"No","No",NA,"1","1","1",NA,1,1,0
+"2318",14165,"English","Laborer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,0,1,0
+"2329",1397,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,1,0
+"2334",1036,"English","Furniceman","Smelter","Employee",0,16,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2338",5324,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2353",4461,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2357",5438,"English","Real Estate","N/A","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,0,0,1
+"2361",9667,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,0,1
+"2386",6863,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2398",5415,"English","Farmer","Farming","Own Account",0,0,"Yes","No",NA,"0",NA,"1",NA,1,0,1
+"2399",5574,"English","Wagon Boss","Farming","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2401",12779,"English","Carpenter","House","Employee",0,0,"Yes","Yes",NA,"1","1","1",NA,0,0,0
+"2402",13620,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2407",9080,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,1,0
+"2414",2794,"English","Collector","Lumber Co","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2419",9938,"English","Black Smith","Own Shop","Own Account",0,0,"Yes","Yes",NA,"1","0","0",NA,0,0,1
+"2425",4569,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2450",2511,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,0,1
+"2459",9303,"English","Farmer","N/A","Own Account",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,0,1
+"2461",2330,"English","Carpenter","House","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2469",10752,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2470",12340,"English","Farmer","Farming","Own Account",0,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,0,1
+"2478",7295,"English","Prospecting","Lead & Zinc Mine","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2490",6027,"English","Machinist","Retail Grocery","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,1
+"2492",10820,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,0,1
+"2495",8530,"English","Car Inspector","Rail-Road Shop","Employee",0,0,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2499",8361,"English","Own Income","N/A",NA,NA,NA,"Yes","Yes",NA,"1","1","1",NA,0,NA,NA
+"2514",891,"English","Proprietor","Insurance","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,1
+"2519",3303,"English","Laborer","Farming","Employee",0,0,"Yes","No",NA,"1","0","0",NA,0,0,0
+"2523",5179,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,1,0,1
+"2525",7265,"English","Farmer","Working Out","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,1,0,0
+"2527",7799,"English","Farmer","Farming","Own Account",NA,NA,"No","No",NA,"1","0","1",NA,1,0,1
+"2528",8131,"English","Laborer","Saw Mill","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2534",11576,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2537",14180,"English","Farmer","Farming","Employer",0,0,"Yes","Yes",NA,"1","1","1",129,1,1,0
+"2540",2104,"English","Physician","N/A","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,1
+"2542",3968,"English","Preacher","N/A","Employee",0,0,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2544",4869,"English","Minister","Gospel","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2545",648,"English","Farmer","N/A","Own Account",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,0,1
+"2551",8435,"English","Sexton","City Cemetery","Employee",0,16,"Yes","Yes",NA,"1","0","0",NA,0,0,0
+"2552",9010,"English","Painter","","Employee",0,0,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2565",12298,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2567",9672,"English","Carpenter","House","Employee",0,20,"Yes","Yes",NA,"1","1","0",NA,0,0,0
+"2573",10671,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"0",NA,"1",NA,1,1,0
+"2577",3815,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2587",5941,"English","Own Income","N/A",NA,NA,NA,"Yes","Yes",NA,"1","0","1",NA,0,NA,NA
+"2595",10700,"English","Farmer","Farming","Employer",0,0,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2597",3213,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","0","1",86,1,1,0
+"2598",1842,"English","Farmer","Farming","Employer",NA,NA,"Yes","Yes",NA,"1","1","1",NA,1,1,0
+"2599",9115,"English","Proprietor","Hotel","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2600",6564,"English","Plumer","Private Family","Own Account",NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,0,1
+"2601",905,"English","Farmer","Farming","Own Account",NA,NA,"Yes","Yes",NA,"1","0","1",NA,1,0,1
+"2609",7586,"English","Laborer","Line Works","Employee",0,NA,"Yes","Yes",NA,"0",NA,"0",NA,0,0,0
+"2615",700,"English","Own Income","N/A",NA,NA,NA,"Yes","Yes",NA,"1","1","0",NA,0,NA,NA
+"2617",10388,"English","Teacher","Rural School","Employee",0,0,"Yes","Yes","Yes","1","1","1",NA,0,0,0

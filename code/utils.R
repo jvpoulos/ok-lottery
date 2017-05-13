@@ -5,7 +5,11 @@ Capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
-proper <-function(x) paste0(toupper(substr(x, 1, 1)), tolower(substring(x, 2)))
+SimpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse=" ")
+}
 
 FreqFunc <- function(x, n){
   tail(sort(table(unlist(strsplit(as.character(x), ", ")))), n)
