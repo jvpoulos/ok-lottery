@@ -6,16 +6,55 @@
 
 # Make data for histogram
 time.lapse.plot <- melt(data=lawton[c("time.lapse","comply")], 
-                          id.vars="comply") 
+                        id.vars="comply") 
 
 # Plot the overlaid density of time lapse by compliance status
 time.lapse.hist <- ggplot(time.lapse.plot, aes(x=value, fill=as.factor(comply))) + 
   geom_density(alpha=.3) +
   ylab("Density") + 
   xlab("# of days elapsed") +
-  ggtitle(paste("Lawton homesteaders, N =", 
-                format(nrow(lawton),big.mark=",",scientific=FALSE,trim=TRUE))) +
   scale_fill_manual(values = c("yellow","green"), labels = c("no","yes"), name= "Registered?") +
   theme(legend.justification = c(0, 1), legend.position = c(0, 1),legend.background = element_rect(colour = "black"))
 
-ggsave(paste0(data.directory,"plots/time-elapse.png"), time.lapse.hist, width=8.5, height=11) 
+ggsave(paste0(data.directory,"plots/time-lapse.png"), time.lapse.hist, width=8.5, height=11) 
+
+## Plot draw # vs. time lapse (Lawton)
+
+draw.time <- ggplot(lawton, aes(Drawing.., time.lapse)) + 
+  geom_point(aes(colour = factor(comply)), alpha=.8) +
+  scale_x_log10() +
+  xlab("Common logarithm of draw #") + 
+  ylab("# of days elapsed") +
+  scale_colour_manual(values = c("yellow","green"), labels = c("no","yes"), name= "Registered?") +
+  theme(legend.justification = c(0, 1), legend.position = c(0, 1),legend.background = element_rect(colour = "black"))
+
+ggsave(paste0(data.directory,"plots/draw-time.png"), draw.time, width=8.5, height=11)
+
+## Plot sales time series
+
+sales.tab <- aggregate(cbind(count = State) ~ Date, 
+                       data = sales, 
+                       FUN = function(x){NROW(x)})
+
+sales.tab$Date <- as.POSIXct(sales.tab$Date,format="%m/%d/%Y",tz="UTC")
+
+sales.time <- ggplot(sales.tab, aes( Date, count )) + 
+  geom_line() +
+  ylab("Number of land patents by cash entry") +
+  xlab("") +
+  stat_smooth(method = "loess", formula = y ~ x, size = 1, se=FALSE) # apply a locally weighted regression
+
+ggsave(paste0(data.directory,"plots/sales-time.png"), sales.time, width=8.5, height=11)
+
+## Plot map of homesteader origin city/state
+
+# geocode cities with >1
+cities <- count(hs$county)[count(hs$county)$freq>2,]$x
+geocodes <- geocode(as.character(cities))
+
+map <- map_data("state")
+
+
+
+# my.stats <- list("n", "min", "mean", "max", "s") # create table
+# tableNominal(vars = hs[c("state","county","lawton")], prec = 3,stats=my.stats,cap = "Summary statistics on homesteaders.", lab = "sum-hs")

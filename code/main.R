@@ -40,6 +40,7 @@ source("glo-link.R") # Link participants to GLO sales
 
 if(run.descriptive){
   source("descriptive.R")
+  source("balance-plot.R")
 }
 
 if(run.power){

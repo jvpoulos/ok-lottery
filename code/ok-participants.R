@@ -105,6 +105,24 @@ hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
 
 hs$lawton <- ifelse(!is.na(hs$comply),1,0) # lawton dummy
 
+# standardize state
+hs$state <- as.character(hs$state)
+hs$state[hs$state=="acres" | hs$state=="D c  also lists lawton  ot as town" | hs$state=="Nana"] <- NA
+hs$state[hs$state=="I t" | hs$state=="Indain territory" | hs$state=="Indtan territory"] <- "Indian Territory"
+hs$state[hs$state=="N  j"] <- "New Jersey"
+hs$state[hs$state=="N  m" | hs$state=="New mexico"] <- "New Mexico"
+hs$state[hs$state=="N  y" | hs$state=="New york" | hs$state =="N y"] <- "New York"
+hs$state[hs$state=="O t" | hs$state=="oklahoma territory"] <- "Oklahoma Territory"
+hs$state[hs$state=="S  d" | hs$state=="South dakota"] <- "South Dakota"
+hs$state[hs$state=="South carolina"] <- "South Carolina"
+hs$state[hs$state=="W  va" | hs$state=="West virginia"] <- "West Virginia"
+
+# standardize county
+hs$county <- as.character(hs$county)
+hs$county <- trimws(gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(hs$county), perl=TRUE))
+hs$county <- gsub("  ", "", hs$county)
+hs$county[hs$county==""] <- NA
+
 # Create unique homesteader ID
 hs <- hs[order(hs$draw),]
 hs$hs.id <- 1:nrow(hs)
