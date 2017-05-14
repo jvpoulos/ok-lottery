@@ -88,5 +88,19 @@ map.ok.sales <- ggmap(get_map(location = 'oklahoma', zoom = 7)) +
 
 ggsave(paste0(data.directory,"plots/map-sales.png"), map.ok.sales, width=8.5, height=11)
 
-## Table of homesteader states
-tableNominal(vars = hs[c("state")], prec = 3,cumsum = FALSE,cap = "States of El Reno and Lawton participants at time of registration.", lab = "sum-hs")
+## Bar chart of homesteader states
+
+hs.state.dat <- count(hs$state)[count(hs$state)$freq >100,]
+hs.state.dat <- hs.state.dat[!is.na(hs.state.dat$x),]
+
+colnames(hs.state.dat) <- c("State", "Count")
+                            
+hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
+ # scale_y_continuous(labels = c("0", "10,000", "20,000", "30,000", "40,000")) +
+  geom_bar(stat="identity",fill='blue') +
+  geom_text(aes(label = Percent(Count/nrow(hs))), size = 3, hjust = 0.5, vjust = -1) +
+  xlab("State") +
+  ylab("Count")
+
+ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height=11)
+
