@@ -49,12 +49,24 @@ ggsave(paste0(data.directory,"plots/sales-time.png"), sales.time, width=8.5, hei
 ## Plot map of homesteader origin city/state
 
 # geocode cities with >1
-cities <- count(hs$county)[count(hs$county)$freq>2,]$x
+cities <- as.character(count(hs$county)[count(hs$county)$freq>2,]$x)
+cities <- cities[!is.na(cities)]
 geocodes <- geocode(as.character(cities))
 
-map <- map_data("state")
+city.data <- cbind(cities, geocodes,count(hs$county)[count(hs$county)$freq>2,]$freq[1:870])
+colnames(city.data) <- c("city","Longitude","Latitude","Count")
 
+# map.us <- ggmap(get_map(location = 'oklahoma', zoom = 3)) +
+#   geom_point(data=city.data, aes(x=lon, y=lat, size=count), color="orange") +
+#   scale_x_continuous(limits = c(-126, -66), expand = c(0, 0)) +
+#   scale_y_continuous(limits = c(25, 51), expand = c(0, 0))
+# 
+# ggsave(paste0(data.directory,"plots/map.us.png"), sales.time, width=8.5, height=11)
 
+map.ok <- ggmap(get_map(location = 'oklahoma', zoom = 6)) +
+  geom_point(data=city.data, aes(x=Longitude, y=Latitude, size=Count), color="orange") 
 
-# my.stats <- list("n", "min", "mean", "max", "s") # create table
-# tableNominal(vars = hs[c("state","county","lawton")], prec = 3,stats=my.stats,cap = "Summary statistics on homesteaders.", lab = "sum-hs")
+ggsave(paste0(data.directory,"plots/map.png"), map.ok, width=8.5, height=11)
+
+## Table of homesteader states
+tableNominal(vars = hs[c("state")], prec = 3,cumsum = FALSE,cap = "States of El Reno and Lawton participants at time of registration.", lab = "sum-hs")

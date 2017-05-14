@@ -11,6 +11,8 @@ require(caret)
 require(stringr)
 
 if(run.descriptive){
+  require(ggmap)
+  require(maps)
   require(reporttools)
   require(weights)
   require(plyr)
