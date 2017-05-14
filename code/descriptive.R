@@ -68,5 +68,25 @@ map.ok <- ggmap(get_map(location = 'oklahoma', zoom = 6)) +
 
 ggsave(paste0(data.directory,"plots/map.png"), map.ok, width=8.5, height=11)
 
+## Plot sales locations
+sales.loc <- aggregate(cbind(count = State) ~ County, 
+                       data = sales, 
+                       FUN = function(x){NROW(x)}) 
+
+sales.loc <- cbind(sales.loc, geocode(as.character(sales.loc$County)))
+colnames(sales.loc) <- c("County","Count","lon","lat")
+
+
+ggplot(map_data("county", region="oklahoma"), aes(x=long, y=lat)) +
+  geom_polygon() +
+  coord_map() +
+  geom_point(data=sales.loc, aes(x=lon, y=lat, size=Count), color="orange")
+
+map.ok.sales <- ggmap(get_map(location = 'oklahoma', zoom = 7)) +
+  geom_point(data=sales.loc, aes(x=lon, y=lat, size=Count), color="orange") +
+  scale_y_continuous(limits = c(33.5, 37.5), expand = c(0, 0))
+
+ggsave(paste0(data.directory,"plots/map-sales.png"), map.ok.sales, width=8.5, height=11)
+
 ## Table of homesteader states
 tableNominal(vars = hs[c("state")], prec = 3,cumsum = FALSE,cap = "States of El Reno and Lawton participants at time of registration.", lab = "sum-hs")
