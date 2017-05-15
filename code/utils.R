@@ -9,6 +9,8 @@ Percent <- function(x, digits = 2, format = "f", ...) {
   paste0(formatC(100 * x, format = format, digits = digits, ...), "%")
 }
 
+proper <- function(x) paste0(toupper(substr(x, 1, 1)), tolower(substring(x, 2)))
+
 SimpleCap <- function(x) {
   s <- strsplit(x, " ")[[1]]
   paste(toupper(substring(s, 1,1)), substring(s, 2),
@@ -22,6 +24,18 @@ FreqFunc <- function(x, n){
 Mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
+}
+
+# Function for balance plot theme
+ThemeBw1 <- function(base_size = 8, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.text.x =       element_text(size = base_size*.9, colour = "black",  hjust = .5 , vjust=1),
+      axis.text.y =       element_text(size = base_size, colour = "black", hjust = 0 , vjust=.5 ), # changes position of X axis text
+      axis.ticks =        element_blank(),
+      axis.title.y =      element_text(size = base_size,angle=90,vjust=.01,hjust=.1),
+      legend.position = "none"
+    )
 }
 
 StFirst <- function(first) {

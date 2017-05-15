@@ -33,11 +33,11 @@ source("SuperLearner.R")
 
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
-source("census-1900-clean.R") # load 1900 100% sample and clean
-source("census-1910-clean.R") # load 1910 100% sample and clean
+#source("census-1900-clean.R") # load 1900 100% sample and clean
+#source("census-1910-clean.R") # load 1910 100% sample and clean
 source("glo-clean.R") # load GLO sales and clean
 
-source("census-link.R") # Link participants to 1900 & 1910 Census 
+#source("census-link.R") # Link participants to 1900 & 1910 Census 
 source("glo-link.R") # Link participants to GLO sales
 
 if(run.descriptive){

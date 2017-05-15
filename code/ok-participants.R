@@ -103,8 +103,6 @@ hs <- data.frame("draw"= c(elreno$Number, lawton$Drawing..),
                              "county"= c(elreno$City, lawton$Place.of.Residence),
                            "comply"=c(rep("NA", nrow(elreno)), lawton$comply))
 
-hs$lawton <- ifelse(!is.na(hs$comply),1,0) # lawton dummy
-
 # standardize state
 hs$state <- as.character(hs$state)
 hs$state[hs$state=="acres" | hs$state=="D c  also lists lawton  ot as town" | hs$state=="Nana"] <- NA
@@ -117,11 +115,21 @@ hs$state[hs$state=="S  d" | hs$state=="South dakota"] <- "South Dakota"
 hs$state[hs$state=="South carolina"] <- "South Carolina"
 hs$state[hs$state=="W  va" | hs$state=="West virginia"] <- "West Virginia"
 
+hs$state <- as.factor(hs$state)
+
 # standardize county
 hs$county <- as.character(hs$county)
 hs$county <- trimws(gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(hs$county), perl=TRUE))
 hs$county <- gsub("  ", "", hs$county)
 hs$county[hs$county==""] <- NA
+
+# Scale draw #
+hs$draw.scale <- (hs$draw-mean(hs$draw,na.rm=TRUE))/(2*sd(hs$draw,na.rm=TRUE)) # center and divide by 2 sds
+
+# Concatenate city + state
+hs$loc <- paste(hs$county,hs$state,sep=", ")
+
+hs$loc <- as.factor(hs$loc)
 
 # Create unique homesteader ID
 hs <- hs[order(hs$draw),]
