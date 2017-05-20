@@ -1,24 +1,32 @@
-run.descriptive <- FALSE
+run.appendix <- FALSE
 run.power <-FALSE
 
 # Libraries
-require(reshape2)
-require(RecordLinkage)
-require(ggplot2)
-require(doParallel)
-require(data.table)
-require(caret)
-require(stringr)
+library(reshape2)
+library(RecordLinkage)
+library(ggplot2)
+library(doParallel)
+library(data.table)
+library(caret)
+library(stringr)
+library(zoo)
+library(plyr)
 
-if(run.descriptive){
-  require(ggmap)
-  require(maps)
-  require(reporttools)
-  require(weights)
-  require(plyr)
-  require(gridExtra)
-  require(reshape)
-  require(scales)
+install.packages("dplyr")
+install.packages("Rcpp")
+library(dplyr)
+
+
+
+
+if(run.appendix){
+  library(ggmap)
+  library(maps)
+  library(reporttools)
+  library(weights)
+  library(gridExtra)
+  library(reshape)
+  library(scales)
 }
 
 # Set directories
@@ -29,18 +37,19 @@ setwd(code.directory)
 
 # Source scripts (in order)
 source("utils.R")
+
 source("SuperLearner.R")
 
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
-#source("census-1900-clean.R") # load 1900 100% sample and clean
-#source("census-1910-clean.R") # load 1910 100% sample and clean
 source("glo-clean.R") # load GLO sales and clean
 
-#source("census-link.R") # Link participants to 1900 & 1910 Census 
 source("glo-link.R") # Link participants to GLO sales
 
-if(run.descriptive){
+if(run.appendix){
+  source("census-1900-clean.R") # load 1900 100% sample and clean
+  source("census-1910-clean.R") # load 1910 100% sample and clean
+  source("census-link.R") # Link participants to 1900 & 1910 Census 
   source("descriptive.R")
   source("balance-plot.R")
 }

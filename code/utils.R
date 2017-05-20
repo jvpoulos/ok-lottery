@@ -414,5 +414,6 @@ CleanSales <- function(sales){
   
   # Convert filing dates to POSIXct
   sales$Date <- as.POSIXct(sales$Date,format="%m/%d/%Y",tz="UTC")
+
   return(sales)
 }
