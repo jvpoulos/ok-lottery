@@ -3,6 +3,7 @@ run.cennsus <-FALSE
 run.power <-FALSE
 
 # Libraries
+
 library(reshape2)
 library(RecordLinkage)
 library(ggplot2)
@@ -13,8 +14,8 @@ library(stringr)
 library(zoo)
 library(plyr)
 
-install.packages("dplyr")
-install.packages("Rcpp")
+install.packages("Rcpp") # need to update before loading dplyr
+
 library(dplyr)
 
 if(run.appendix){
@@ -42,6 +43,8 @@ source("ok-participants.R") # load and clean Lawton and El Reno participants
 source("glo-clean.R") # load GLO sales and clean
 
 source("glo-link.R") # Link participants to GLO sales
+
+source("indiv-analysis.R") # individual-level analysis
 
 if(run.appendix){
   source("descriptive.R")

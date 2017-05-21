@@ -32,19 +32,34 @@ ggsave(paste0(data.directory,"plots/draw-time.png"), draw.time, width=8.5, heigh
 
 ## Plot sales time series
 
-sales.tab <- aggregate(cbind(count = State) ~ Date, 
-                       data = sales, 
-                       FUN = function(x){NROW(x)})
+# By time
+sales.tab <- aggregate(sales$n.sales, by=list(sales$Date), FUN=sum)
+
+colnames(sales.tab) <- c("Date","Count")
 
 sales.tab$Date <- as.POSIXct(sales.tab$Date,format="%m/%d/%Y",tz="UTC")
 
-sales.time <- ggplot(sales.tab, aes( Date, count )) + 
+sales.time <- ggplot(sales.tab, aes( Date, Count )) + 
   geom_line() +
-  ylab("Number of land patents by cash entry") +
+  ylab("Number of land patent sales") +
   xlab("") +
   stat_smooth(method = "loess", formula = y ~ x, size = 1, se=FALSE) # apply a locally weighted regression
 
 ggsave(paste0(data.directory,"plots/sales-time.png"), sales.time, width=8.5, height=11)
+
+# By time x state
+sales.state.tab <- aggregate(sales$n.sales, by=list(sales$State, sales$Date), FUN=sum)
+
+colnames(sales.state.tab) <- c("State","Date","Count")
+
+sales.state.tab$Date <- as.POSIXct(sales.state.tab$Date,format="%m/%d/%Y",tz="UTC")
+
+sales.state.time <- ggplot(sales.state.tab, aes( Date, Count,color=State )) + 
+  geom_line() +
+  ylab("Number of land patent sales") +
+  xlab("")
+
+ggsave(paste0(data.directory,"plots/sales-state-time.png"), sales.state.time, width=8.5, height=11)
 
 ## Plot map of homesteader origin city/state
 
@@ -68,35 +83,15 @@ map.ok <- ggmap(get_map(location = 'oklahoma', zoom = 6)) +
 
 ggsave(paste0(data.directory,"plots/map.png"), map.ok, width=8.5, height=11)
 
-## Plot sales locations
-sales.loc <- aggregate(cbind(count = State) ~ County, 
-                       data = sales, 
-                       FUN = function(x){NROW(x)}) 
-
-sales.loc <- cbind(sales.loc, geocode(as.character(sales.loc$County)))
-colnames(sales.loc) <- c("County","Count","lon","lat")
-
-
-ggplot(map_data("county", region="oklahoma"), aes(x=long, y=lat)) +
-  geom_polygon() +
-  coord_map() +
-  geom_point(data=sales.loc, aes(x=lon, y=lat, size=Count), color="orange")
-
-map.ok.sales <- ggmap(get_map(location = 'oklahoma', zoom = 7)) +
-  geom_point(data=sales.loc, aes(x=lon, y=lat, size=Count), color="orange") +
-  scale_y_continuous(limits = c(33.5, 37.5), expand = c(0, 0))
-
-ggsave(paste0(data.directory,"plots/map-sales.png"), map.ok.sales, width=8.5, height=11)
-
 ## Bar chart of homesteader states
 
 hs.state.dat <- count(hs$state)[count(hs$state)$freq >100,]
 hs.state.dat <- hs.state.dat[!is.na(hs.state.dat$x),]
 
 colnames(hs.state.dat) <- c("State", "Count")
-                            
+
 hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
- # scale_y_continuous(labels = c("0", "10,000", "20,000", "30,000", "40,000")) +
+  # scale_y_continuous(labels = c("0", "10,000", "20,000", "30,000", "40,000")) +
   geom_bar(stat="identity",fill='blue') +
   geom_text(aes(label = Percent(Count/nrow(hs))), size = 3, hjust = 0.5, vjust = -1) +
   xlab("State") +

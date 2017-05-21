@@ -36,6 +36,9 @@ sales <- sales %>%
   group_by(sales.id) %>%
   mutate(n.sales = n())
 
+# Keep one record per buyer
+sales <- sales[!duplicated(sales$sales.id),]
+
 sales <- sales[ , !(names(sales) %in% c("sales.id"))] # rm sales ID
 
 # Clean

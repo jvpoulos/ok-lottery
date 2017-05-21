@@ -20,11 +20,11 @@ link.sales$sale <- ifelse(!is.na(link.sales$Date),1, 0)
 
 link.sales$n.sales[is.na(link.sales$n.sales)] <- 0
 
-# Scale n.sales
-link.sales$n.sales <- (link.sales$n.sales-mean(link.sales$n.sales,na.rm=TRUE))/(2*sd(link.sales$n.sales,na.rm=TRUE)) # center and divide by 2 sds
-
 # Drop link vars
 drops <- c("sound.surname.x","sound.first.x","surname.length","first.length","sound.surname.y","sound.first.y")
 
 link.sales <- link.sales[!names(link.sales) %in% drops]
+
+# Save workspace
+save.image(paste0(data.directory,"sales-link.RData"))
 
