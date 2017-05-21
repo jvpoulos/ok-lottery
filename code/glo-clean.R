@@ -16,8 +16,10 @@ sales <- sales[sales$Accession != "WHATLEY, SAMUEL J", ]
 sales <- sales[sales$Accession != "SCOTT, RUFE", ]
 sales <- sales[sales$Accession != "DONOHOE, JAMES W", ]
 sales <- sales[sales$Accession != "HAWKINS, ROBERT H", ]
+sales <- sales[sales$Accession != "OK", ]
 sales <- sales[sales$Names != "5th PM", ]
 sales <- sales[sales$Names != "6th PM", ]
+sales <- sales[sales$Names != "Indian", ]
 
 # Fill in NAs with previous row
 sales <- sales %>%
