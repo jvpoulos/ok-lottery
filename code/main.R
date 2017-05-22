@@ -13,6 +13,8 @@ library(caret)
 library(stringr)
 library(zoo)
 library(plyr)
+library(weights)
+library(e1071)
 
 install.packages("Rcpp") # need to update before loading dplyr
 
@@ -22,7 +24,6 @@ if(run.appendix){
   library(ggmap)
   library(maps)
   library(reporttools)
-  library(weights)
   library(gridExtra)
   library(reshape)
   library(scales)
@@ -44,8 +45,6 @@ source("glo-clean.R") # load GLO sales and clean
 
 source("glo-link.R") # Link participants to GLO sales
 
-source("indiv-analysis.R") # individual-level analysis
-
 if(run.appendix){
   source("descriptive.R")
   source("balance-plot.R")
@@ -61,3 +60,5 @@ if(run.census){
 if(run.power){
   source("ok-power.R")
 }
+
+source("indiv-analysis.R") # individual-level analysis
