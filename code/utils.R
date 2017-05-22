@@ -417,3 +417,134 @@ CleanSales <- function(sales){
 
   return(sales)
 }
+
+
+MaxDR <- function(y,treat){ 
+  # Calculate max. of dose-response fn
+  #
+  # Args:
+  #   y: Response vector.
+  #   treat: Treatment assignment vector.
+  #
+  # Returns:
+  #   Max. of dose-response fn
+  dr <- ddply(data.frame("y"=y,
+                   "treat"=treat),~treat,summarise,mean=mean(y))
+  return(max(dr$mean))
+} 
+
+PermutationTest<-function(y,treat,L=10000,alternative="two.sided",allow.parallel=TRUE,workers=cores){
+  # Calculate randomization p value for ITT weighted difference-in-means.
+  #
+  # Args:
+  #   y: Vector of non-missing responses.
+  #   treat: Vector of non-missing treatment assignments. Must be equal in length to y and the sum must be nonzero. 
+  #   L: Number of iterations for the permutation. Default is L=10000. 
+  #   alternative: Character string specifying alternative hypothesis. Must be one of "two.sided" (default), "greater" or "less". 
+  #   allow.parallel: Character string specifying whether to use parallel backend. Default is TRUE.
+  #   workers: Number of workers used for parallel execution. Default is set to number of cores.
+  #
+  # Returns:
+  #   Randomization p value. 
+  # Error handling
+  if (sum(is.na(y))>0){
+    stop("y contains missing values.")
+  }
+  if (sum(is.na(treat))>0 | length(treat)!=length(y)){
+    stop("treat must be equal in length to y and contain non-missing values.")
+  }
+  if (sum(treat)==0){
+    stop("Treatment group is empty.")
+  }
+  if (sum(treat)==length(treat)){
+    warning("Control group is empty.")
+  }
+  # Apply permutation test L times
+  if(allow.parallel){
+    new.t.stats <- mclapply(1:L, function(i){
+      # Create permutation assignment vector 
+      treat.perm <-sample(c(treat), 
+                          length(treat),
+                          replace=FALSE) 
+      # Calculate permutation test statistic
+      return(MaxDR(y,treat.perm))
+    }, 
+    mc.set.seed=FALSE,
+    mc.cores=workers)
+  }
+  else{
+    new.t.stats <- lapply(1:L, function(i){
+      # Create permutation assignment vector 
+      treat.perm <-sample(c(treat), 
+                          length(treat),
+                          replace=FALSE) 
+      # Calculate permutation test statistic
+      return(MaxDR(y,treat.perm))
+    })
+  }
+  new.t.stats <- unlist(new.t.stats)
+  # Calculate p value
+  if (alternative=="two.sided"){
+    pvalue <- sum(abs(new.t.stats) >= abs(MaxDR(y,treat)))/L 
+  }
+  if (alternative=="greater"){
+    pvalue <- sum(new.t.stats > MaxDR(y,treat))/L
+  }
+  if (alternative=="less"){
+    pvalue <- sum(new.t.stats < MaxDR(y,treat))/L
+  }
+  # Return p-value and permutation vectors
+  return(list("p" = pvalue, "perm.t.stats" = new.t.stats))
+}
+
+BootDiff<- function(y,treat,w,R=10000,beta.hat,sc=1) {
+  # Function to compute 95% confidence interval for the weighted difference in two means.
+  #
+  # Args:
+  #   y: Response vector.
+  #   treat: Treatment vector
+  #   w: Vector of weights.
+  #   R: The number of bootstrap replicates. The default is 10,000. 
+  #   beta.hat: The fraction of compliers in the experimental population.
+  #   sc. Smoothing constant. Default is 1. 
+  #
+  # Returns:
+  #   Vector containing weighted difference-in-means, and 95% nonparametric CI.
+  treat <- as.factor(treat) 
+  # Bootstrap weighted means for response y for each treatment group 
+  itt.diff <- bootstrap(y, MaxDR,R=R, args.stat=list(treat,w[treat])) #ITT
+  tot.diff <- bootstrap(y, MaxDR,R=R, args.stat=list(treat,w[treat],beta.hat)) #TOT
+  # Smooth bootstrap replicates by adding random normal variate independently to each observation
+  itt.diff[[2]] <- sapply(1:R, function(x) {
+    itt.diff[[2]][x] + rnorm(1,0,sc*sd(itt.diff[[2]])/sqrt(length(y)))
+  })
+  tot.diff[[2]] <- sapply(1:R, function(x) {
+    tot.diff[[2]][x] + rnorm(1,0,sc*sd(tot.diff[[2]])/sqrt(length(y)))
+  })
+  # Calculate percentiles of the differences in bootstrapped means
+  itt.per <- quantile(itt.diff[[2]], probs = c(0.025, 0.975))
+  tot.per <- quantile(tot.diff[[2]], probs = c(0.025, 0.975))
+  # Calculate observed differences in means
+  meandif.itt <- MaxDR(y,treat,w) 
+  meandif.tot <- MaxDR(y,treat,w,beta.hat)
+  # Make table for estimates
+  res.itt <- c(meandif.itt, itt.per) 
+  res.tot <- c(meandif.tot, tot.per)
+  res <- rbind(res.itt,res.tot) 
+  colnames(res) <- c('Mean Difference','.025','.975') 
+  rownames(res) <- c('ITT','TOT') 
+  return(res)
+}
+
+# Forest plot for summary figure
+ForestPlot <- function(d, xlab, ylab){
+  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=Outcome)) + 
+    geom_pointrange(size=1.2, alpha=0.9) + 
+    coord_flip() +
+    geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
+    theme(legend.position="none") +
+    facet_grid(Outcome~.) +
+    ylab(xlab) +
+    xlab(ylab) #switch because of the coord_flip() above
+  return(p)
+}

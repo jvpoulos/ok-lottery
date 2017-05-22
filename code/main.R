@@ -15,6 +15,7 @@ library(zoo)
 library(plyr)
 library(weights)
 library(e1071)
+require(doParallel)
 
 install.packages("Rcpp") # need to update before loading dplyr
 
