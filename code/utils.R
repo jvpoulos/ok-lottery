@@ -530,11 +530,23 @@ PermutationCI <- function(y,treat,c.range=c(0,1),L=100,alpha=0.025,l=100) {
 # Forest plot for summary figure
 ForestPlot <- function(d, xlab, ylab){
   p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=x)) + 
-    geom_pointrange(size=1.2, alpha=0.9) + 
+    geom_pointrange(size=1, alpha=0.9) + 
     coord_flip() +
     geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
     theme(legend.position="none") +
     ylab(xlab) +
     xlab(ylab) #switch because of the coord_flip() above
+  return(p)
+}
+
+# Forest plot for year figure
+ForestPlot2 <- function(d, xlab, ylab){
+  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=x)) + 
+    geom_pointrange(size=1, alpha=0.9) + 
+  #  coord_flip() +
+    geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
+    theme(legend.position="none") +
+    ylab(ylab) +
+    xlab(xlab) #switch because of the coord_flip() above
   return(p)
 }

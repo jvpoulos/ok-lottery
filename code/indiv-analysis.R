@@ -6,11 +6,45 @@ patient <- FALSE
 
 ## OLS without covariates
 
-# Sales (binary)
+# Sales
 
-lm.sale <- lm(sale ~ draw.scale, data=link.sales)
+lm.sale <- lm(sale~ draw.scale, data=link.sales)
 summary(lm.sale)
 confint(lm.sale)
+
+# estimates by sale year
+link.sales$year <- lubridate::year(link.sales$Date)
+
+lm.sale.year <- lapply(c(1901:1910),
+                       function(t){
+                         lm <- lm(sale~ draw.scale, data=link.sales[link.sales$year==t | is.na(link.sales$year),])
+                         return(data.frame("Est" = coeftest(lm)[,1]["draw.scale"],
+                                           "p"= coeftest(lm)[,4]["draw.scale"],
+                                           "CI" = confint(lm)[2,],
+                                           "N" = summary(lm)$df[2]))
+                       })
+  
+# Create data for plot 
+plot.data.year <- data.frame(y = c(lm.sale.year[[1]]['Est'][1,],
+                                  lm.sale.year[[2]]['Est'][1,],
+                                  lm.sale.year[[3]]['Est'][1,],
+                                  lm.sale.year[[4]]['Est'][1,],
+                                  lm.sale.year[[5]]['Est'][1,],
+                                  lm.sale.year[[6]]['Est'][1,],
+                                  lm.sale.year[[7]]['Est'][1,],
+                                  lm.sale.year[[8]]['Est'][1,],
+                                  lm.sale.year[[9]]['Est'][1,],
+                                  lm.sale.year[[10]]['Est'][1,]),
+                            y.lo = c(lm.sale.year[[1]]['CI'][1,],lm.sale.year[[2]]['CI'][1,],lm.sale.year[[3]]['CI'][1,],lm.sale.year[[4]]['CI'][1,],lm.sale.year[[5]]['CI'][1,],lm.sale.year[[6]]['CI'][1,],lm.sale.year[[7]]['CI'][1,],lm.sale.year[[8]]['CI'][1,],lm.sale.year[[9]]['CI'][1,],lm.sale.year[[10]]['CI'][1,]),
+                            y.hi = c(lm.sale.year[[1]]['CI'][2,],lm.sale.year[[2]]['CI'][2,],lm.sale.year[[3]]['CI'][2,],lm.sale.year[[4]]['CI'][2,],lm.sale.year[[5]]['CI'][2,],lm.sale.year[[6]]['CI'][2,],lm.sale.year[[7]]['CI'][2,],lm.sale.year[[8]]['CI'][2,],lm.sale.year[[9]]['CI'][2,],lm.sale.year[[10]]['CI'][2,]))
+plot.data.year <- transform(plot.data.year, y.lo = y.lo, y.hi=y.hi)
+plot.data.year$x <- c(1901:1910)  
+  
+# Plot forest plots
+plot.data.year$x <- factor(plot.data.year$x, levels=plot.data.year$x) # reverse order
+summary.plot.year <- ForestPlot2(plot.data.year,ylab="Treatment effect",xlab="Year of sale") + scale_y_continuous(labels = percent_format())
+
+ggsave(paste0(data.directory,"plots/forest-year.png"), summary.plot.year, width=8.5, height=11)  
 
 ## Covariate selection with Lasso 
 
