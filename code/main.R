@@ -15,7 +15,8 @@ library(zoo)
 library(plyr)
 library(weights)
 library(e1071)
-require(doParallel)
+library(parallel)
+library(doParallel)
 
 install.packages("Rcpp") # need to update before loading dplyr
 
@@ -27,7 +28,6 @@ if(run.appendix){
   library(reporttools)
   library(gridExtra)
   library(reshape)
-  library(scales)
 }
 
 # Set directories
@@ -52,6 +52,8 @@ if(run.appendix){
 }
 
 if(run.census){
+  library(lmtest)
+  library(scales)
   source("SuperLearner.R")
   source("census-1900-clean.R") # load 1900 100% sample and clean
   source("census-1910-clean.R") # load 1910 100% sample and clean

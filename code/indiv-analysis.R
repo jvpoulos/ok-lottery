@@ -4,13 +4,6 @@
 
 patient <- FALSE
 
-# Setup parallel processing 
-cores <- detectCores() # specify number of cores to use
-
-registerDoParallel(cores) # register cores
-
-RNGkind("L'Ecuyer-CMRG") # ensure random number generation
-
 ## OLS without covariates
 
 # Sales (binary)
@@ -18,12 +11,6 @@ RNGkind("L'Ecuyer-CMRG") # ensure random number generation
 lm.sale <- lm(sale ~ draw.scale, data=link.sales)
 summary(lm.sale)
 confint(lm.sale)
-
-# Sales (continuous)
-
-lm.n.sales <- lm(n.sales ~ draw.scale, data=link.sales)
-summary(lm.n.sales)
-confint(lm.n.sales)
 
 ## Covariate selection with Lasso 
 
@@ -55,19 +42,25 @@ sum(coef(lasso.cv.sale, s = "lambda.min")) # all but intercept zeroed-out
 
 ## Nonparametric estimation
 
+# Setup parallel processing 
+cores <- detectCores() # specify number of cores to use
+
+registerDoParallel(cores) # register cores
+
+RNGkind("L'Ecuyer-CMRG") # ensure random number generation
+
 link.sales <- link.sales[!is.na(link.sales$draw),] # rm 111 obs w missing draw
 
-# Get randomization p value
 if(patient){
+  # Get randomization p value
   perm.sale <- PermutationTest(y=link.sales$sale,
                              treat=link.sales$draw,
-                             L=500) 
+                             L=10000) 
   print(perm.sale$p)
-  
+ 
+  # Get randomization CIs 
   perm.sale.CI <- PermutationTest(y=link.sales$sale,
                                   treat=link.sales$draw)
+  print(perm.sale.CI$CI)
+  print(perm.sale.CI$MaxDR) # observed t stat is mean DR
 }
-
-# Get randomization CIs
-
-
