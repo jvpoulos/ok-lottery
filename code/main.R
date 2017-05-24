@@ -58,10 +58,14 @@ if(run.census){
   source("census-1900-clean.R") # load 1900 100% sample and clean
   source("census-1910-clean.R") # load 1910 100% sample and clean
   source("census-link.R") # Link participants to 1900 & 1910 Census 
+  
+  source("indiv-analysis-census.R") # individual-level analyses (census outcomes)
 }
 
 if(run.power){
   source("ok-power.R")
 }
 
-source("indiv-analysis.R") # individual-level analysis
+source("indiv-analysis.R") # individual-level analyses (sale outcome)
+
+source("county-analysis.R") # individual-level analyses

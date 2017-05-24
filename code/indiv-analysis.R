@@ -89,7 +89,7 @@ if(patient){
   # Get randomization p value
   perm.sale <- PermutationTest(y=link.sales$sale,
                              treat=link.sales$draw,
-                             L=10000) 
+                             L=5000) 
   print(perm.sale$p)
  
   # Get randomization CIs 
