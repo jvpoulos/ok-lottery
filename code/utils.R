@@ -550,3 +550,18 @@ ForestPlot2 <- function(d, xlab, ylab){
     xlab(xlab) #switch because of the coord_flip() above
   return(p)
 }
+
+RbindMatchColumns <- function(input1, input2) {
+  n.input1 <- ncol(input1)
+  n.input2 <- ncol(input2)
+  
+  if (n.input2 < n.input1) {
+    TF.names <- which(names(input2) %in% names(input1))
+    column.names <- names(input2[, TF.names])
+  } else {
+    TF.names <- which(names(input1) %in% names(input2))
+    column.names <- names(input1[, TF.names])
+  }
+  
+  return(rbind(input1[, column.names], input2[, column.names]))
+}

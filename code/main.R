@@ -1,6 +1,6 @@
-run.appendix <- TRUE
-run.cennsus <-FALSE
-run.power <-FALSE
+run.appendix <- TRUE # create descriptive figures for appendix?
+run.census <-FALSE # run individual-level analyses on census outcomes?
+run.power <-FALSE # run power analyses?
 
 # Libraries
 
@@ -17,6 +17,7 @@ library(weights)
 library(e1071)
 library(parallel)
 library(doParallel)
+library(reldist)
 
 install.packages("Rcpp") # need to update before loading dplyr
 
@@ -36,9 +37,9 @@ code.directory <- "~/Dropbox/github/ok-lottery/code/"
 
 setwd(code.directory)
 
-# Source scripts (in order)
-
 source("utils.R")
+
+## Individual-level analyses 
 
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
@@ -68,4 +69,7 @@ if(run.power){
 
 source("indiv-analysis.R") # individual-level analyses (sale outcome)
 
+## County-level analyses
+
+source("census-county-clean.R")
 source("county-analysis.R") # individual-level analyses

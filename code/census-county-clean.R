@@ -2,18 +2,101 @@
 ### County-level censuses   ###
 #####################
 
-# Load data, subset to OK (53), TX (49), KS (32)
+## Load data, subset to OK (53) and neighboring states: TX (49), KS (32), AR (42), MO (34), CO (62), NM (66)
 
-years <- c(seq(1890,1940,10))
+years <- c(seq(1860,1950,10)) 
 
 census.county <- sapply(years, function(i) {
   census.county.i <- read.csv(paste0(data.directory,"census-county/",i,".csv"), stringsAsFactors=FALSE)
-  census.county.i <- census.county.i[census.county.i$state==53 | census.county.i$state==49 | census.county.i$state==32,] # ICPSR codes
+  census.county.i <- census.county.i[census.county.i$state==53 | 
+                                       census.county.i$state==49 | 
+                                       census.county.i$state==32 |
+                                       census.county.i$state==42 | 
+                                       census.county.i$state==34 | 
+                                       census.county.i$state==62 | 
+                                       census.county.i$state==66,] # ICPSR codes
   census.county.i <- census.county.i[census.county.i$county!=0,] # remove state total
+  census.county.i <- census.county.i[!duplicated(c(census.county.i$county,census.county.i$state)),] # rm state/county dups
+  census.county.i <- cbind(census.county.i, "year"=rep(i, nrow(census.county.i)))
 #  census.county.i$year <- i # add year variable
 }
 )
 names(census.county) <- years
+
+## Create land distribution variables
+
+#1860
+census.county[[1]] <- census.county[[1]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm500*749.5),(farm1000)*1000)),
+         n.farms = sum(farm39,farm1019,farm2049,farm5099,farm100,farm500,farm1000),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-top.farms/n.farms)^(beta)) # by construction, S is 20% in 1860
+
+#1870, 1880
+
+for(i in c(2:3)){ 
+  census.county[[i]] <- census.county[[i]] %>%
+    group_by(state,county) %>%
+    mutate(G = gini(c((farm02*1),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm500*749.5),(farm1000)*1000)),
+           n.farms = sum(farm02,farm39,farm1019,farm2049,farm5099,farm100,farm500,farm1000),
+           beta = (1+G)/(1-G),
+           top.farms = n.farms*(1-(0.8)^(1/beta)),
+           S= 1-(1-0.2/n.farms)^(beta))
+}
+
+# 1890
+census.county[[4]] <- census.county[[4]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm09*4.9),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm500*749.5),(farm1000)*1000)),
+         n.farms = sum(farm09,farm1019,farm2049,farm5099,farm100,farm500,farm1000),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-0.2/n.farms)^(beta))
+
+# 1900
+census.county[[5]] <- census.county[[5]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm12*1.5),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
+         n.farms = sum(farm12,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-0.2/n.farms)^(beta))
+
+# 1910, 1920
+for(i in c(6:7)){ 
+census.county[[i]] <- census.county[[i]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm02*1),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
+         n.farms = sum(farm02,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-0.2/n.farms)^(beta))
+}
+
+# 1930
+census.county[[8]] <- census.county[[8]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm02*1),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*2999.5),(farm5000)*5000),
+         n.farms = sum(farm02,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000,farm5000),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-0.2/n.farms)^(beta))
+
+#1940 ##FINISH
+census.county[[9]] <- census.county[[9]] %>%
+  group_by(state,county) %>%
+  mutate(G = gini(c((farm02*1.5),c(farm39*6),(farm1019*14.5),(farm3049*39.5),(farm5069*59.5),
+                    (farm7099*84.5),(farm100*119.5),(farm140*159.5),(farm175*177),(farm180*199.5),(farm220*239.5),(farm260*319.5))),
+         n.farms = sum(farm02,farm39,farm1019,farm3049,farm5069),
+         beta = (1+G)/(1-G),
+         top.farms = n.farms*(1-(0.8)^(1/beta)),
+         S= 1-(1-0.2/n.farms)^(beta))
+
+#1950
+
+## County definitions
 
 # OK lottery counties
 
@@ -36,15 +119,72 @@ ok.allotment <- c(1130,710,1030,1170)
 
 # OK sealed bid
 
-# Big pasture: 0310 Comanche; 0330 Cotton; 1410 Tillman
+# Big pasture: 0310 Comanche; 0330 Cotton; 1410 Tillman 
 
-ok.sealed <- c(310,330,1410)
+ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery lottery)
 
 # OK land run
 
-# Unassigned lands: 0170 Canadian; 0270 Cleveland; 0730 Kingfisher; 0830 Logan; 1090 Oklahoma; 1190 Payne
+# Unassigned lands: 0170 Canadian; 0270 Cleveland; 0730 Kingfisher; 0830 Logan; 1090 Oklahoma; 1190 Payne 
 # Iowa / Sac & Fox / - Pottawatomie & Shawnee /Kickapoo: 1250 Pottawattamie; 0270 Cleveland; 0810 Lincoln; 1190 Payne; 1090 Oklahoma
 # Cheyenne & Arapaho: 0430 Dewey; 0390 Custer; 1290 Roger Mills; 0090 Beckham 
 # Cherokee Outlet: 0530 Grant; 0470 Garfield; 0030 Alfalfa; 0930 Major; 1510 Woods; 1530 Woodward; 0590 Harper; 0450 Ellis
 
-ok.run <- c(170,270,730,830,1090,1190,1250,810,430,390,1290,90,530,470,30,930,1510,1530,590,450)
+ok.run <- c(270,730,830,1090,1190,1250,810,430,390,1290,90,530,470,30,930,1510,1530,590,450) # (NB: Canadian counted as land lottery )
+
+## Create time-series
+
+# Rbind by common column names
+df1 <- RbindMatchColumns(census.county[[6]], census.county[[5]]) # backward merge
+df2 <- RbindMatchColumns(df1, census.county[[4]])
+df3 <- RbindMatchColumns(df2, census.county[[3]])
+df4 <- RbindMatchColumns(df3, census.county[[2]])
+df5 <- RbindMatchColumns(df4, census.county[[1]])
+
+df6 <- RbindMatchColumns(census.county[[7]], census.county[[8]]) # forward merge
+df7 <- RbindMatchColumns(df6, census.county[[9]]) 
+df8 <- RbindMatchColumns(df7, census.county[[10]]) 
+df9 <- RbindMatchColumns(df8, census.county[[11]]) 
+
+c.county <- RbindMatchColumns(df5, df9) #1850-1950
+
+# Bind farm values time series
+
+farmvals <- read.csv(paste0(data.directory,"census-county/farmval.csv"), stringsAsFactors=FALSE)
+
+farmvals$year <- farmvals$year +1000
+
+farmvals <- farmvals[farmvals$year %in% years,][c(1:5)] # keep decenial years
+
+c.county <- merge(c.county, farmvals, by=c("county","state","year"),
+                  all.x=TRUE)
+
+keeps <- c("county","state","year","totpop","urb25","mtot","ftot","farms","region1","region2","faval")
+
+c.county <- c.county[names(c.county) %in% keeps]
+
+# County, state, county * state dummies
+
+continous.vars <- c("totpop","urb25","mtot","ftot","farms","faval")
+
+county.x <- cbind("id"=interaction(c.county$county, c.county$state), 
+                  dummify(as.factor(c.county$state)),
+                  dummify(as.factor(c.county$region1)),
+                  dummify(as.factor(c.county$region2)),
+                  c.county[continous.vars])
+
+# Response variable (gini inequality)
+
+
+# Impute missing features using proximity from randomForest
+set.seed(42) 
+county.x <- rfImpute(x=county.x,
+                     y=sub.prior[!is.na(sub.prior$slave.index),]$slave.index)[-1] # remove response 
+
+# Scale and center continuous vars
+preProcValues <- preProcess(county.x[continous.vars], method = c("center", "scale"))
+county.x[continous.vars] <- predict(preProcValues, county.x[continous.vars])
+
+
+
+

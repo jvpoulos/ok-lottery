@@ -91,10 +91,22 @@ if(patient){
                              treat=link.sales$draw,
                              L=5000) 
   print(perm.sale$p)
+
  
   # Get randomization CIs 
   perm.sale.CI <- PermutationTest(y=link.sales$sale,
                                   treat=link.sales$draw)
   print(perm.sale.CI$CI)
-  print(perm.sale.CI$MaxDR) # observed t stat is mean DR
+  print(perm.sale.CI$MeanDR) # observed t stat is mean DR
+  
+  # Plot randomization distribution
+  obs.t.stat <- MeanDR(y=link.sales$sale,
+                       treat=link.sales$draw)
+  perm.plot <- qplot(perm.sale$perm.t.stats, geom="histogram",xlab="Randomization test statistics", ylab="Count",binwidth=0.0001) + 
+    geom_vline(aes(xintercept=  obs.t.stat), colour="red", linetype = "longdash") + 
+    scale_x_continuous(breaks=c(0.246, 0.248,0.250,0.252,0.254),
+                       labels=c("0.246", "0.248","0.250","0.252","0.254"))
+  
+  ggsave(paste0(data.directory,"plots/perm-plot.png"), perm.plot, width=8.5, height=11)  
+  
 }
