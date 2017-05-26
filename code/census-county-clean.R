@@ -196,7 +196,7 @@ c.county <- c.county[!is.na(c.county$county),] # drop if missing county
 continous.vars <- c("totpop","urb25","mtot","ftot","faval")
 
 county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)), 
-                  as.numeric(c.county$year),
+                  "year"=as.numeric(c.county$year),
                   dummify(as.factor(c.county$state)),
                   dummify(as.factor(c.county$region1)),
                   dummify(as.factor(c.county$region2)),
@@ -204,8 +204,8 @@ county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)),
 
 # Response variables (gini inequality) 
 
-county.gini <- c.county$G # gini inequality
-county.S <- c.county$S # land share of the largest landowners
+county.gini <- as.numeric(c.county$G) # gini inequality
+county.S <- as.numeric(c.county$S) # land share of the largest landowners
 
 # Impute missing features using proximity from randomForest
 
