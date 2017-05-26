@@ -72,4 +72,4 @@ source("indiv-analysis.R") # individual-level analyses (sale outcome)
 ## County-level analyses
 
 source("census-county-clean.R")
-source("county-analysis.R") # individual-level analyses
+source("county-time.R") # county-level time series

@@ -23,9 +23,12 @@ census.county <- sapply(years, function(i) {
 )
 names(census.county) <- years
 
-## Create land distribution variables
+## Create response variables for: 
+## land inequality (1860-1950)
+## farm tenancy (1880-1950)
+## avg farm size (1880-1900,1930-1950)
 
-#1860
+#1860 # no # farms
 census.county[[1]] <- census.county[[1]] %>%
   group_by(state,county) %>%
   mutate(G = gini(c((farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm500*749.5),(farm1000)*1000)),
@@ -48,6 +51,11 @@ for(i in c(2:3)){
 summary(census.county[[2]]$n.farms) == summary(census.county[[2]]$farms)
 summary(census.county[[3]]$n.farms) == summary(census.county[[3]]$farms)
 
+census.county[[3]] <- census.county[[3]] %>% #1880 tenancy rate /farmsize
+  group_by(state,county) %>%
+  mutate(tenancy = sum(farmten,farmsc)/farms,
+         farmsize = farmsize)
+
 # 1890
 census.county[[4]] <- census.county[[4]] %>%
   group_by(state,county) %>%
@@ -55,18 +63,23 @@ census.county[[4]] <- census.county[[4]] %>%
          n.farms = sum(farm09,farm1019,farm2049,farm5099,farm100,farm500,farm1000),
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy = (sum(fa09te,fa1019te,fa2049te,fa5099te,fa100te,fa500te,fa1000te,
+                        fa09sc,fa1019sc,fa2049sc,fa5099sc,fa100sc,fa500sc,fa1000sc))/(farms),
+         farmsize = farmsize)
 
 summary(census.county[[4]]$n.farms) == summary(census.county[[4]]$farms)
 
 # 1900
 census.county[[5]] <- census.county[[5]] %>%
   group_by(state,county) %>%
-  mutate(G = gini(c((farm12*1.5),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
+  mutate(G = gini(c((farm12*1.5),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
          n.farms = sum(farm12,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000),
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy=(sum(farmwhct,farmcoct,farmwhst,farmcost)/(farms)),
+         farmsize = farmsize)
 
 summary(census.county[[5]]$n.farms) == summary(census.county[[5]]$farms)
 
@@ -74,11 +87,12 @@ summary(census.county[[5]]$n.farms) == summary(census.county[[5]]$farms)
 for(i in c(6:7)){ 
 census.county[[i]] <- census.county[[i]] %>%
   group_by(state,county) %>%
-  mutate(G = gini(c((farm02*1),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
+  mutate(G = gini(c((farm02*1),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
          n.farms = sum(farm02,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000),
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy=(farmten)/(farms))
 }
 
 summary(census.county[[6]]$n.farms) == summary(census.county[[6]]$farms)
@@ -87,11 +101,13 @@ summary(census.county[[7]]$n.farms) == summary(census.county[[7]]$farms)
 # 1930
 census.county[[8]] <- census.county[[8]] %>%
   group_by(state,county) %>%
-  mutate(G = gini(c((farm02*1),c(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*2999.5),(farm5000)*5000),
+  mutate(G = gini(c((farm02*1),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000*2999.5),(farm5000)*5000)),
          n.farms = sum(farm02,farm39,farm1019,farm2049,farm5099,farm100,farm175,farm260,farm500,farm1000,farm5000),
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy=(farmten)/(farms),
+         farmsize = farmsize)
 
 summary(census.county[[8]]$n.farms) == summary(census.county[[8]]$farms)
 
@@ -105,7 +121,9 @@ census.county[[9]] <- census.county[[9]] %>%
          n.farms = farms,
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy=(farmten)/(farms),
+         farmsize = farmsize)
 
 #summary(census.county[[9]]$n.farms) == summary(census.county[[9]]$farms)
 
@@ -119,7 +137,9 @@ census.county[[10]] <- census.county[[10]] %>%
          n.farms = sum(farm02,farm39,farm1029,farm3049,farm5069,farm7099,farm100,farm140,farm180,farm220,farm260,farm500,farm1000),
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
-         S= 1-(1-0.2/n.farms)^(beta))
+         S= 1-(1-0.2/n.farms)^(beta),
+         tenancy=(farmten)/(farms),
+         farmsize = farmsize)
 
 # check 
 summary(census.county[[10]]$n.farms) == summary(census.county[[10]]$farms2)
@@ -160,7 +180,7 @@ ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery lottery)
 
 ok.run <- c(270,730,830,1090,1190,1250,810,430,390,1290,90,530,470,30,930,1510,1530,590,450) # (NB: Canadian counted as land lottery )
 
-## Create time-series
+## Create time-series 
 
 # Rbind by common column names
 df1 <- RbindMatchColumns(census.county[[5]], census.county[[4]]) # backward merge
@@ -173,7 +193,9 @@ df6 <- RbindMatchColumns(df5, census.county[[8]])
 df7 <- RbindMatchColumns(df6, census.county[[9]]) 
 df8 <- RbindMatchColumns(df7, census.county[[10]]) 
 
-c.county <- RbindMatchColumns(df4, df8) #1850-1950
+c.county1 <- RbindMatchColumns(df4, df8) #1850-1950
+c.county2 <- RbindMatchColumns(df2, df8) #1880-1950 (Tenancy)
+c.county3 <- RbindMatchColumns(df2, RbindMatchColumns(RbindMatchColumns(census.county[[8]],census.county[[9]]),census.county[[10]])) #1880-1900,1930-1950 (farm size)
 
 # Bind farm values time series
 
@@ -183,37 +205,80 @@ farmvals$year <- farmvals$year +1000
 
 farmvals <- farmvals[farmvals$year %in% years,][c(1:5)] # keep decenial years
 
-c.county <- merge(c.county, farmvals, by=c("county","state","year"),
+c.county1 <- merge(c.county1, farmvals, by=c("county","state","year"),
                   all.x=TRUE)
 
-c.county <- c.county[!names(c.county) %in% c("beta","name.y","level")]
-names(c.county)[4] <- c("name")
+c.county1 <- c.county1[!names(c.county1) %in% c("beta","name.y","level")]
+names(c.county1)[4] <- c("name")
 
-c.county <- c.county[!is.na(c.county$county),] # drop if missing county
+c.county1 <- c.county1[!is.na(c.county1$county),] # drop if missing county
+
+c.county2 <- merge(c.county2, farmvals, by=c("county","state","year"),
+                   all.x=TRUE)
+
+c.county2 <- c.county2[!names(c.county2) %in% c("beta","name.y","level")]
+names(c.county2)[4] <- c("name")
+
+c.county2 <- c.county2[!is.na(c.county2$county),] # drop if missing county
+
+c.county3 <- merge(c.county3, farmvals, by=c("county","state","year"),
+                   all.x=TRUE)
+
+c.county3 <- c.county3[!names(c.county3) %in% c("beta","name.y","level")]
+names(c.county3)[4] <- c("name")
+
+c.county3 <- c.county3[!is.na(c.county3$county),] # drop if missing county
 
 # County, state, county * state dummies
 
 continous.vars <- c("totpop","urb25","mtot","ftot","faval")
 
-county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)), 
-                  "year"=as.numeric(c.county$year),
-                  dummify(as.factor(c.county$state)),
-                  dummify(as.factor(c.county$region1)),
-                  dummify(as.factor(c.county$region2)),
-                  c.county[continous.vars])
+county.x1 <- cbind("id"=as.numeric(interaction(c.county1$county, c.county1$state)), 
+                  "year"=as.numeric(c.county1$year),
+                  dummify(as.factor(c.county1$state)),
+                  dummify(as.factor(c.county1$region1)),
+                  dummify(as.factor(c.county1$region2)),
+                  c.county1[continous.vars])
+
+county.x2 <- cbind("id"=as.numeric(interaction(c.county2$county, c.county2$state)), 
+                   "year"=as.numeric(c.county2$year),
+                   dummify(as.factor(c.county2$state)),
+                   dummify(as.factor(c.county2$region1)),
+                   dummify(as.factor(c.county2$region2)),
+                   c.county2[continous.vars])
+
+county.x3 <- cbind("id"=as.numeric(interaction(c.county3$county, c.county3$state)), 
+                   "year"=as.numeric(c.county3$year),
+                   dummify(as.factor(c.county3$state)),
+                   dummify(as.factor(c.county3$region1)),
+                   dummify(as.factor(c.county3$region2)),
+                   c.county3[continous.vars])
 
 # Response variables (gini inequality) 
 
-county.gini <- as.numeric(c.county$G) # gini inequality
-county.S <- as.numeric(c.county$S) # land share of the largest landowners
+gini <- as.numeric(c.county1$G) # gini inequality
+S <- as.numeric(c.county1$S) # land share of the largest landowners
+
+tenancy <- as.numeric(c.county2$tenancy) # tenancy
+
+farmsize <- as.numeric(c.county3$farmsize) # avg. farm size
 
 # Impute missing features using proximity from randomForest
 
 set.seed(42) 
-county.x[continous.vars] <- rfImpute(x=county.x[continous.vars],
-                     y=county.x$id)[-1] # remove response
+county.x1[continous.vars] <- rfImpute(x=county.x1[continous.vars],
+                     y=county.x1$id)[-1] # remove response
+county.x2[continous.vars] <- rfImpute(x=county.x2[continous.vars],
+                                      y=county.x2$id)[-1] 
+county.x3[continous.vars] <- rfImpute(x=county.x3[continous.vars],
+                                      y=county.x3$id)[-1] 
 
 # Scale and center continuous vars
-preProcValues <- preProcess(county.x[continous.vars], method = c("center", "scale"))
-county.x[continous.vars] <- predict(preProcValues, county.x[continous.vars])
+preProcValues1 <- preProcess(county.x1[continous.vars], method = c("center", "scale"))
+county.x1[continous.vars] <- predict(preProcValues, county.x1[continous.vars])
 
+preProcValues2 <- preProcess(county.x2[continous.vars], method = c("center", "scale"))
+county.x2[continous.vars] <- predict(preProcValues, county.x2[continous.vars])
+
+preProcValues3 <- preProcess(county.x3[continous.vars], method = c("center", "scale"))
+county.x3[continous.vars] <- predict(preProcValues, county.x3[continous.vars])
