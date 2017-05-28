@@ -99,3 +99,54 @@ hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
 
 ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height=11)
 
+## County-level time-series plots by group
+
+# land inequality
+
+gini.county <- ggplot(c.county1[!c.county1$state==53,], aes(x=year, y = G)) + 
+  geom_point() + 
+  geom_point(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.lottery,]) +
+  geom_point(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.run,]) +
+  geom_point(data=c.county1[c.county1$state==53 & ! c.county1$county %in% c(ok.lottery,ok.run),]) +
+  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
+  geom_smooth(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county1[c.county1$state==53 & ! c.county1$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  scale_x_continuous(breaks= years) +
+  ylab("Land Gini") 
+
+ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=8.5, height=11)
+
+
+# tenancy
+
+county.tenancy <- ggplot(c.county2[!c.county2$state==53,], aes(x=year, y = tenancy)) + 
+  geom_point() + 
+  geom_point(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.lottery,]) +
+  geom_point(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.run,]) +
+  geom_point(data=c.county2[c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run),]) +
+  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  scale_x_continuous(breaks= years) +
+  ylab("Share of tenant farms") 
+
+ggsave(paste0(data.directory,"plots/county-tenancy.png"), county.tenancy, width=8.5, height=11)
+
+# avg farm sizes 
+
+county.farmsize <- ggplot(c.county3[!c.county3$state==53,], aes(x=year, y = farmsize)) + 
+  geom_point() + 
+  geom_point(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.lottery,]) +
+  geom_point(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.run,]) +
+  geom_point(data=c.county3[c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run),]) +
+  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
+  geom_smooth(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county3[c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  scale_x_continuous(breaks= years) +
+  scale_y_continuous(limits=c(0,5000)) +
+  ylab("Average farm size") 
+
+ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)

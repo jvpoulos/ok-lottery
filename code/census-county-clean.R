@@ -16,7 +16,7 @@ census.county <- sapply(years, function(i) {
                                        census.county.i$state==62 | 
                                        census.county.i$state==66,] # ICPSR codes
   census.county.i <- census.county.i[census.county.i$county!=0,] # remove state total
-  census.county.i <- census.county.i[!duplicated(c(census.county.i$county,census.county.i$state)),] # rm state/county dups
+  # census.county.i <- census.county.i[!duplicated(c(census.county.i$county,census.county.i$state)),] # rm state/county dups
   census.county.i <- cbind(census.county.i, "year"=rep(i, nrow(census.county.i)))
 #  census.county.i$year <- i # add year variable
 }
@@ -148,22 +148,22 @@ summary(census.county[[10]]$n.farms) == summary(census.county[[10]]$farms2)
 
 # OK lottery counties
 
-# Wichita & Caddo: 0110 Blaine; 0150 Caddo; 0170 Canadian; 0390 Custer; 1490 Washita (NB: Canadian also contains land run )
+# Wichita & Caddo: 0110 Blaine; 0150 Caddo; 0170 Canadian; 0390 Custer; 1490 Washita; 8050 Wichita Res (NB: Canadian also contains land run )
 
-# Comanche, Kiowa, and Apache: 0310 Comanche; 0750 Kiowa (NB: Comanche also contains land by sealed bid (big pasture))
+# Comanche, Kiowa, and Apache: 0310 Comanche; 0750 Kiowa; 8030 Kiowa/Comanche/Apache Res (NB: Comanche also contains land by sealed bid (big pasture))
 
-ok.lottery <- c(110,150,170,390,1490,310,750)
+ok.lottery <- c(110,150,170,390,1490,310,750,8030,8050)
 
 # OK allotment counties
 
-# Osage:  1130 Osage
-# Kaw:  0710 Kay
-# Ponca: 0710 Kay; 1030 Noble
+# Osage:  1130 Osage; 8040 Osage Res
+# Kaw:  0710 Kay; 8020 Kaw res
+# Ponca: 0710 Kay; 1030 Noble; 8060 Ponca/Otoe Res
 # Tonkawa: 0710 Kay
 # Oto-Missouri: 1030 Noble; 1170 Pawnee
 # Pawnee: 1170 Pawnee
 
-ok.allotment <- c(1130,710,1030,1170)
+ok.allotment <- c(1130,710,1030,1170,8020,8040,8060)
 
 # OK sealed bid
 
@@ -193,7 +193,7 @@ df6 <- RbindMatchColumns(df5, census.county[[8]])
 df7 <- RbindMatchColumns(df6, census.county[[9]]) 
 df8 <- RbindMatchColumns(df7, census.county[[10]]) 
 
-c.county1 <- RbindMatchColumns(df4, df8) #1850-1950
+c.county1 <- RbindMatchColumns(df4, df8) #1850-1950 (Inequality)
 c.county2 <- RbindMatchColumns(df2, df8) #1880-1950 (Tenancy)
 c.county3 <- RbindMatchColumns(df2, RbindMatchColumns(RbindMatchColumns(census.county[[8]],census.county[[9]]),census.county[[10]])) #1880-1900,1930-1950 (farm size)
 
@@ -275,10 +275,10 @@ county.x3[continous.vars] <- rfImpute(x=county.x3[continous.vars],
 
 # Scale and center continuous vars
 preProcValues1 <- preProcess(county.x1[continous.vars], method = c("center", "scale"))
-county.x1[continous.vars] <- predict(preProcValues, county.x1[continous.vars])
+county.x1[continous.vars] <- predict(preProcValues1, county.x1[continous.vars])
 
 preProcValues2 <- preProcess(county.x2[continous.vars], method = c("center", "scale"))
-county.x2[continous.vars] <- predict(preProcValues, county.x2[continous.vars])
+county.x2[continous.vars] <- predict(preProcValues2, county.x2[continous.vars])
 
 preProcValues3 <- preProcess(county.x3[continous.vars], method = c("center", "scale"))
-county.x3[continous.vars] <- predict(preProcValues, county.x3[continous.vars])
+county.x3[continous.vars] <- predict(preProcValues3, county.x3[continous.vars])
