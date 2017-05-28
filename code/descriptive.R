@@ -146,7 +146,7 @@ county.farmsize <- ggplot(c.county3[!c.county3$state==53,], aes(x=year, y = farm
   geom_smooth(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
   geom_smooth(data=c.county3[c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
   scale_x_continuous(breaks= years) +
-  scale_y_continuous(limits=c(0,5000)) +
+  scale_y_continuous(limits=c(0,2000)) +
   ylab("Average farm size") 
 
 ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)
