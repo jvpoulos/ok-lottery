@@ -257,6 +257,7 @@ county.x3 <- cbind("id"=as.numeric(interaction(c.county3$county, c.county3$state
 # Response variables (gini inequality) 
 
 gini <- as.numeric(c.county1$G) # gini inequality
+
 S <- as.numeric(c.county1$S) # land share of the largest landowners
 
 tenancy <- as.numeric(c.county2$tenancy) # tenancy

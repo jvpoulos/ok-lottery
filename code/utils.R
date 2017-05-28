@@ -565,3 +565,11 @@ RbindMatchColumns <- function(input1, input2) {
   
   return(rbind(input1[, column.names], input2[, column.names]))
 }
+
+## Market Matching functions
+
+source("MarketMatching.R")
+
+## Super Learner functions
+
+source("SuperLearner.R")

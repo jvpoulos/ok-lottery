@@ -1,56 +1,28 @@
 #####################################
-### County-level analysis        ###
+### County-level time-series analysis        ###
 #####################################
 
+#pre.period <- c(years[1], years[5])
+#post.period <- c(years[6], years[10])
 
+#impact <- CausalImpact(cbind(gini,county.x1[!colnames(county.x1) %in% c("id")]), pre.period, post.period)
 
+set.seed(1)
+x1 <- 100 + arima.sim(model = list(ar = 0.999), n = 100)
+y <- 1.2 * x1 + rnorm(100)
+y[71:100] <- y[71:100] + 10
+data <- cbind(y, x1)
 
+time.points <- seq.Date(as.Date("2014-01-01"), by = 1, length.out = 100)
+data <- zoo(cbind(y, x1), time.points)
+head(data)
 
-## OLS without covariates
+pre.period <- as.Date(c("2014-01-01", "2014-03-11"))
+post.period <- as.Date(c("2014-03-12", "2014-04-10"))
 
-# Scale draw #
-link.1900.1910$draw.scale <- (link.1900.1910$draw-mean(hs$draw,na.rm=TRUE))/(2*sd(hs$draw,na.rm=TRUE)) # center and divide by 2 sds (summary stats of entire sample)
+impact <- CausalImpact(data, pre.period, post.period)
+plot(impact)
 
-census.dvs <- c("farmer","employer","self","unemp","own","free","farm")
+summary(impact)
 
-lm.census <- lapply(census.dvs,
-                    function(x){
-                      lm <- lm(link.1900.1910[,x] ~ link.1900.1910$draw.scale)
-                      return(data.frame("Est" = coeftest(lm)[,1]["link.1900.1910$draw.scale"],
-                                        "p"= coeftest(lm)[,4]["link.1900.1910$draw.scale"],
-                                        "CI" = confint(lm)[2,],
-                                        "N" = summary(lm)$df[2]))
-                    })
-
-# Create data for plot for county analyses
-plot.data.county <- data.frame(y = c(lm.census[[1]]['Est'][1,],
-                                  lm.census[[2]]['Est'][1,],
-                                  lm.census[[3]]['Est'][1,],
-                                  lm.census[[4]]['Est'][1,],
-                                  lm.census[[5]]['Est'][1,],
-                                  lm.census[[6]]['Est'][1,],
-                                  lm.census[[7]]['Est'][1,]),
-                            y.lo = c(lm.census[[1]]['CI'][1,],lm.census[[2]]['CI'][1,],lm.census[[3]]['CI'][1,],lm.census[[4]]['CI'][1,],lm.census[[5]]['CI'][1,],lm.census[[6]]['CI'][1,],lm.census[[7]]['CI'][1,]),
-                            y.hi = c(lm.census[[1]]['CI'][2,],lm.census[[2]]['CI'][2,],lm.census[[3]]['CI'][2,],lm.census[[4]]['CI'][2,],lm.census[[5]]['CI'][2,],lm.census[[6]]['CI'][2,],lm.census[[7]]['CI'][2,]))
-plot.data.county <- transform(plot.data.county, y.lo = y.lo, y.hi=y.hi)
-plot.data.county$x <- c(rep(paste("Farmer, N =", 
-                                     format(lm.census[[1]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Employer, N =", 
-                                     format(lm.census[[2]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Self-employed, N =", 
-                                     format(lm.census[[3]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Unemployed, N =", 
-                                     format(lm.census[[4]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Own home, N =", 
-                                     format(lm.census[[5]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Own home free, N =", 
-                                     format(lm.census[[6]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1),
-                           rep(paste("Own farm, N =", 
-                                     format(lm.census[[7]]['N'][1,],big.mark=",",scientific=FALSE,trim=TRUE)),1))
-
-# Plot forest plots
-plot.data.county$x <- factor(plot.data.county$x, levels=plot.data.county$x) # reverse order
-summary.plot.county <- ForestPlot(plot.data.county,xlab="Treatment effect",ylab="Outcome") + scale_y_continuous(labels = percent_format(), 
-                                                                                                           limits = c(-0.25,0.25))
-
-ggsave(paste0(data.directory,"plots/forest-county.png"), summary.plot.county, width=8.5, height=11)  
+summary(impact, "report")
