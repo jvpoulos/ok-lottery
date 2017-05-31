@@ -99,7 +99,7 @@ hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
 
 ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height=11)
 
-## County-level time-series plots by group
+## Plot county-level time-series outcomes by group
 
 # land inequality
 
@@ -150,3 +150,20 @@ county.farmsize <- ggplot(c.county3[!c.county3$state==53,], aes(x=year, y = farm
   ylab("Average farm size") 
 
 ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)
+
+## Plot county-level time-series pretreatment covariates by group
+
+bin.melt <- melt(county.x1[c("id","year","totpop","urb25","mtot","ftot","faval")],
+                 id.vars=c("id","year"))
+
+ggplot(data=bin.melt[bin.melt$year=="1900",],aes(x=variable,y=value,colour=variable))+
+ # scale_y_continuous(limit=c(0,40000),labels = c("0", "10,000", "20,000", "30,000", "40,000")) +
+ # scale_x_continuous(breaks=c(0,1), labels=c("No","Yes")) +
+  geom_boxplot(aes(group=value)) +
+  facet_wrap(~variable,  nrow=1) +
+  theme(strip.background = element_blank(),
+        strip.text.x = element_blank()) +
+  #theme(axis.ticks = element_blank(), axis.text.x = element_blank()) +
+  labs(y="Total census wealth in 1860 (1860$)",x="") +
+  scale_color_discrete("Pretreatment variable",
+                       labels=c("Former officeholder", "Unionist", "Democrat", "Confederate"))

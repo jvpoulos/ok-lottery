@@ -4,6 +4,7 @@ run.power <-FALSE # run power analyses?
 
 # Libraries
 
+library(reshape)
 library(reshape2)
 library(RecordLinkage)
 library(ggplot2)
@@ -18,6 +19,7 @@ library(e1071)
 library(parallel)
 library(doParallel)
 library(reldist)
+library(randomForest)
 
 install.packages("Rcpp") # need to update before loading dplyr
 
@@ -47,15 +49,9 @@ source("glo-clean.R") # load GLO sales and clean
 
 source("glo-link.R") # Link participants to GLO sales
 
-if(run.appendix){
-  source("descriptive.R")
-  source("balance-plot.R")
-}
-
 if(run.census){
   library(lmtest)
   library(scales)
-  source("SuperLearner.R")
   source("census-1900-clean.R") # load 1900 100% sample and clean
   source("census-1910-clean.R") # load 1910 100% sample and clean
   source("census-link.R") # Link participants to 1900 & 1910 Census 
@@ -69,7 +65,14 @@ if(run.power){
 
 source("indiv-analysis.R") # individual-level analyses (sale outcome)
 
-## County-level analyses
+## County-level data
 
 source("census-county-clean.R")
-source("county-time.R") # county-level time series
+
+if(run.appendix){ # appendix plots
+  library(devtools)
+  source_gist("524eade46135f6348140")
+  
+  source("descriptive.R")
+  source("balance-plot.R")
+}
