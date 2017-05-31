@@ -283,3 +283,8 @@ county.x2[continous.vars] <- predict(preProcValues2, county.x2[continous.vars])
 
 preProcValues3 <- preProcess(county.x3[continous.vars], method = c("center", "scale"))
 county.x3[continous.vars] <- predict(preProcValues3, county.x3[continous.vars])
+
+# Export each as csv (label + features)
+write.csv(cbind(gini,county.x1), paste0(data.directory,"df-county-gini.csv"))
+write.csv(cbind(tenancy,county.x2), paste0(data.directory,"df-county-tenancy.csv"))
+write.csv(cbind(farmsize,county.x3), paste0(data.directory,"df-county-farmsize.csv"))
