@@ -2,7 +2,7 @@
 ### County-level censuses   ###
 #####################
 
-## Load data, subset to OK (53) and neighboring states: TX (49), KS (32), AR (42), MO (34), CO (62), NM (66)
+## Load data, subset to OK (53) and TX (49), KS (32)
 
 years <- c(seq(1860,1950,10)) 
 
@@ -10,15 +10,9 @@ census.county <- sapply(years, function(i) {
   census.county.i <- read.csv(paste0(data.directory,"census-county/",i,".csv"), stringsAsFactors=FALSE)
   census.county.i <- census.county.i[census.county.i$state==53 | 
                                        census.county.i$state==49 | 
-                                       census.county.i$state==32 |
-                                       census.county.i$state==42 | 
-                                       census.county.i$state==34 | 
-                                       census.county.i$state==62 | 
-                                       census.county.i$state==66,] # ICPSR codes
+                                       census.county.i$state==32,] # ICPSR codes
   census.county.i <- census.county.i[census.county.i$county!=0,] # remove state total
-  # census.county.i <- census.county.i[!duplicated(c(census.county.i$county,census.county.i$state)),] # rm state/county dups
   census.county.i <- cbind(census.county.i, "year"=rep(i, nrow(census.county.i)))
-#  census.county.i$year <- i # add year variable
 }
 )
 names(census.county) <- years
@@ -117,7 +111,6 @@ census.county[[9]] <- census.county[[9]] %>%
   mutate(G = gini(c((farm02*1.5),(farm39*6),(farm1029*19.5),(farm3049*39.5),(farm5069*59.5),
                     (farm7099*84.5),(farm100*119.5),(farm140*159.5),(farm175*177),(farm180*199.5),
                     (farm220*239.5),(farm260*319.5),(farm380*439.5),(farm500*599.5),(farm700*849.5),(farm1000*1000))),
-#        n.farms = sum(farm02,farm39,farm1029,farm3049,farm5069,farm7099,farm100,farm140,farm175,farm180,farm220,farm260,farm380,farm500,farm700,farm1000),
          n.farms = farms,
          beta = (1+G)/(1-G),
          top.farms = n.farms*(1-(0.8)^(1/beta)),
@@ -180,6 +173,49 @@ ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery lottery)
 
 ok.run <- c(270,730,830,1090,1190,1250,810,430,390,1290,90,530,470,30,930,1510,1530,590,450) # (NB: Canadian counted as land lottery )
 
+# TX contiguous
+# 1110 Dallam
+# 4210 Sherman
+# 1950 Hansford
+# 3570 Ochiltree
+# 2950 Lipscomb
+# 2110 Hemphill
+# 0870 Collingsworth
+# 4830 Wheeler
+# 0750 Childress
+# 
+# 1970 Hardeman
+# 4870 Wilbarger
+# 4850 Wichita
+# 0770 Clay
+# 0970 Cooke
+# 3370 Montague
+# 1810 Grayson
+# 1470 Fannin
+# 2770 Lamar
+# 3870 Red River
+# 0370 Bowie
+
+tx.contig <- c(1110,4210,1950,3570,2950,2110,0870,4830,0750,1970,4870,4850,0770,0970,3370,1810,1470,2770,3870,0370)
+
+# KS contiguous 
+# 1290 Morton
+# 1890 Stevens
+# 1750 Seward
+# 1190 Meade
+# 0250 Clark
+# 0330 Comanche
+# 0070 Barber/Barbour
+# 0770 Harper
+# 1910 Sumner
+# 0350 Cowley
+# 0190 Chautauqua
+# 1250 Montgomery
+# 0990 Labette
+# 0210 Cherokee/Mcghee
+
+ks.contig <- c(1290,1890,1750,1190,0250,0330,0070,1910,0350,0190,1250,0990,0210)
+
 ## Create time-series 
 
 # Rbind by common column names
@@ -231,28 +267,47 @@ c.county3 <- c.county3[!is.na(c.county3$county),] # drop if missing county
 
 # County, state, county * state dummies
 
-continous.vars <- c("totpop","urb25","mtot","ftot","faval")
+continous.vars <- c("totpop","urb25","mtot","ftot","n.farms","farm100","farm500","farm1000","faval")
+
+#Categories
+# 0 : TX/KS contiguous
+# 1 : OK other [allotment; sealed bid; none]
+# 2: OK land run
+# 3 OK Lottery
+# NA: TX/KS non-contiguous
 
 county.x1 <- cbind("id"=as.numeric(interaction(c.county1$county, c.county1$state)), 
                   "year"=as.numeric(c.county1$year),
                   dummify(as.factor(c.county1$state)),
                   dummify(as.factor(c.county1$region1)),
                   dummify(as.factor(c.county1$region2)),
-                  c.county1[continous.vars])
+                  c.county1[continous.vars],
+                  "cat" = ifelse((c.county1$state==49 |c.county1$state==32)  & c.county1$county %in% c(tx.contig,ks.contig),0,
+                                 ifelse(c.county1$state==53 & ! c.county1$county %in% c(ok.lottery,ok.run), 1, 
+                                        ifelse(c.county1$state==53 & c.county1$county %in% ok.run, 2,
+                                               ifelse(c.county1$state==53 & c.county1$county %in% ok.lottery, 3, NA) ))))
 
 county.x2 <- cbind("id"=as.numeric(interaction(c.county2$county, c.county2$state)), 
                    "year"=as.numeric(c.county2$year),
                    dummify(as.factor(c.county2$state)),
                    dummify(as.factor(c.county2$region1)),
                    dummify(as.factor(c.county2$region2)),
-                   c.county2[continous.vars])
+                   c.county2[continous.vars],
+                   "cat" = ifelse((c.county2$state==49 |c.county2$state==32)  & c.county2$county %in% c(tx.contig,ks.contig),0,
+                                  ifelse(c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run), 1, 
+                                         ifelse(c.county2$state==53 & c.county2$county %in% ok.run, 2,
+                                                ifelse(c.county2$state==53 & c.county2$county %in% ok.lottery, 3, NA) ))))
 
 county.x3 <- cbind("id"=as.numeric(interaction(c.county3$county, c.county3$state)), 
                    "year"=as.numeric(c.county3$year),
                    dummify(as.factor(c.county3$state)),
                    dummify(as.factor(c.county3$region1)),
                    dummify(as.factor(c.county3$region2)),
-                   c.county3[continous.vars])
+                   c.county3[continous.vars],
+                   "cat" = ifelse((c.county3$state==49 |c.county3$state==32)  & c.county3$county %in% c(tx.contig,ks.contig),0,
+                                  ifelse(c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run), 1, 
+                                         ifelse(c.county3$state==53 & c.county3$county %in% ok.run, 2,
+                                                ifelse(c.county3$state==53 & c.county3$county %in% ok.lottery, 3, NA) ))))
 
 # Response variables (gini inequality) 
 
