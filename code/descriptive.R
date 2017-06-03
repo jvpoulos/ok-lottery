@@ -99,7 +99,7 @@ hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
 
 ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height=11)
 
-## Plot county-level time-series outcomes by group
+## Plot county-level time-series outcomes by group ## REDO THESE WITH COUNTY.X, AVGING, AND ZOOM
 
 # land inequality
 
@@ -151,19 +151,25 @@ county.farmsize <- ggplot(c.county3[!c.county3$state==53,], aes(x=year, y = farm
 
 ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)
 
+## Plot time series of covariates by group (lottery counties vs. l)
+
+
 ## Plot county-level time-series pretreatment covariates by group
 
-bin.melt <- melt(county.x1[c("id","year","totpop","urb25","mtot","ftot","faval")],
-                 id.vars=c("id","year"))
+bin.melt <- melt(county.x1[c("id","year","totpop","mtot","ftot","farm100","farm500","farm1000","n.farms","faval","cat")],
+                 id.vars=c("id","year","cat"))
 
-ggplot(data=bin.melt[bin.melt$year=="1900",],aes(x=variable,y=value,colour=variable))+
- # scale_y_continuous(limit=c(0,40000),labels = c("0", "10,000", "20,000", "30,000", "40,000")) +
- # scale_x_continuous(breaks=c(0,1), labels=c("No","Yes")) +
-  geom_boxplot(aes(group=value)) +
-  facet_wrap(~variable,  nrow=1) +
+county.pretreatment <- ggplot(data=bin.melt[bin.melt$year==1900,],aes(x=variable,y=value,colour=as.factor(cat))) + 
+  coord_cartesian(ylim=c(-2, 6)) +
+  scale_x_discrete(labels=c("Total pop.", "Urban pop.","Total males","Total females", 
+                            "# farms 100-499 acres" , "# farms 500-999 acres", "# farms 1000+ acres","# farms","Farm value")) +
+  geom_boxplot() +
+#  facet_wrap(~year,  nrow=1) +
   theme(strip.background = element_blank(),
-        strip.text.x = element_blank()) +
-  #theme(axis.ticks = element_blank(), axis.text.x = element_blank()) +
-  labs(y="Total census wealth in 1860 (1860$)",x="") +
-  scale_color_discrete("Pretreatment variable",
-                       labels=c("Former officeholder", "Unionist", "Democrat", "Confederate"))
+        strip.text.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(y="Value, centered and scaled",x="") +
+  scale_color_discrete("Group",
+                       labels=c("TX contiguous", "OK other", "OK land run", "OK lottery", "Neighboring state"))
+
+ggsave(paste0(data.directory,"plots/county-pretreatment.png"), county.pretreatment, width=8.5, height=11)
