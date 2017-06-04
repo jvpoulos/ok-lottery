@@ -99,77 +99,87 @@ hs.state <- ggplot(hs.state.dat, aes(State, Count)) +
 
 ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height=11)
 
-## Plot county-level time-series outcomes by group ## REDO THESE WITH COUNTY.X, AVGING, AND ZOOM
+## Plot county-level time-series outcomes by group
 
 # land inequality
 
-gini.county <- ggplot(c.county1[!c.county1$state==53,], aes(x=year, y = G)) + 
+gini.county <- ggplot(c.county[!c.county$cat==0,], aes(x=year, y = G)) + 
   geom_point() + 
-  geom_point(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.lottery,]) +
-  geom_point(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.run,]) +
-  geom_point(data=c.county1[c.county1$state==53 & ! c.county1$county %in% c(ok.lottery,ok.run),]) +
+  geom_point(data=c.county[c.county$cat==1,]) +
+  geom_point(data=c.county[c.county$cat==2,]) +
+  geom_point(data=c.county[c.county$cat==3,]) +
+  geom_point(data=c.county[c.county$cat==4,]) +
   geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county1[c.county1$state==53 & c.county1$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county1[c.county1$state==53 & ! c.county1$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
   scale_x_continuous(breaks= years) +
-  ylab("Land Gini") 
+  scale_y_continuous(labels = scales::percent) +
+  ylab("Land Gini") +
+  xlab("")
 
 ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=8.5, height=11)
 
 
 # tenancy
 
-county.tenancy <- ggplot(c.county2[!c.county2$state==53,], aes(x=year, y = tenancy)) + 
+county.tenancy <- ggplot(c.county[!c.county$cat==0,], aes(x=year, y = tenancy)) + 
   geom_point() + 
-  geom_point(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.lottery,]) +
-  geom_point(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.run,]) +
-  geom_point(data=c.county2[c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run),]) +
+  geom_point(data=c.county[c.county$cat==1,]) +
+  geom_point(data=c.county[c.county$cat==2,]) +
+  geom_point(data=c.county[c.county$cat==3,]) +
+  geom_point(data=c.county[c.county$cat==4,]) +
   geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$state==53 & c.county2$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county[c.county$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
   scale_x_continuous(breaks= years) +
-  ylab("Share of tenant farms") 
+  scale_y_continuous(labels = scales::percent) +
+  ylab("Share of tenant farms") +
+  xlab("")
 
 ggsave(paste0(data.directory,"plots/county-tenancy.png"), county.tenancy, width=8.5, height=11)
 
 # avg farm sizes 
 
-county.farmsize <- ggplot(c.county3[!c.county3$state==53,], aes(x=year, y = farmsize)) + 
+county.farmsize <- ggplot(c.county2[!c.county2$cat==0,], aes(x=year, y = farmsize)) + 
   geom_point() + 
-  geom_point(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.lottery,]) +
-  geom_point(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.run,]) +
-  geom_point(data=c.county3[c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run),]) +
+  geom_point(data=c.county2[c.county2$cat==1,]) +
+  geom_point(data=c.county2[c.county2$cat==2,]) +
+  geom_point(data=c.county2[c.county2$cat==3,]) +
+  geom_point(data=c.county2[c.county2$cat==4,]) +
   geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.lottery,],method="lm",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county3[c.county3$state==53 & c.county3$county %in% ok.run,],method="lm",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county3[c.county3$state==53 & ! c.county3$county %in% c(ok.lottery,ok.run),],method="lm",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
+  geom_smooth(data=c.county2[c.county2$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
   scale_x_continuous(breaks= years) +
-  scale_y_continuous(limits=c(0,2000)) +
-  ylab("Average farm size") 
+#  scale_y_continuous(limits=c(0,2000)) +
+  coord_cartesian(ylim=c(0, 10000)) +
+  ylab("Average farm size") +
+  xlab("")
 
 ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)
-
-## Plot time series of covariates by group (lottery counties vs. l)
 
 
 ## Plot county-level time-series pretreatment covariates by group
 
-bin.melt <- melt(county.x1[c("id","year","totpop","mtot","ftot","farm100","farm500","farm1000","n.farms","faval","cat")],
-                 id.vars=c("id","year","cat"))
+bin.melt <- melt(c.county[c("year","totpop","mtot","ftot","farm100","farm500","farm1000","farms","faval","cat")],
+                 id.vars=c("year","cat"))
 
-county.pretreatment <- ggplot(data=bin.melt[bin.melt$year==1900,],aes(x=variable,y=value,colour=as.factor(cat))) + 
-  coord_cartesian(ylim=c(-2, 6)) +
+county.pretreatment <- ggplot(data=na.omit(bin.melt[bin.melt$year==1900,]),aes(x=variable,y=value,colour=as.factor(cat))) + 
   scale_x_discrete(labels=c("Total pop.", "Urban pop.","Total males","Total females", 
                             "# farms 100-499 acres" , "# farms 500-999 acres", "# farms 1000+ acres","# farms","Farm value")) +
   geom_boxplot() +
+  scale_y_log10() +
 #  facet_wrap(~year,  nrow=1) +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y="Value, centered and scaled",x="") +
+  labs(y="Value (common logarithm)",x="") +
   scale_color_discrete("Group",
-                       labels=c("TX contiguous", "OK other", "OK land run", "OK lottery", "Neighboring state"))
+                       labels=c("KS/TX contiguous", "OK other", "OK land run", "OK lottery", "Other"))
 
 ggsave(paste0(data.directory,"plots/county-pretreatment.png"), county.pretreatment, width=8.5, height=11)
