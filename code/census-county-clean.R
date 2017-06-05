@@ -281,10 +281,10 @@ county.x2 <- cbind("id"=as.numeric(interaction(c.county2$county, c.county2$state
                   c.county2[continous.vars],
                   "farmsize" = c.county2$farmsize)
 
-# Order by year, id
-county.x <- county.x[with(county.x, order(year,id)), ]
+# Order by id, year
+county.x <- county.x[with(county.x, order(id,year)), ]
 
-county.x2 <- county.x2[with(county.x2, order(year,id)), ]
+county.x2 <- county.x2[with(county.x2, order(id,year)), ]
 
 # Drop IDs with missing labels
 
@@ -294,21 +294,6 @@ drops.x2 <- sort(unique(county.x2$id[is.na(county.x2$farmsize)]))
 
 county.x <- county.x[!county.x$id %in% drops.x1,]
 county.x2 <- county.x2[!county.x2$id %in% drops.x2,]
-
-# Subset data so that each id has same # timesteps 
-county.x$count <- unsplit(lapply(split(county.x, county.x[c("id")]), nrow), county.x[c("id")])
-
-county.x <- county.x[county.x$count==8,] # n.b.: only categories 0 and 4 included
-#count(county.x$year) # 8 years/2480 obs each (timesteps)
-
-county.x <- county.x[!colnames(county.x) %in% c("count")] # drop count
-
-county.x2$count <- unsplit(lapply(split(county.x2, county.x2[c("id")]), nrow), county.x2[c("id")])
-
-county.x2 <- county.x2[county.x2$count==6,] 
-#count(county.x2$year) # 6 years/2510 obs each (timesteps)
-
-county.x2 <- county.x2[!colnames(county.x2) %in% c("count")] # drop count, id
 
 # Impute missing features using proximity from randomForest
 
@@ -328,6 +313,27 @@ county.x[continous.vars] <- predict(preProcValues, county.x[continous.vars])
 preProcValues <- preProcess(county.x2[continous.vars], method = c("center", "scale"))
 county.x2[continous.vars] <- predict(preProcValues, county.x2[continous.vars])
 
+# Train/val/test splits
+set.seed(42) 
+train.ids <- sort(sample(unique(county.x$id), length(unique(county.x$id))*.75))
+train.ids2 <- sort(sample(unique(county.x2$id), length(unique(county.x2$id))*.75))
+
+val.ids <- sort(unique(county.x$id)[!unique(county.x$id) %in% train.ids])
+val.ids2 <- sort(unique(county.x2$id)[!unique(county.x2$id) %in% train.ids2])
+
+county.x.train <- county.x[county.x$id %in% train.ids & county.x$year <=1900,]
+county.x.val <- county.x[county.x$id %in% val.ids & county.x$year <=1900,]
+county.x.test <- county.x[county.x$year > 1900,]
+
+county.x2.train <- county.x2[county.x2$id %in% train.ids2 & county.x2$year <=1900,]
+county.x2.val <- county.x2[county.x2$id %in% val.ids2 & county.x2$year <=1900,]
+county.x2.test <- county.x2[county.x2$year > 1900,]
+
 # Export each as csv (label + features)
-write.csv(county.x, paste0(data.directory,"county-df.csv")) # counties with nonmissing farm and tenancy data
-write.csv(county.x2, paste0(data.directory,"county-df-farmsize.csv"))
+write.csv(county.x.train, paste0(data.directory,"county-x-train.csv"), row.names=FALSE) # counties with nonmissing farm and tenancy data
+write.csv(county.x.val, paste0(data.directory,"county-x-val.csv"), row.names=FALSE)
+write.csv(county.x.test, paste0(data.directory,"county-x-test.csv"), row.names=FALSE)
+
+write.csv(county.x2.train, paste0(data.directory,"county-x2-train.csv"), row.names=FALSE) # counties with nonmissing farm and farmsize data
+write.csv(county.x2.val, paste0(data.directory,"county-x2-val.csv"), row.names=FALSE)
+write.csv(county.x2.test, paste0(data.directory,"county-x2-test.csv"), row.names=FALSE)
