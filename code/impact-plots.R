@@ -24,7 +24,7 @@ cat.ids <- cat.ids[!duplicated(cat.ids$id),]
 
 ts.dat <- merge(ts.dat, cat.ids, by="id", all.x=TRUE)
 
-# Plot time series
+## Plot time series
 
 ts.means <- ts.dat %>%
   group_by(year,cat) %>%
@@ -32,4 +32,19 @@ ts.means <- ts.dat %>%
             gini.pred = mean(gini.pred,na.rm=TRUE))
 
 ts.means[is.na(ts.means$gini.pred),]$gini.pred <- ts.means[is.na(ts.means$gini.pred),]$gini.obs # pre-treatment pred is observed
+
+ts.means <- reshape(data.frame(ts.means), idvar = "year", timevar = "cat", direction = "wide") # reshape long
+
+ts.means$year <- as.yearmon(ts.means$year) # convert year to date class
+
+ts.means <- xts(ts.means,order.by = ts.means$year)
+
+ts.means <- ts.means[,-1]
+
+storage.mode(ts.means) <- "numeric" # convert to numeric
+
+# Gini
+
+ts.means.gini <- ts.means[,1:3]
+gg.charts.PerformanceSummary(ts.means.gini, geometric = FALSE)
 
