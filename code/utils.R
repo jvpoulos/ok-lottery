@@ -26,18 +26,6 @@ Mode <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 }
 
-# Function for balance plot theme
-ThemeBw1 <- function(base_size = 8, base_family = "") {
-  theme_grey(base_size = base_size, base_family = base_family) %+replace%
-    theme(
-      axis.text.x =       element_text(size = base_size*.9, colour = "black",  hjust = .5 , vjust=1),
-      axis.text.y =       element_text(size = base_size, colour = "black", hjust = 0 , vjust=.5 ), # changes position of X axis text
-      axis.ticks =        element_blank(),
-      axis.title.y =      element_text(size = base_size,angle=90,vjust=.01,hjust=.1),
-      legend.position = "none"
-    )
-}
-
 StFirst <- function(first) {
   first  <-gsub("PAT$","PATRICK", first)
   first  <-gsub("DANL$","DANIEL", first)
@@ -566,9 +554,21 @@ RbindMatchColumns <- function(input1, input2) {
   return(rbind(input1[, column.names], input2[, column.names]))
 }
 
-## Market Matching functions
+## Plot functions
 
-source("MarketMatching.R")
+# Function for balance plot theme
+ThemeBw1 <- function(base_size = 8, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.text.x =       element_text(size = base_size*.9, colour = "black",  hjust = .5 , vjust=1),
+      axis.text.y =       element_text(size = base_size, colour = "black", hjust = 0 , vjust=.5 ), # changes position of X axis text
+      axis.ticks =        element_blank(),
+      axis.title.y =      element_text(size = base_size,angle=90,vjust=.01,hjust=.1),
+      legend.position = "none"
+    )
+}
+
+source("ts-plot.R")
 
 ## Super Learner functions
 

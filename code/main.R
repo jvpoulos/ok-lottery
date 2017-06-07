@@ -14,6 +14,7 @@ library(caret)
 library(stringr)
 library(zoo)
 library(plyr)
+library(xts)
 
 install.packages('survival')# need to update before loading weights
 
