@@ -1,30 +1,7 @@
 #Source https://stackoverflow.com/questions/14817006/ggplot-version-of-charts-performancesummary
 
-library(xts)
-library(PerformanceAnalytics)
-
-X.stock.rtns <- xts(rnorm(1000,0.00001,0.0003), Sys.Date()-(1000:1))
-Y.stock.rtns <- xts(rnorm(1000,0.00003,0.0004), Sys.Date()-(1000:1))
-Z.stock.rtns <- xts(rnorm(1000,0.00005,0.0005), Sys.Date()-(1000:1))
-rtn.obj <- merge(X.stock.rtns , Y.stock.rtns, Z.stock.rtns)
-colnames(rtn.obj) <- c("x","y","z")
-
-
-# create a function to store fancy axis labels 
-
-my_labeller <- function(var, value){ # from the R Cookbook
-  value <- as.character(value)
-  if (var=="variable") 
-  {
-    value[value=="Index"] <- "Cumulative Returns"
-    value[value=="Return"] <- "Daily Returns"
-    value[value=="Drawdown"] <- "Drawdown"
-  }
-  return(value)
-}
-
 # advanced charts.PerforanceSummary based on ggplot
-gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", plot = TRUE)
+gg.charts.PerformanceSummary <- function(rtn.obj, main = "", plot = TRUE)
 {
   
   # load libraries
@@ -34,39 +11,31 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
   suppressPackageStartupMessages(require(PerformanceAnalytics))
   
   # create function to clean returns if having NAs in data
-  clean.rtn.xts <- function(univ.rtn.xts.obj,na.replace=0){
-    univ.rtn.xts.obj[is.na(univ.rtn.xts.obj)]<- na.replace
-    univ.rtn.xts.obj  
-  }
+  # clean.rtn.xts <- function(univ.rtn.xts.obj,na.replace=0){
+  #   univ.rtn.xts.obj[is.na(univ.rtn.xts.obj)]<- na.replace
+  #   univ.rtn.xts.obj
+  # }
   
-  # Create cumulative return function
-  cum.rtn <- function(clean.xts.obj, g = TRUE)
-  {
-    x <- clean.xts.obj
-    if(g == TRUE){y <- cumprod(x+1)-1} else {y <- cumsum(x)}
-    y
-  }
-  
-  # Create function to calculate drawdowns
-  dd.xts <- function(clean.xts.obj, g = TRUE)
-  {
-    x <- clean.xts.obj
-    if(g == TRUE){y <- PerformanceAnalytics:::Drawdowns(x)} else {y <- PerformanceAnalytics:::Drawdowns(x,geometric = FALSE)}
-    y
-  }
+  # # Create cumulative return function
+  # cum.rtn <- function(clean.xts.obj, g = TRUE)
+  # {
+  #   x <- clean.xts.obj
+  #   if(g == TRUE){y <- cumprod(x+1)-1} else {y <- cumsum(x)}
+  #   y
+  # }
   
   # create a function to create a dataframe to be usable in ggplot to replicate charts.PerformanceSummary
-  cps.df <- function(xts.obj,geometric)
+  cps.df <- function(xts.obj)
   {
-    x <- clean.rtn.xts(xts.obj)
+    #x <- clean.rtn.xts(xts.obj)
+    x <- xts.obj
     series.name <- colnames(xts.obj)[1]
-    tmp <- cum.rtn(x,geometric)
+    tmp <- x
     tmp$rtn <- x
-    tmp$dd <- dd.xts(x,geometric)
-    colnames(tmp) <- c("Index","Return","Drawdown") # names with space
+    colnames(tmp) <- c("Timeseries","Pointwise") # names with space
     tmp.df <- as.data.frame(coredata(tmp))
-    tmp.df$Date <- as.POSIXct(index(tmp))
-    tmp.df.long <- melt(tmp.df,id.var="Date")
+    tmp.df$year <- round(as.POSIXct(index(tmp), tz="UTC"), "months")
+    tmp.df.long <- melt(tmp.df,id.var="year")
     tmp.df.long$asset <- rep(series.name,nrow(tmp.df.long))
     tmp.df.long
   }
@@ -75,7 +44,7 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
   if(ncol(rtn.obj)==1)
   {
     # using the cps.df function
-    df <- cps.df(rtn.obj,geometric)
+    df <- cps.df(rtn.obj)
     # adding in a title string if need be
     if(main == ""){
       title.string <- paste("Asset Performance")
@@ -83,15 +52,15 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
       title.string <- main
     }
     
-    gg.xts <- ggplot(df, aes_string( x = "Date", y = "value", group = "variable" )) +
+    gg.xts <- ggplot(df, aes_string( x = "year", y = "value", group = "variable" )) +
       facet_grid(variable ~ ., scales = "free_y", space = "fixed") +
-      geom_line(data = subset(df, variable == "Index")) +
-      geom_bar(data = subset(df, variable == "Return"), stat = "identity") +
-      geom_line(data = subset(df, variable == "Drawdown")) +
+      geom_line(data = subset(df, variable == "Timeseries")) +
+      geom_line(data = subset(df, variable == "Pointwise")) +
+      geom_line(data = subset(df, variable == "Cumulative")) +
       geom_hline(yintercept = 0, size = 0.5, colour = "black") +
       ggtitle(title.string) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1)) +
-      scale_x_datetime(breaks = date_breaks("6 months"), labels = date_format("%m/%Y")) +
+      scale_x_datetime(breaks = date_breaks("10 years"), labels = date_format("%Y")) +
       ylab("") +
       xlab("")
     
@@ -101,7 +70,7 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
     # a few extra bits to deal with the added rtn columns
     no.of.assets <- ncol(rtn.obj)
     asset.names <- colnames(rtn.obj)
-    df <- do.call(rbind,lapply(1:no.of.assets, function(x){cps.df(rtn.obj[,x],geometric)}))
+    df <- do.call(rbind,lapply(1:no.of.assets, function(x){cps.df(rtn.obj[,x])}))
     df$asset <- ordered(df$asset, levels=asset.names)
     if(main == ""){
       title.string <- paste("Asset",asset.names[1],asset.names[2],asset.names[3],"Performance")
@@ -111,35 +80,43 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
     
     if(no.of.assets>5){legend.rows <- 5} else {legend.rows <- no.of.assets}
     
-    gg.xts <- ggplot(df, aes_string(x = "Date", y = "value" )) +
+    gg.xts <- ggplot(df, aes_string(x = "year", y = "value" )) +
       
       # panel layout
       facet_grid(variable~., scales = "free_y", space = "fixed", shrink = TRUE, drop = TRUE, margin = 
                    , labeller = label_value) + # label_value is default
+
+      # display points
+      geom_point(data = subset(df, variable == c("Timeseries"))
+                 , aes(colour = factor(asset), shape = factor(asset)), size = 1.2, show.legend = TRUE) +
       
-      # display points for Index and Drawdown, but not for Return
-      geom_point(data = subset(df, variable == c("Index","Drawdown"))
-                 , aes(colour = factor(asset), shape = factor(asset)), size = 1.2, show.legend = TRUE) + 
+      geom_point(data = subset(df, variable == c("Pointwise"))
+                 , aes(colour = factor(asset), shape = factor(asset)), size = 1.2, show.legend = TRUE) +
+      
+      geom_point(data = subset(df, variable == c("Cumulative"))
+                 , aes(colour = factor(asset), shape = factor(asset)), size = 1.2, show.legend = TRUE) +
       
       # manually select shape of geom_point
-      scale_shape_manual(values = c(1,2,3)) + 
+      scale_shape_manual(values = c(1:ncol(df))) + 
       
-      # line colours for the Index
-      geom_line(data = subset(df, variable == "Index"), aes(colour = factor(asset)), show.legend = FALSE) +
+      # line colours
+      geom_line(data = subset(df, variable == "Timeseries"), aes(colour = factor(asset)), show.legend = FALSE) +
       
-      # bar colours for the Return
-      geom_bar(data = subset(df,variable == "Return"), stat = "identity"
-               , aes(fill = factor(asset), colour = factor(asset)), position = "dodge", show.legend = FALSE) +
+      geom_line(data = subset(df, variable == "Pointwise"), aes(colour = factor(asset)), show.legend = FALSE) +
       
-      # line colours for the Drawdown
-      geom_line(data = subset(df, variable == "Drawdown"), aes(colour = factor(asset)), show.legend = FALSE) +
+      geom_line(data = subset(df, variable == "Cumulative"), aes(colour = factor(asset)), show.legend = FALSE) +
+      
+      # vertocal line to indicate zero values
+      geom_vline(xintercept=c(as.numeric(as.POSIXct("1910-12-31 UTC"))), linetype=4) +
       
       # horizontal line to indicate zero values
       geom_hline(yintercept = 0, size = 0.5, colour = "black") +
       
       # horizontal ticks
-      scale_x_datetime(breaks = date_breaks("6 months"), labels = date_format("%m/%Y")) +
-      
+      scale_x_datetime(limits=c(as.POSIXct("1873-12-31 06:00:00",tz="UTC"), as.POSIXct("1943-12-31 18:00:00",tz="UTC")),
+                       date_breaks="10 years",labels=date_format("%Y"),
+                       time_trans(tz="UTC"))+
+  
       # main y-axis title
       ylab("") +
       
@@ -151,7 +128,7 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
     
     # legend 
     
-    gglegend <- guide_legend(override.aes = list(size = 3))
+    gglegend <- guide_legend(override.aes = list(size = ncol(df)))
     
     gg.xts <- gg.xts + guides(colour = gglegend, size = "none") +
       
@@ -162,14 +139,9 @@ gg.charts.PerformanceSummary <- function(rtn.obj, geometric = TRUE, main = "", p
              , legend.position = c(0,1)
              , legend.justification = c(0,1)
              , legend.background = element_rect()
-             #, legend.key = element_rect(fill="white",colour="white")# added as afterthought
              , legend.box = "horizontal" # not working?
              , axis.text.x = element_text(angle = 0, hjust = 1)
-             #, axis.title.y = element_text(size=2,colour="black")
-             , strip.background = element_rect(fill = 'white')
-             , panel.background = element_rect(fill = 'white', colour = 'white')
-             , panel.grid.major = element_line(colour = "grey", size = 0.5) 
-             , panel.grid.minor = element_line(colour = NA, size = 0.0))
+      )
     
   }
   
