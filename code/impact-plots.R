@@ -10,7 +10,7 @@ names(gini.test.pred) <- c("gini.pred")
 
 county.x.test <- cbind(county.x.test, gini.test.pred)
 
-# Import training and validation fits
+# Import training fit
 
 gini.train.pred <- read_csv("~/Dropbox/github/drnns-prediction/results/ok-pred/gini-train-pred.csv", col_names = FALSE)
 
@@ -18,19 +18,11 @@ names(gini.train.pred) <- c("gini.pred")
 
 county.x.train <- cbind(county.x.train, gini.train.pred)
 
-gini.val.pred <- read_csv("~/Dropbox/github/drnns-prediction/results/ok-pred/gini-val-pred.csv", col_names = FALSE)
-
-gini.val.pred <- rbind(data.frame("X1"=rep(NA,1)), gini.val.pred)
-
-names(gini.val.pred) <- c("gini.pred")
-
-county.x.val <- cbind(county.x.val, gini.val.pred)
-
 # Create time series data
 
 time.vars <- c("id","year","gini","gini.pred")
 
-ts.dat <- rbind(county.x.train[time.vars],county.x.val[time.vars],county.x.test[time.vars])
+ts.dat <- rbind(county.x.train[time.vars],county.x.test[time.vars])
 
 cat.ids <- data.frame("id"=as.numeric(interaction(c.county$county, c.county$state)),
                       "cat"=c.county$cat) # back out categories
@@ -38,7 +30,7 @@ cat.ids <- cat.ids[!duplicated(cat.ids$id),]
 
 ts.dat <- merge(ts.dat, cat.ids, by="id", all.x=TRUE)
 
-ts.dat$cat <- ifelse((ts.dat$cat==3 | ts.dat$cat==2), "Treated", "Control") # compare lottery counties vs. all other
+ts.dat$cat <- ifelse(ts.dat$cat>=2, "Treated", "Control") # compare land reform counties vs. all other
 
 ## Plot time series
 

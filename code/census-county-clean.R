@@ -123,85 +123,6 @@ census.county[[10]] <- census.county[[10]] %>%
          tenancy=(farmten)/(farms),
          farmsize = farmsize)
 
-## County definitions
-
-# OK lottery counties
-
-# Wichita & Caddo: 0110 Blaine; 0150 Caddo; 0170 Canadian; 0390 Custer; 1490 Washita; 8050 Wichita Res (NB: Canadian also contains land run )
-
-# Comanche, Kiowa, and Apache: 0310 Comanche; 0750 Kiowa; 8030 Kiowa/Comanche/Apache Res (NB: Comanche also contains land by sealed bid (big pasture))
-
-ok.lottery <- c(110,150,170,390,1490,310,750,8030,8050)
-
-# OK allotment counties
-
-# Osage:  1130 Osage; 8040 Osage Res
-# Kaw:  0710 Kay; 8020 Kaw res
-# Ponca: 0710 Kay; 1030 Noble; 8060 Ponca/Otoe Res
-# Tonkawa: 0710 Kay
-# Oto-Missouri: 1030 Noble; 1170 Pawnee
-# Pawnee: 1170 Pawnee
-
-ok.allotment <- c(1130,710,1030,1170,8020,8040,8060)
-
-# OK sealed bid
-
-# Big pasture: 0310 Comanche; 0330 Cotton; 1410 Tillman 
-
-ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery lottery)
-
-# OK land run
-
-# Unassigned lands: 0170 Canadian; 0270 Cleveland; 0730 Kingfisher; 0830 Logan; 1090 Oklahoma; 1190 Payne 
-# Iowa / Sac & Fox / - Pottawatomie & Shawnee /Kickapoo: 1250 Pottawattamie; 0270 Cleveland; 0810 Lincoln; 1190 Payne; 1090 Oklahoma
-# Cheyenne & Arapaho: 0430 Dewey; 0390 Custer; 1290 Roger Mills; 0090 Beckham 
-# Cherokee Outlet: 0530 Grant; 0470 Garfield; 0030 Alfalfa; 0930 Major; 1510 Woods; 1530 Woodward; 0590 Harper; 0450 Ellis
-
-ok.run <- c(270,730,830,1090,1190,1250,810,430,390,1290,90,530,470,30,930,1510,1530,590,450) # (NB: Canadian counted as land lottery )
-
-# TX contiguous
-# 1110 Dallam
-# 4210 Sherman
-# 1950 Hansford
-# 3570 Ochiltree
-# 2950 Lipscomb
-# 2110 Hemphill
-# 0870 Collingsworth
-# 4830 Wheeler
-# 0750 Childress
-# 
-# 1970 Hardeman
-# 4870 Wilbarger
-# 4850 Wichita
-# 0770 Clay
-# 0970 Cooke
-# 3370 Montague
-# 1810 Grayson
-# 1470 Fannin
-# 2770 Lamar
-# 3870 Red River
-# 0370 Bowie
-
-tx.contig <- c(1110,4210,1950,3570,2950,2110,0870,4830,0750,1970,4870,4850,0770,0970,3370,1810,1470,2770,3870,0370)
-
-# KS contiguous 
-# 1290 Morton
-# 1890 Stevens
-# 1750 Seward
-# 1190 Meade
-# 0250 Clark
-# 0330 Comanche
-# 0070 Barber/Barbour
-# 0770 Harper
-# 1910 Sumner
-# 0350 Cowley
-# 0190 Chautauqua
-# 1250 Montgomery
-# 0990 Labette
-# 0210 Cherokee/Mcghee
-
-ks.contig <- c(1290,1890,1750,1190,0250,0330,0070,1910,0350,0190,1250,0990,0210)
-
 ## Create time-series 
 
 # Rbind by common column names
@@ -216,7 +137,6 @@ df7 <- RbindMatchColumns(df6, census.county[[9]])
 df8 <- RbindMatchColumns(df7, census.county[[10]]) 
 
 c.county <- RbindMatchColumns(df2, df8) #1880-1950
-c.county2 <- RbindMatchColumns(df2, RbindMatchColumns(RbindMatchColumns(census.county[[8]],census.county[[9]]),census.county[[10]])) #1880-1900,1930-1950 (farm size)
 
 # Bind farm values time series
 
@@ -234,32 +154,23 @@ names(c.county)[4] <- c("name")
 
 c.county <- c.county[!is.na(c.county$county),] # drop if missing county
 
-c.county2 <- merge(c.county2, farmvals, by=c("county","state","year"),
-                  all.x=TRUE)
-
-c.county2 <- c.county2[!names(c.county2) %in% c("beta","name.y","level")]
-names(c.county2)[4] <- c("name")
-
-c.county2 <- c.county2[!is.na(c.county2$county),] # drop if missing county
-
 # Create county category var 
 
 # Categories
-# 0 : TX/KS contiguous
-# 1 : OK other [allotment; sealed bid; none]
-# 2: OK land run
-# 3 OK Lottery
-# 4: All other (non-contiguous)))
+# 0: Other state
+# 1 : OK none
+# 2: OK sealed bid
+# 3 : OK allotment
+# 4: OK land run
+# 5 OK Lottery
 
-c.county$cat <- ifelse((c.county$state==49 | c.county$state==32) & c.county$county %in% c(tx.contig,ks.contig),0,
-       ifelse(c.county$state==53 & ! c.county$county %in% c(ok.lottery,ok.run), 1, 
-              ifelse(c.county$state==53 & c.county$county %in% ok.run, 2,
-                     ifelse(c.county$state==53 & c.county$county %in% ok.lottery, 3, 4) )))
+c.county$cat <- ifelse(c.county$state!=53,0,
+       ifelse(c.county$state==53 & ! c.county$county %in% c(ok.lottery,ok.run,ok.allotment,ok.sealed), 1, 
+              ifelse(c.county$state==53 & c.county$county %in% ok.sealed, 2,
+                     ifelse(c.county$state==53 & c.county$county %in% ok.allotment, 3,
+                            ifelse(c.county$state==53 & c.county$county %in% ok.run, 4,
+                                   ifelse(c.county$state==53 & c.county$county %in% ok.lottery, 5, NA) )))))
 
-c.county2$cat <- ifelse((c.county2$state==49 | c.county2$state==32) & c.county2$county %in% c(tx.contig,ks.contig),0,
-                       ifelse(c.county2$state==53 & ! c.county2$county %in% c(ok.lottery,ok.run), 1, 
-                              ifelse(c.county2$state==53 & c.county2$county %in% ok.run, 2,
-                                     ifelse(c.county2$state==53 & c.county2$county %in% ok.lottery, 3, 4) )))
 ## Create time series df
 
 continous.vars <- c("totpop","urb25","mtot","ftot","farms","farm100","farm500","farm1000","faval")
@@ -274,26 +185,14 @@ county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)),
                   "gini" = c.county$G,
                   "tenancy" = c.county$tenancy)
 
-county.x2 <- cbind("id"=as.numeric(interaction(c.county2$county, c.county2$state)), 
-                  "year"=as.numeric(c.county2$year),
-                  dummify(as.factor(c.county2$state)),
-                  dummify(as.factor(c.county2$region1)),
-                  c.county2[continous.vars],
-                  "farmsize" = c.county2$farmsize)
-
 # Order by id, year
 county.x <- county.x[with(county.x, order(id,year)), ]
 
-county.x2 <- county.x2[with(county.x2, order(id,year)), ]
-
 # Drop IDs with missing labels
 
-drops.x1 <- sort(unique(c(county.x$id[is.na(county.x$gini)], county.x$id[is.na(county.x$tenancy)])))
+drops.x <- sort(unique(c(county.x$id[is.na(county.x$gini)], county.x$id[is.na(county.x$tenancy)])))
 
-drops.x2 <- sort(unique(county.x2$id[is.na(county.x2$farmsize)]))
-
-county.x <- county.x[!county.x$id %in% drops.x1,]
-county.x2 <- county.x2[!county.x2$id %in% drops.x2,]
+county.x <- county.x[!county.x$id %in% drops.x,]
 
 # Impute missing features using proximity from randomForest
 
@@ -302,38 +201,14 @@ county.x[continous.vars] <- rfImpute(x=county.x[continous.vars],
                                      y=county.x$gini,
                                      ntree=50)[-1] # remove response
 
-county.x2[continous.vars] <- rfImpute(x=county.x2[continous.vars],
-                                      y=county.x2$farmsize,
-                                      ntree=50)[-1] # remove response
-
 # Scale and center continuous vars
 preProcValues <- preProcess(county.x[continous.vars], method = c("center", "scale"))
 county.x[continous.vars] <- predict(preProcValues, county.x[continous.vars])
 
-preProcValues <- preProcess(county.x2[continous.vars], method = c("center", "scale"))
-county.x2[continous.vars] <- predict(preProcValues, county.x2[continous.vars])
-
-# Train/val/test splits
-set.seed(42) 
-train.ids <- sort(sample(unique(county.x$id), length(unique(county.x$id))*.75))
-train.ids2 <- sort(sample(unique(county.x2$id), length(unique(county.x2$id))*.75))
-
-val.ids <- sort(unique(county.x$id)[!unique(county.x$id) %in% train.ids])
-val.ids2 <- sort(unique(county.x2$id)[!unique(county.x2$id) %in% train.ids2])
-
-county.x.train <- county.x[county.x$id %in% train.ids & county.x$year <=1900,]
-county.x.val <- county.x[county.x$id %in% val.ids & county.x$year <=1900,]
+# Train/test splits
+county.x.train <- county.x[county.x$year <=1900,]
 county.x.test <- county.x[county.x$year > 1900,]
-
-county.x2.train <- county.x2[county.x2$id %in% train.ids2 & county.x2$year <=1900,]
-county.x2.val <- county.x2[county.x2$id %in% val.ids2 & county.x2$year <=1900,]
-county.x2.test <- county.x2[county.x2$year > 1900,]
 
 # Export each as csv (label + features)
 write.csv(county.x.train, paste0(data.directory,"county-x-train.csv"), row.names=FALSE) # counties with nonmissing farm and tenancy data
-write.csv(county.x.val, paste0(data.directory,"county-x-val.csv"), row.names=FALSE)
 write.csv(county.x.test, paste0(data.directory,"county-x-test.csv"), row.names=FALSE)
-
-write.csv(county.x2.train, paste0(data.directory,"county-x2-train.csv"), row.names=FALSE) # counties with nonmissing farm and farmsize data
-write.csv(county.x2.val, paste0(data.directory,"county-x2-val.csv"), row.names=FALSE)
-write.csv(county.x2.test, paste0(data.directory,"county-x2-test.csv"), row.names=FALSE)

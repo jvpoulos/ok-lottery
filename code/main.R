@@ -14,7 +14,6 @@ library(caret)
 library(stringr)
 library(zoo)
 library(plyr)
-library(lubridate)
 
 install.packages('survival')# need to update before loading weights
 
@@ -72,6 +71,8 @@ source("indiv-analysis.R") # individual-level analyses (sale outcome)
 ## County-level data
 
 source("census-county-clean.R")
+
+source("impact-plots.R")
 
 if(run.appendix){ # appendix plots
   library(devtools)
