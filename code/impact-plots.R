@@ -43,25 +43,33 @@ ts.dat$cat <- ifelse((ts.dat$cat==3 | ts.dat$cat==2), "Treated", "Control") # co
 ## Plot time series
 
 ts.means <- ts.dat %>%
-  group_by(year,cat) %>%
-  summarise(gini.obs = mean(gini,na.rm=TRUE),
-            gini.pred = mean(gini.pred,na.rm=TRUE)) 
+  group_by(year,cat) %>% # also: dv
+  summarise(obs = mean(gini,na.rm=TRUE),
+            pred = mean(gini.pred,na.rm=TRUE)) 
 
-ts.means <- reshape(data.frame(ts.means), idvar = "year", timevar = "cat", direction = "wide") # reshape long
+ts.means <- ts.means  %>%
+  group_by(year) %>%
+  mutate(pointwise = ifelse(cat=='Treated', obs-pred, NA)) %>% # calc. pointwise impact
+  group_by(cat) %>%
+  mutate(cumulative = cumsum(pointwise))
 
-ts.means$gini.pointwise <- ts.means$gini.obs.Treated-ts.means$gini.pred.Treated # calc. pointwise impact
 
-ts.means$gini.cumulative <- c(rep(0,4),cumsum(ts.means$gini.pointwise[5:8]))
+ts.means <- melt(as.data.frame(ts.means), id.var=c("year","cat"))
 
-ts.means$year <- as.yearmon(paste0(ts.means$year,"-12"), "%Y-%m",frac=1,tz="UTC") # convert year to date class
+ts.means$year <- as.yearmon(paste0(ts.means$year,"-01"), "%Y-%m",tz="UTC") # convert year to date class
 
-ts.means <- xts(ts.means,order.by = ts.means$year)
+ts.means$year <- round(as.POSIXct(ts.means$year, tz="UTC"), "months")
 
-ts.means <- ts.means[,-1]
+ts.means$series <- NA
+ts.means$series[ts.means$variable=="obs" | ts.means$variable=="pred"] <- "Time-series"
+ts.means$series[ts.means$variable=="pointwise"] <- "Pointwise impact"
+ts.means$series[ts.means$variable=="cumulative"] <- "Cumulative impact"
 
-storage.mode(ts.means) <- "numeric" # convert to numeric
+ts.means$series<- factor(ts.means$series, levels=c("Time-series","Pointwise impact", "Cumulative impact")) # reverse order
+
+levels(ts.means$variable) <- c("Observed","Predicted","Pointwise","Cumulative")
 
 # Gini
 
-gg.charts.PerformanceSummary(ts.means[,c("gini.obs.Control","gini.pred.Treated","gini.obs.Treated","gini.pointwise")], main="Causal effect of land reform on land inequality")
+TsPlot(ts.means,  main="Causal effect of land reform on land inequality")
 
