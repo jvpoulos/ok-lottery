@@ -173,7 +173,7 @@ c.county$cat <- ifelse(c.county$state!=53,0,
 
 ## Create time series df
 
-continous.vars <- c("totpop","urb25","mtot","ftot","farms","farm100","farm500","farm1000","faval")
+continuous.vars <- c("totpop","urb25","mtot","ftot","farms","farm100","farm500","farm1000","faval")
 
 # ICPSR Codes: OK (53), TX (49), KS (32)
 
@@ -181,7 +181,7 @@ county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)),
                   "year"=as.numeric(c.county$year),
                   dummify(as.factor(c.county$state)),
                   dummify(as.factor(c.county$region1)),
-                  c.county[continous.vars],
+                  c.county[continuous.vars],
                   "gini" = c.county$G,
                   "tenancy" = c.county$tenancy)
 
@@ -197,13 +197,13 @@ county.x <- county.x[!county.x$id %in% drops.x,]
 # Impute missing features using proximity from randomForest
 
 set.seed(42) 
-county.x[continous.vars] <- rfImpute(x=county.x[continous.vars],
+county.x[continuous.vars] <- rfImpute(x=county.x[continuous.vars],
                                      y=county.x$gini,
                                      ntree=50)[-1] # remove response
 
 # Scale and center continuous vars
-preProcValues <- preProcess(county.x[continous.vars], method = c("center", "scale"))
-county.x[continous.vars] <- predict(preProcValues, county.x[continous.vars])
+preProcValues <- preProcess(county.x[continuous.vars], method = c("center", "scale"))
+county.x[continuous.vars] <- predict(preProcValues, county.x[continuous.vars])
 
 # Train/test splits
 county.x.train <- county.x[county.x$year <=1900,]
