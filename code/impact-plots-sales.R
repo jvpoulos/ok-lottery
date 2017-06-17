@@ -9,6 +9,7 @@ test.files <- list.files(pattern = "sales-test*")
 sales.test.pred <- do.call(cbind,lapply(test.files,read.csv, 
                                 header=FALSE,
                                 col.names="sales.pred"))
+sales.test.pred$sales.mean <- rowMeans(as.matrix(sales.test.pred))
 sales.test.pred$sales.sd <- matrixStats::rowSds(as.matrix(sales.test.pred))
 
 # Import training fit
@@ -18,6 +19,7 @@ train.files <- list.files(pattern = "sales-train*")
 sales.train.pred <- do.call(cbind,lapply(train.files,read.csv, 
                                         header=FALSE,
                                         col.names="sales.pred"))
+sales.train.pred$sales.mean <- rowMeans(as.matrix(sales.train.pred))
 sales.train.pred$sales.sd <- matrixStats::rowSds(as.matrix(sales.train.pred))
 
 # Import validation fit
@@ -27,31 +29,32 @@ val.files <- list.files(pattern = "sales-val*")
 sales.val.pred <- do.call(cbind,lapply(val.files,read.csv, 
                                         header=FALSE,
                                        col.names="sales.pred"))
+sales.val.pred$sales.mean <- rowMeans(as.matrix(sales.val.pred))
 sales.val.pred$sales.sd <- matrixStats::rowSds(as.matrix(sales.val.pred))
 
 # Bind to splits
-patents.test <- cbind(data.frame(patents.test), sales.test.pred[c(1,ncol(sales.test.pred))]) # first column is best model
-patents.train <- cbind(data.frame(patents.train), sales.train.pred[c(1,ncol(sales.test.pred))])
-patents.val <- cbind(data.frame(patents.val), sales.val.pred[c(1,ncol(sales.test.pred))])
+patents.test <- cbind(data.frame(patents.test), sales.test.pred[c(ncol(sales.test.pred)-1,ncol(sales.test.pred))]) 
+patents.train <- cbind(data.frame(patents.train), sales.train.pred[c(ncol(sales.test.pred)-1,ncol(sales.test.pred))])
+patents.val <- cbind(data.frame(patents.val), sales.val.pred[c(ncol(sales.test.pred)-1,ncol(sales.test.pred))])
 
 # Create time series data
 
-time.vars <- c("date","county_code","state_code","sales","sales.pred","sales.sd")
+time.vars <- c("date","county_code","state_code","sales","sales.mean","sales.sd")
 
 ts.dat <- rbind(patents.train[time.vars],patents.val[time.vars],patents.test[time.vars])
 
-ts.dat$cat <- ifelse(ts.dat$state_code=="OK" & ts.dat$county_code %in% c(ok.lottery,ok.run,ok.allotment,ok.sealed), "Treated", "Nontreated") # compare land reform counties vs. all other
+ts.dat$cat <- ifelse(ts.dat$state_code=="OK" & ts.dat$county_code %in% c(ok.lottery,ok.run,ok.allotment,ok.sealed) & ts.dat$county_code !=590, "Treated", "Nontreated") # compare land reform counties vs. all other
 
 ## Plot time series 
 
 ts.means <- ts.dat %>%
   group_by(date,cat) %>% # also: dv
   summarise(obs = mean(sales,na.rm=TRUE),
-            pred = mean(sales.pred,na.rm=TRUE)) 
+            pred = mean(sales.mean,na.rm=TRUE)) 
 
 ts.means <- ts.means  %>%
   group_by(date) %>%
-  mutate(pointwise = ifelse(cat=='Treated', obs-pred, NA)) %>% # calc. pointwise impact
+  mutate(pointwise = obs-pred) %>% # calc. pointwise impact
   group_by(cat) %>%
   mutate(cumulative = cumsum(pointwise))
 
@@ -77,14 +80,14 @@ levels(ts.means.m$variable) <- c("Observed","Predicted", "Pointwise","Cumulative
 sds <- ts.dat %>%
   group_by(date,cat) %>%
   summarise(obs = mean(sales,na.rm=TRUE),
-            pred = mean(sales.pred,na.rm=TRUE),
+            pred = mean(sales.mean,na.rm=TRUE),
             pred.min = pred - mean(sales.sd, na.rm=TRUE),
             pred.max = pred + mean(sales.sd, na.rm=TRUE))
 
 sds <- sds  %>%
   group_by(date) %>%
-  mutate(pointwise.min = ifelse(cat=='Treated', obs-pred.min, NA),
-         pointwise.max = ifelse(cat=='Treated', obs-pred.max, NA)) %>% 
+  mutate(pointwise.min = obs-pred.min,
+         pointwise.max = obs-pred.max) %>% 
   group_by(cat) %>%
   mutate(cumulative.min = cumsum(pointwise.min),
          cumulative.max = cumsum(pointwise.max))
@@ -94,7 +97,7 @@ ts.means.m <- cbind(ts.means.m, sds[pred.vars])
 ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 
 # Plot sales
-ts.means.m$value[ts.means.m$variable=="Observed" & ts.means.m$value >200] <- NA # for y axis control
+ts.means.m$value[ts.means.m$variable=="Observed" & ts.means.m$value >75] <- NA # for y axis control
 sales.ts.plot <- TsPlot(ts.means.m,  main="Causal impact of land reform on land sales")
 
 ggsave(paste0(data.directory,"plots/sales-ts-plot.png"), sales.ts.plot, width=8.5, height=11)
