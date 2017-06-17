@@ -44,7 +44,7 @@ TsPlot <- function(df, main = "") {
   geom_hline(yintercept = 0, size = 0.5, colour = "black") +
   
   #horizontal ticks
-    scale_x_datetime(limits=c(as.POSIXct("1850-12-01 06:00:00",tz="UTC"), as.POSIXct("1950-12-01 18:00:00",tz="UTC")),
+    scale_x_datetime(limits=c(as.POSIXct("1865-12-01 06:00:00",tz="UTC"), as.POSIXct("1950-12-01 18:00:00",tz="UTC")),
                       date_breaks="10 years",labels=date_format("%Y"),
                       time_trans(tz="UTC"))+
     
@@ -63,7 +63,7 @@ TsPlot <- function(df, main = "") {
   ggtitle(main)
 
 # annotation text
-  ann_text <- data.frame(date = c(as.POSIXlt("1875-01-01 EST"),as.POSIXlt("1900-01-01 EST"),as.POSIXlt("1925-01-01 EST")), value=125, 
+  ann_text <- data.frame(date = c(as.POSIXlt("1875-01-01 EST"),as.POSIXlt("1898-01-01 EST"),as.POSIXlt("1925-01-01 EST")), value=90, 
                          series = factor("Time-series", levels = c("Time-series","Pointwise impact","Cumulative impact")),
                          lab = c("pre-reform \n (training)", "reform \n (validation)","post-reform \n (test)" ))
 
@@ -77,7 +77,7 @@ gg.xts <- gg.xts + guides(colour = gglegend, size = "none", shape = gglegend) +
   # gg.xts <- gg.xts + guides(colour = gglegend, size = "none", shape = gglegend) + # Warning: "Duplicated override.aes is ignored"
   
   theme( legend.title = element_blank()
-         , legend.position = c(0.35,0.05)
+         , legend.position = c(0.32,0.1)
          , legend.justification = c(1,0)
          , legend.background = element_rect()
          , axis.title.x=element_blank()

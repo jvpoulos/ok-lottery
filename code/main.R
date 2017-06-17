@@ -72,7 +72,8 @@ source("indiv-analysis.R") # individual-level analyses (sale outcome)
 
 source("census-county-clean.R")
 
-source("impact-plots-patents.R")
+source("impact-plots-sales.R")
+source("impact-plots-homesteads.R")
 
 if(run.appendix){ # appendix plots
   library(devtools)
