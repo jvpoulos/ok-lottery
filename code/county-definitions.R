@@ -23,7 +23,7 @@ ok.allotment <- c(1130,710,1030,1170,8020,8040,8060)
 
 # Big pasture: 0310 Comanche; 0330 Cotton; 1410 Tillman 
 
-ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery lottery)
+ok.sealed <- c(330,1410) #(NB: Comanche counted as land lottery)
 
 # OK land run
 
