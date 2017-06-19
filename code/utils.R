@@ -568,7 +568,8 @@ ThemeBw1 <- function(base_size = 8, base_family = "") {
     )
 }
 
-source("ts-plot.R")
+source("ts-plot-patents.R")
+source("ts-plot-census.R")
 
 ## Super Learner functions
 

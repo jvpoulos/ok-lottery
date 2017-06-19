@@ -1,4 +1,4 @@
-TsPlot <- function(df, main = "") {
+TsPlotPatents <- function(df, main = "") {
   library(ggplot2)
   library(scales)
   
@@ -10,13 +10,21 @@ TsPlot <- function(df, main = "") {
   theme(strip.text= element_text(size = 12, family = "serif", face='bold')) +
   
   # line colours
-   geom_line(data = subset(df, variable == "Observed"), aes(y = value, colour = "Observed", linetype="Observed"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Observed sales"), aes(y = value, colour = "Observed sales", linetype="Observed sales"), show.legend = TRUE) +
    
-   geom_line(data = subset(df, variable == "Predicted"), aes(y = value, colour = "Predicted", linetype="Predicted"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Predicted sales"), aes(y = value, colour = "Predicted sales", linetype="Predicted sales"), show.legend = TRUE) +
    
-   geom_line(data = subset(df, variable == "Pointwise"), aes(y = value, colour = "Predicted"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Pointwise sales"), aes(y = value, colour = "Predicted sales"), show.legend = FALSE) +
    
-   geom_line(data = subset(df, variable == "Cumulative"), aes(y = value ,colour = "Predicted"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Cumulative sales"), aes(y = value ,colour = "Predicted sales"), show.legend = FALSE) +
+    
+    geom_line(data = subset(df, variable == "Observed homesteads"), aes(y = value, colour = "Observed homesteads", linetype="Observed homesteads"), show.legend = FALSE) +
+    
+    geom_line(data = subset(df, variable == "Predicted homesteads"), aes(y = value, colour = "Predicted homesteads", linetype="Predicted homesteads"), show.legend = FALSE) +
+    
+    geom_line(data = subset(df, variable == "Pointwise homesteads"), aes(y = value, colour = "Predicted homesteads"), show.legend = FALSE) +
+    
+    geom_line(data = subset(df, variable == "Cumulative homesteads"), aes(y = value ,colour = "Predicted homesteads"), show.legend = FALSE) +
     
   # intervals
    
@@ -24,7 +32,9 @@ TsPlot <- function(df, main = "") {
     
   #  geom_ribbon(data = subset(df, variable == "Pointwise"), aes(ymin = pointwise.min, ymax=pointwise.max, color="Predicted"), alpha = .1) +
    
-    geom_ribbon(data = subset(df, variable == "Cumulative"), aes(ymin = cumulative.min, ymax=cumulative.max, colour="Predicted"), alpha=.2, show.legend = FALSE) +   
+    geom_ribbon(data = subset(df, variable == "Cumulative sales"), aes(ymin = cumulative.sales.min, ymax=cumulative.sales.max, colour="Predicted sales"), alpha=.2, show.legend = FALSE) +   
+    
+    geom_ribbon(data = subset(df, variable == "Cumulative homesteads"), aes(ymin = cumulative.homesteads.min, ymax=cumulative.homesteads.max, colour="Predicted homesteads"), alpha=.2, show.legend = FALSE) +   
   
     # vertical line to indicate intervention
   
@@ -57,7 +67,7 @@ TsPlot <- function(df, main = "") {
   gg.xts <- gg.xts +
   
   theme( legend.title = element_blank()
-         , legend.position = c(0.95,0.9)
+         , legend.position = c(0.90,0.8)
          , legend.justification = c(1,0)
          , legend.background = element_rect()
          , axis.text=element_text(size=12)
@@ -67,8 +77,8 @@ TsPlot <- function(df, main = "") {
          , legend.text=element_text(size=12, family = "serif")
          , legend.box = "horizontal" # not working?)
   ) + geom_text(data = ann_text,aes(y = value, label =lab), family="serif", fontface="italic",  size=5) +
-  scale_colour_manual(name="Legend", values = c("Predicted" = "#E69F00", "Observed" = "#56B4E9"), labels= c("Predicted homesteads","Observed homesteads")) +
-  scale_linetype_manual(name="Legend", values = c("Predicted" = "dashed", "Observed" = "solid"), labels= c("Predicted homesteads","Observed homesteads"))  + 
+   scale_colour_manual(name="Legend", values = c("Observed sales" = "#E69F00","Predicted sales" = "#E69F00", "Observed homesteads" = "#56B4E9", "Predicted homesteads" = "#56B4E9")) +
+   scale_linetype_manual(name="Legend", values = c("Predicted sales" = "dashed","Predicted homesteads" = "dashed", "Observed sales" = "solid", "Observed homesteads" = "solid"))  + 
   theme(legend.key.width=unit(3,"line")) 
 return(gg.xts)
 }

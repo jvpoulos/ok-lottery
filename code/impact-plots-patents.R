@@ -121,6 +121,6 @@ ts.means.m <- cbind(ts.means.m, sds[pred.vars])
 ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 
 # Plot
-ts.plot <- TsPlotCensus(ts.means.m)
+ts.plot <- TsPlotPatents(ts.means.m)
 
-ggsave(paste0(data.directory,"plots/census-ts-plot.png"), ts.plot, width=11, height=8.5)
+ggsave(paste0(data.directory,"plots/patents-ts-plot.png"), ts.plot, width=11, height=8.5)
