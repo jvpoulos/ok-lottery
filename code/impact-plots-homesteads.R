@@ -48,8 +48,8 @@ ts.means.m <- melt(as.data.frame(ts.means), id.var=c("date"))
 # Adjust date for plot
 ts.means.m$date <- as.yearmon(ts.means.m$date, "%Y-%m",tz="UTC") # convert date to date class
 
-ts.means.m$date <- round(as.POSIXct(ts.means.m$date, tz="UTC"), "months")
-
+ts.means.m$date <- as.POSIXct(ts.means.m$date, tz="UTC")
+                         
 # Labels
 
 ts.means.m$series <- NA
@@ -77,6 +77,6 @@ ts.means.m <- cbind(ts.means.m, sds[pred.vars])
 ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 
 # Plot homesteads
-homesteads.ts.plot <- TsPlot(ts.means.m,  main="Causal impact of land lottery on homesteads")
+homesteads.ts.plot <- TsPlot(ts.means.m)
 
 ggsave(paste0(data.directory,"plots/homesteads-ts-plot.png"), homesteads.ts.plot, width=11, height=8.5)
