@@ -18,7 +18,6 @@ names(census.county) <- years
 ## Create response variables for: 
 ## land inequality (1860-1950)
 ## farm tenancy (1880-1950)
-## avg farm size (1880-1900,1930-1950)
 
 #1860 # no # farms
 census.county[[1]] <- census.county[[1]] %>%
@@ -136,79 +135,75 @@ df6 <- RbindMatchColumns(df5, census.county[[8]])
 df7 <- RbindMatchColumns(df6, census.county[[9]]) 
 df8 <- RbindMatchColumns(df7, census.county[[10]]) 
 
-c.county <- RbindMatchColumns(df2, df8) #1880-1950
+c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "tenancy")] #1890-1950 # Gini & Tenancy
 
-# Bind farm values time series
+# Year to time
 
-farmvals <- read.csv(paste0(data.directory,"census-county/farmval.csv"), stringsAsFactors=FALSE)
-
-farmvals$year <- farmvals$year +1000
-
-farmvals <- farmvals[farmvals$year %in% years,][c(1:5)] # keep decenial years
-
-c.county <- merge(c.county, farmvals, by=c("county","state","year"),
-                  all.x=TRUE)
-
-c.county <- c.county[!names(c.county) %in% c("beta","name.y","level")]
-names(c.county)[4] <- c("name")
-
-c.county <- c.county[!is.na(c.county$county),] # drop if missing county
+c.county$date <- as.yearmon(paste0("12/01/",c.county$year), "%m/%d/%Y",tz="UTC") # convert to monthly data
 
 # Create county category var 
 
-# Categories
-# 0: Other state
-# 1 : OK none
-# 2: OK sealed bid
-# 3 : OK allotment
-# 4: OK land run
-# 5 OK Lottery
-
-c.county$cat <- ifelse(c.county$state!=53,0,
-       ifelse(c.county$state==53 & ! c.county$county %in% c(ok.lottery,ok.run,ok.allotment,ok.sealed), 1, 
-              ifelse(c.county$state==53 & c.county$county %in% ok.sealed, 2,
-                     ifelse(c.county$state==53 & c.county$county %in% ok.allotment, 3,
-                            ifelse(c.county$state==53 & c.county$county %in% ok.run, 4,
-                                   ifelse(c.county$state==53 & c.county$county %in% ok.lottery, 5, NA) )))))
+c.county$cat <- ifelse(c.county$state==53 & c.county$county %in% c(ok.lottery), "Treated", "Control") # compare lottery counties vs. all other
 
 ## Create time series df
 
-continuous.vars <- c("totpop","urb25","mtot","ftot","farms","farm100","farm500","farm1000","faval")
+# Create control and treated sums
+cats.sums <- c.county %>% 
+  group_by(date,cat) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, tenancy) 
 
-# ICPSR Codes: OK (53), TX (49), KS (32)
+cats.sums <- reshape(data.frame(cats.sums), idvar = "date", timevar = "cat", direction = "wide")
 
-county.x <- cbind("id"=as.numeric(interaction(c.county$county, c.county$state)), 
-                  "year"=as.numeric(c.county$year),
-                  dummify(as.factor(c.county$state)),
-                  dummify(as.factor(c.county$region1)),
-                  c.county[continuous.vars],
-                  "gini" = c.county$G,
-                  "tenancy" = c.county$tenancy)
+# Reshape long to wide
 
-# Order by id, year
-county.x <- county.x[with(county.x, order(id,year)), ]
+c.county$id <- interaction(c.county$county,c.county$state)
 
-# Drop IDs with missing labels
+c.county <- c.county[c.county$cat=="Control",] # discard treated since we have treated time-series
 
-drops.x <- sort(unique(c(county.x$id[is.na(county.x$gini)], county.x$id[is.na(county.x$tenancy)])))
+gini <- reshape(data.frame(c.county[c("date","id","G")]), idvar = "date", timevar = "id", direction = "wide")
 
-county.x <- county.x[!county.x$id %in% drops.x,]
+tenancy <- reshape(data.frame(c.county[c("date","id","tenancy")]), idvar = "date", timevar = "id", direction = "wide")
 
-# Impute missing features using proximity from randomForest
+# Labels
 
-set.seed(42) 
-county.x[continuous.vars] <- rfImpute(x=county.x[continuous.vars],
-                                     y=county.x$gini,
-                                     ntree=50)[-1] # remove response
+gini.y <- cats.sums[c("date", "G.Treated")]
 
-# Scale and center continuous vars
-preProcValues <- preProcess(county.x[continuous.vars], method = c("center", "scale"))
-county.x[continuous.vars] <- predict(preProcValues, county.x[continuous.vars])
+tenancy.y <- cats.sums[c("date", "tenancy.Treated")]
 
-# Train/test splits
-county.x.train <- county.x[county.x$year <=1900,]
-county.x.test <- county.x[county.x$year > 1900,]
+# Splits
 
-# Export each as csv (label + features)
-write.csv(county.x.train, paste0(data.directory,"county-x-train.csv"), row.names=FALSE) # counties with nonmissing farm and tenancy data
-write.csv(county.x.test, paste0(data.directory,"county-x-test.csv"), row.names=FALSE)
+gini.x.train <- gini[gini$date %in% gini.y$date & gini$date <= "Dec 1900",]
+gini.x.test <- gini[gini$date %in% gini.y$date & gini$date > "Dec 1900",]
+
+gini.y.train <- gini.y[gini.y$date <= "Dec 1900",]
+gini.y.test <- gini.y[gini.y$date > "Dec 1900",]
+
+tenancy.x.train <- tenancy[tenancy$date %in% tenancy.y$date & tenancy$date <= "Dec 1900",]
+tenancy.x.test <- tenancy[tenancy$date %in% tenancy.y$date & tenancy$date > "Dec 1900",]
+
+tenancy.y.train <- tenancy.y[tenancy.y$date <= "Dec 1900",]
+tenancy.y.test <- tenancy.y[tenancy.y$date > "Dec 1900",]
+
+# Preprocess
+gini.pre.train <- preProcess(gini.x.train[!colnames(gini.x.train) %in% c("date")], method = c("medianImpute"))
+gini.x.train[!colnames(gini.x.train) %in% c("date")] <- predict(gini.pre.train, gini.x.train[!colnames(gini.x.train) %in% c("date")] )
+
+gini.x.test[!colnames(gini.x.test) %in% c("date")] <- predict(gini.pre.train, gini.x.test[!colnames(gini.x.test) %in% c("date")] ) # use training values for test set 
+
+tenancy.pre.train <- preProcess(tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")], method = c("medianImpute"))
+tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")] <- predict(tenancy.pre.train, tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")] )
+
+tenancy.x.test[!colnames(tenancy.x.test) %in% c("date")] <- predict(tenancy.pre.train, tenancy.x.test[!colnames(tenancy.x.test) %in% c("date")] ) # use training values for test set 
+
+# Export each as csv (labels, features)
+data.directory <- "~/Dropbox/github/drnns-prediction/data/census/"
+
+write.csv(gini.x.train[!colnames(gini.x.train) %in% c("date")], paste0(data.directory,"gini-x-train.csv"), row.names=FALSE) 
+write.csv(gini.x.test[!colnames(gini.x.test) %in% c("date")], paste0(data.directory,"gini-x-test.csv"), row.names=FALSE) 
+write.csv(gini.y.train[!colnames(gini.y.train) %in% c("date")], paste0(data.directory,"gini-y-train.csv"), row.names=FALSE) 
+write.csv(gini.y.test[!colnames(gini.y.test) %in% c("date")], paste0(data.directory,"gini-y-test.csv"), row.names=FALSE) 
+
+write.csv(tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")], paste0(data.directory,"tenancy-x-train.csv"), row.names=FALSE) 
+write.csv(tenancy.x.test[!colnames(tenancy.x.test) %in% c("date")] , paste0(data.directory,"tenancy-x-test.csv"), row.names=FALSE) 
+write.csv(tenancy.y.train[!colnames(tenancy.y.train) %in% c("date")], paste0(data.directory,"tenancy-y-train.csv"), row.names=FALSE) 
+write.csv(tenancy.y.test[!colnames(tenancy.y.test) %in% c("date")], paste0(data.directory,"tenancy-y-test.csv"), row.names=FALSE) 
