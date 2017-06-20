@@ -10,21 +10,21 @@ TsPlotCensus <- function(df, main = "") {
   theme(strip.text= element_text(size = 12, family = "serif", face='bold')) +
   
   # line colours
-   geom_line(data = subset(df, variable == "Observed sales"), aes(y = value, colour = "Observed sales", linetype="Observed sales"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Observed gini"), aes(y = value, colour = "Observed gini", linetype="Observed gini"), show.legend = TRUE) +
    
-   geom_line(data = subset(df, variable == "Predicted sales"), aes(y = value, colour = "Predicted sales", linetype="Predicted sales"), show.legend = TRUE) +
+   geom_line(data = subset(df, variable == "Predicted gini"), aes(y = value, colour = "Predicted gini", linetype="Predicted gini"), show.legend = TRUE) +
    
-   geom_line(data = subset(df, variable == "Pointwise sales"), aes(y = value, colour = "Predicted sales"), show.legend = FALSE) +
+   geom_line(data = subset(df, variable == "Pointwise gini"), aes(y = value, colour = "Predicted gini"), show.legend = FALSE) +
    
-   geom_line(data = subset(df, variable == "Cumulative sales"), aes(y = value ,colour = "Predicted sales"), show.legend = FALSE) +
+   geom_line(data = subset(df, variable == "Cumulative gini"), aes(y = value ,colour = "Predicted gini"), show.legend = FALSE) +
     
-    geom_line(data = subset(df, variable == "Observed homesteads"), aes(y = value, colour = "Observed homesteads", linetype="Observed homesteads"), show.legend = FALSE) +
+    geom_line(data = subset(df, variable == "Observed tenancy"), aes(y = value, colour = "Observed tenancy", linetype="Observed tenancy"), show.legend = FALSE) +
     
-    geom_line(data = subset(df, variable == "Predicted homesteads"), aes(y = value, colour = "Predicted homesteads", linetype="Predicted homesteads"), show.legend = FALSE) +
+    geom_line(data = subset(df, variable == "Predicted tenancy"), aes(y = value, colour = "Predicted tenancy", linetype="Predicted tenancy"), show.legend = FALSE) +
     
-    geom_line(data = subset(df, variable == "Pointwise homesteads"), aes(y = value, colour = "Predicted homesteads"), show.legend = FALSE) +
+    geom_line(data = subset(df, variable == "Pointwise tenancy"), aes(y = value, colour = "Predicted tenancy"), show.legend = FALSE) +
     
-    geom_line(data = subset(df, variable == "Cumulative homesteads"), aes(y = value ,colour = "Predicted homesteads"), show.legend = FALSE) +
+    geom_line(data = subset(df, variable == "Cumulative tenancy"), aes(y = value ,colour = "Predicted tenancy"), show.legend = FALSE) +
     
   # intervals
    
@@ -32,9 +32,9 @@ TsPlotCensus <- function(df, main = "") {
     
   #  geom_ribbon(data = subset(df, variable == "Pointwise"), aes(ymin = pointwise.min, ymax=pointwise.max, color="Predicted"), alpha = .1) +
    
-    geom_ribbon(data = subset(df, variable == "Cumulative sales"), aes(ymin = cumulative.sales.min, ymax=cumulative.sales.max, colour="Predicted sales"), alpha=.2, show.legend = FALSE) +   
+    geom_ribbon(data = subset(df, variable == "Cumulative gini"), aes(ymin = cumulative.gini.min, ymax=cumulative.gini.max, colour="Predicted gini"), alpha=.2, show.legend = FALSE) +   
     
-    geom_ribbon(data = subset(df, variable == "Cumulative homesteads"), aes(ymin = cumulative.homesteads.min, ymax=cumulative.homesteads.max, colour="Predicted homesteads"), alpha=.2, show.legend = FALSE) +   
+    geom_ribbon(data = subset(df, variable == "Cumulative tenancy"), aes(ymin = cumulative.tenancy.min, ymax=cumulative.tenancy.max, colour="Predicted tenancy"), alpha=.2, show.legend = FALSE) +   
   
     # vertical line to indicate intervention
   
@@ -44,10 +44,10 @@ TsPlotCensus <- function(df, main = "") {
   geom_hline(yintercept = 0, size = 0.5, colour = "black") +
   
  # horizontal ticks
-  scale_x_datetime(limits=c(as.POSIXct("1891-08-01 06:00:00",tz="UTC"), as.POSIXct("1931-08-01 18:00:00",tz="UTC")),
-                    date_breaks="3 years",labels=date_format("%Y"),
-                    time_trans(tz="UTC"))+
-    
+  # scale_x_datetime(limits=c(as.POSIXct("1891-08-01 06:00:00",tz="UTC"), as.POSIXct("1931-08-01 18:00:00",tz="UTC")),
+  #                   date_breaks="3 years",labels=date_format("%Y"),
+  #                   time_trans(tz="UTC"))+
+  #   
   # main y-axis title
   ylab("") +
   
@@ -58,7 +58,7 @@ TsPlotCensus <- function(df, main = "") {
   ggtitle(main)
 
 # annotation text
-  ann_text <- data.frame(date = c(as.POSIXlt("1896-01-01 EST"), as.POSIXlt("1911-01-01 EST")), value=400, 
+  ann_text <- data.frame(date = c(as.POSIXlt("1896-01-01 EST"), as.POSIXlt("1911-01-01 EST")), value=0.9, 
                          series = factor("Time-series", levels = c("Time-series","Pointwise impact","Cumulative impact")),
                          lab = c("pre-lottery \n (training)", "post-lottery \n (test)"))
 
@@ -77,8 +77,8 @@ TsPlotCensus <- function(df, main = "") {
          , legend.text=element_text(size=12, family = "serif")
          , legend.box = "horizontal" # not working?)
   ) + geom_text(data = ann_text,aes(y = value, label =lab), family="serif", fontface="italic",  size=5) +
-   scale_colour_manual(name="Legend", values = c("Observed sales" = "#E69F00","Predicted sales" = "#E69F00", "Observed homesteads" = "#56B4E9", "Predicted homesteads" = "#56B4E9")) +
-   scale_linetype_manual(name="Legend", values = c("Predicted sales" = "dashed","Predicted homesteads" = "dashed", "Observed sales" = "solid", "Observed homesteads" = "solid"))  + 
+   scale_colour_manual(name="Legend", values = c("Observed gini" = "#E69F00","Predicted gini" = "#E69F00", "Observed tenancy" = "#56B4E9", "Predicted tenancy" = "#56B4E9")) +
+   scale_linetype_manual(name="Legend", values = c("Predicted gini" = "dashed","Predicted tenancy" = "dashed", "Observed gini" = "solid", "Observed tenancy" = "solid"))  + 
   theme(legend.key.width=unit(3,"line")) 
 return(gg.xts)
 }
