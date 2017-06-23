@@ -220,6 +220,7 @@ StState <- function(state) {
   state <- gsub("Unreadavle", NA, state)
 }
 
+
 CleanCensus <- function(census) {
   # Clean age
   
@@ -378,32 +379,16 @@ CleanElreno <- function(elreno){
   return(elreno)
 }
 
-CleanSales <- function(sales){
-
+CleanPatents <- function(patents){
   # Split first and middle name
-  sales$first <- trimws(unlist(lapply(strsplit(sales$Names,","), function(x) x[2])))
-  sales$surname <- trimws(unlist(lapply(strsplit(sales$Names,","), function(x) x[1])))
-  sales$middle.name <- trimws(unlist(lapply(strsplit(sales$first," "), function(x) x[2])))
-  sales$first <- trimws(unlist(lapply(strsplit(sales$first," "), function(x) x[1])))
-  
-  # Name lengths
-  sales$surname.length <- nchar(sales$surname)
-  sales$first.length <- nchar(sales$first)
+  patents$first <- trimws(patents$patentee_first_name)
+  patents$surname <- trimws(patents$patentee_last_name)
+  patents$middle.name <- trimws(patents$patentee_middle_name)
   
   # Standardize first names
-  sales$first <- StFirst(sales$first)
-  
-  # Create soundex of first and surnames
-  sales$sound.surname <- soundex(sales$surname)
-  sales$sound.first <- soundex(sales$first)
-  
-  # Standardize county
-  sales$County <- StCounty(sales$County)
-  
-  # Convert filing dates to POSIXct
-  sales$Date <- as.POSIXct(sales$Date,format="%m/%d/%Y",tz="UTC")
+  patents$first <- StFirst(patents$first)
 
-  return(sales)
+  return(patents)
 }
 
 MeanDR <- function(y,treat){ 
@@ -528,12 +513,13 @@ ForestPlot <- function(d, xlab, ylab){
 }
 
 # Forest plot for year figure
-ForestPlot2 <- function(d, xlab, ylab){
-  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=x)) + 
+ForestPlot2 <- function(d, xlab, ylab,leglab){
+  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=variable)) + 
     geom_pointrange(size=1, alpha=0.9) + 
   #  coord_flip() +
     geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
-    theme(legend.position="none") +
+    scale_y_continuous(labels = scales::percent) +
+    labs(colour = leglab) +
     ylab(ylab) +
     xlab(xlab) #switch because of the coord_flip() above
   return(p)

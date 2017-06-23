@@ -30,58 +30,63 @@ draw.time <- ggplot(lawton, aes(Drawing.., time.lapse)) +
 
 ggsave(paste0(data.directory,"plots/draw-time.png"), draw.time, width=8.5, height=11)
 
-## Plot sales time series
+## Plot patents time series
 
 # By time
-sales.tab <- aggregate(sales$n.sales, by=list(sales$Date), FUN=sum)
 
-colnames(sales.tab) <- c("Date","Count")
+patents.tab <- patents %>%
+  group_by(date) %>%
+  summarise_each(funs(sum),sales,homesteads,total_acres)
 
-sales.tab$Date <- as.POSIXct(sales.tab$Date,format="%m/%d/%Y",tz="UTC")
+colnames(patents.tab) <- c("Date","Sales", "Homesteads", "Total Acres")
 
-sales.time <- ggplot(sales.tab, aes( Date, Count )) + 
-  geom_line() +
-  ylab("Number of land patent sales") +
+patents.tab$Date <- as.POSIXct(patents.tab$Date,format="%m/%d/%Y",tz="UTC")
+
+patents.time <- ggplot(patents.tab, aes(x=Date,y=Sales)) + 
+  geom_line(aes(colour='Sales')) +
+  geom_line(aes(y=Homesteads,colour='Homesteads')) +
+  coord_cartesian(xlim=as.POSIXct(c("01/01/1800","12/31/1950"), format="%m/%d/%Y",tz="UTC")) +
+  scale_y_continuous(name="Number of land patents", labels = comma) +
   xlab("") +
-  stat_smooth(method = "loess", formula = y ~ x, size = 1, se=FALSE) # apply a locally weighted regression
+  scale_colour_manual(name="Patent type",
+                      values=c(Sales="red", Homesteads="blue"))
 
-ggsave(paste0(data.directory,"plots/sales-time.png"), sales.time, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/patents-time.png"), patents.time, width=8.5, height=11)
 
-# By time x state
-sales.state.tab <- aggregate(sales$n.sales, by=list(sales$State, sales$Date), FUN=sum)
+# By time x state (sales)
 
-colnames(sales.state.tab) <- c("State","Date","Count")
+#select top 10 states in terms of homesteads
+top10 <- patents %>%
+  group_by(state_code) %>%
+  summarise_each(funs(sum), homesteads) %>%
+  arrange(desc(homesteads))
 
-sales.state.tab$Date <- as.POSIXct(sales.state.tab$Date,format="%m/%d/%Y",tz="UTC")
+patents.state.tab <- patents %>%
+  filter(state_code %in% c(top10[,1][1:7,][[1]])) %>%
+  group_by(date,state_code) %>%
+  summarise_each(funs(sum),sales,homesteads,total_acres)
 
-sales.state.time <- ggplot(sales.state.tab, aes( Date, Count,color=State )) + 
+colnames(patents.state.tab) <- c("Date","State","Sales", "Homesteads", "Total Acres")
+
+patents.state.tab$Date <- as.POSIXct(patents.state.tab$Date,format="%m/%d/%Y",tz="UTC")
+
+sales.state.time <- ggplot(patents.state.tab, aes( Date, Sales ,color=State )) + 
   geom_line() +
-  ylab("Number of land patent sales") +
+  coord_cartesian(xlim=as.POSIXct(c("01/01/1850","12/31/1950"), format="%m/%d/%Y",tz="UTC")) +
+  scale_y_continuous(name="Number of sales", labels = comma) +
   xlab("")
 
 ggsave(paste0(data.directory,"plots/sales-state-time.png"), sales.state.time, width=8.5, height=11)
 
-## Plot map of homesteader origin city/state
+# By time x state (homesteads)
 
-# geocode cities with >1
-cities <- as.character(count(hs$county)[count(hs$county)$freq>2,]$x)
-cities <- cities[!is.na(cities)]
-geocodes <- geocode(as.character(cities))
+homesteads.state.time <- ggplot(patents.state.tab, aes( Date, Homesteads ,color=State )) + 
+  geom_line() +
+  coord_cartesian(xlim=as.POSIXct(c("01/01/1850","12/31/1950"), format="%m/%d/%Y",tz="UTC")) +
+  scale_y_continuous(name="Number of homesteads", labels = comma) +
+  xlab("")
 
-city.data <- cbind(cities, geocodes,count(hs$county)[count(hs$county)$freq>2,]$freq[1:870])
-colnames(city.data) <- c("city","Longitude","Latitude","Count")
-
-# map.us <- ggmap(get_map(location = 'oklahoma', zoom = 3)) +
-#   geom_point(data=city.data, aes(x=lon, y=lat, size=count), color="orange") +
-#   scale_x_continuous(limits = c(-126, -66), expand = c(0, 0)) +
-#   scale_y_continuous(limits = c(25, 51), expand = c(0, 0))
-# 
-# ggsave(paste0(data.directory,"plots/map.us.png"), sales.time, width=8.5, height=11)
-
-map.ok <- ggmap(get_map(location = 'oklahoma', zoom = 6)) +
-  geom_point(data=city.data, aes(x=Longitude, y=Latitude, size=Count), color="orange") 
-
-ggsave(paste0(data.directory,"plots/map.png"), map.ok, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/homesteads-state-time.png"), homesteads.state.time, width=8.5, height=11)
 
 ## Bar chart of homesteader states
 

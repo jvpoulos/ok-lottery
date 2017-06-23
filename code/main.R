@@ -18,7 +18,6 @@ library(plyr)
 install.packages('survival')# need to update before loading weights
 
 library(weights)
-library(e1071)
 library(parallel)
 library(doParallel)
 library(reldist)
@@ -29,8 +28,6 @@ install.packages("Rcpp") # need to update before loading dplyr
 library(dplyr)
 
 if(run.appendix){
-  library(ggmap)
-  library(maps)
   library(reporttools)
   library(gridExtra)
   library(reshape)
@@ -48,9 +45,7 @@ source("utils.R")
 
 source("ok-participants.R") # load and clean Lawton and El Reno participants
 
-source("glo-clean.R") # load GLO sales and clean
-
-source("glo-link.R") # Link participants to GLO sales
+source("glo-link.R") # Link participants to GLO patents
 
 if(run.census){
   library(lmtest)
@@ -66,7 +61,7 @@ if(run.power){
   source("ok-power.R")
 }
 
-source("indiv-analysis.R") # individual-level analyses (sale outcome)
+source("indiv-analysis.R") # individual-level analyses (patents outcomes)
 
 ## County-level data
 

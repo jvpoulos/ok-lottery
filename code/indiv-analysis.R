@@ -6,73 +6,70 @@ patient <- FALSE
 
 ## OLS without covariates
 
-# Sales
+# Sale (binary/continuous)
 
-lm.sale <- lm(sale~ draw.scale, data=link.sales)
+lm.sale <- lm(sale~ draw.scale, data=link.patents)
 summary(lm.sale)
 confint(lm.sale)
 
-# estimates by sale year
-link.sales$year <- lubridate::year(link.sales$Date)
+lm.sales <- lm(sales~ draw.scale, data=link.patents)
+summary(lm.sales)
+confint(lm.sales)
 
-lm.sale.year <- lapply(c(1901:1910),
-                       function(t){
-                         lm <- lm(sale~ draw.scale, data=link.sales[link.sales$year==t | is.na(link.sales$year),])
-                         return(data.frame("Est" = coeftest(lm)[,1]["draw.scale"],
-                                           "p"= coeftest(lm)[,4]["draw.scale"],
+# Homestead (binary/continuous)
+
+lm.homestead <- lm(homestead~ draw.scale, data=link.patents)
+summary(lm.homestead)
+confint(lm.homestead)
+
+lm.homesteads <- lm(homesteads ~ draw.scale, data=link.patents)
+summary(lm.homesteads)
+confint(lm.homesteads)
+
+# Total acres
+
+lm.acres <- lm(total_acres ~ draw.scale, data=link.patents)
+summary(lm.acres)
+confint(lm.acres)
+
+# estimates by year
+
+for(x in c(grep('total_acres', colnames(link.patents), value=TRUE), 
+    grep('sales', colnames(link.patents), value=TRUE),
+    grep('homesteads', colnames(link.patents), value=TRUE))){ # Scale total acres to 0 -to 1
+  link.patents[,x] <-  scales:::rescale(link.patents[,x] , to = c(0, 1))
+}
+
+lm.year <- lapply(outcome.vars,
+                       function(x){
+                         formula <- paste(x, "~ draw.scale")
+                         lm <- lm(formula, data=link.patents)
+                         return(data.frame("Est" = lmtest::coeftest(lm)[,1]["draw.scale"],
+                                           "p"= lmtest::coeftest(lm)[,4]["draw.scale"],
                                            "CI" = confint(lm)[2,],
                                            "N" = summary(lm)$df[2]))
                        })
+
   
 # Create data for plot 
-plot.data.year <- data.frame(y = c(lm.sale.year[[1]]['Est'][1,],
-                                  lm.sale.year[[2]]['Est'][1,],
-                                  lm.sale.year[[3]]['Est'][1,],
-                                  lm.sale.year[[4]]['Est'][1,],
-                                  lm.sale.year[[5]]['Est'][1,],
-                                  lm.sale.year[[6]]['Est'][1,],
-                                  lm.sale.year[[7]]['Est'][1,],
-                                  lm.sale.year[[8]]['Est'][1,],
-                                  lm.sale.year[[9]]['Est'][1,],
-                                  lm.sale.year[[10]]['Est'][1,]),
-                            y.lo = c(lm.sale.year[[1]]['CI'][1,],lm.sale.year[[2]]['CI'][1,],lm.sale.year[[3]]['CI'][1,],lm.sale.year[[4]]['CI'][1,],lm.sale.year[[5]]['CI'][1,],lm.sale.year[[6]]['CI'][1,],lm.sale.year[[7]]['CI'][1,],lm.sale.year[[8]]['CI'][1,],lm.sale.year[[9]]['CI'][1,],lm.sale.year[[10]]['CI'][1,]),
-                            y.hi = c(lm.sale.year[[1]]['CI'][2,],lm.sale.year[[2]]['CI'][2,],lm.sale.year[[3]]['CI'][2,],lm.sale.year[[4]]['CI'][2,],lm.sale.year[[5]]['CI'][2,],lm.sale.year[[6]]['CI'][2,],lm.sale.year[[7]]['CI'][2,],lm.sale.year[[8]]['CI'][2,],lm.sale.year[[9]]['CI'][2,],lm.sale.year[[10]]['CI'][2,]))
-plot.data.year <- transform(plot.data.year, y.lo = y.lo, y.hi=y.hi)
-plot.data.year$x <- c(1901:1910)  
-  
+plot.data.year <- data.frame(variable= outcome.vars,
+                             y = sapply(lm.year, "[[", "Est")[1,],
+                            y.lo = sapply(lm.year, "[[", "CI")[1,],
+                            y.hi = sapply(lm.year, "[[", "CI")[2,])
+
+plot.data.year <- plot.data.year[!plot.data.year$variable %in% c('sales','homesteads','total_acres'),] # rm totals
+plot.data.year$x <- as.numeric(str_sub(plot.data.year$variable, start= -4))
+
+plot.data.year$variable <- as.character(plot.data.year$variable)
+plot.data.year$variable[grep('total_acres',plot.data.year$variable)] <- "Total acres"
+plot.data.year$variable[grep('homesteads',plot.data.year$variable)] <- "Homesteads"
+plot.data.year$variable[grep('sales',plot.data.year$variable)] <- "Sales"
+
 # Plot forest plots
-plot.data.year$x <- factor(plot.data.year$x, levels=plot.data.year$x) # reverse order
-summary.plot.year <- ForestPlot2(plot.data.year,ylab="Treatment effect",xlab="Year of sale") + scale_y_continuous(labels = percent_format())
+plot.data.year$x <- factor(plot.data.year$x, levels=sort(plot.data.year$x)) 
+summary.plot.year <- ForestPlot2(plot.data.year,ylab="Treatment effect",xlab="Year of patent", leglab="Outcome") 
 
-ggsave(paste0(data.directory,"plots/forest-year.png"), summary.plot.year, width=8.5, height=11)  
-
-## Covariate selection with Lasso 
-
-link.sales$lawton <- ifelse(link.sales$comply==0 |link.sales$comply==1 ,1,0) # lawton dummy
-
-link.sales.x <- link.sales[!is.na(link.sales$draw) & !is.na(link.sales$state) & !is.na(link.sales$loc),][c("draw","lawton","state","loc")] # rm NA values
-
-link.sales.x <- cbind(link.sales.x$draw, link.sales.x$lawton, dummify(link.sales.x$state), dummify(link.sales.x$loc))
-
-link.sales.y <- link.sales[!is.na(link.sales$draw) & !is.na(link.sales$state) & !is.na(link.sales$loc),][c("sale")]
-
-# Lasso with cv lambda
-
-if(patient){
-lasso.cv.sale <- glmnet::cv.glmnet(x=as.matrix(link.sales.x), y=as.factor(link.sales.y[,1]), 
-                                family = "binomial", 
-                                type.measure = "class",
-                                alpha=1)
-
-
-saveRDS(lasso.cv.sale, paste0(data.directory,"lasso_cv_sale.rds"))
-}
-
-lasso.cv.sale <- readRDS(paste0(data.directory,"lasso_cv_sale.rds"))
-
-# Extract non-empty coefficients
-
-sum(coef(lasso.cv.sale, s = "lambda.min")) # all but intercept zeroed-out
+ggsave(paste0(data.directory,"plots/forest-year.png"), summary.plot.year, width=11, height=8.5)  
 
 ## Nonparametric estimation
 
@@ -83,30 +80,36 @@ registerDoParallel(cores) # register cores
 
 RNGkind("L'Ecuyer-CMRG") # ensure random number generation
 
-link.sales <- link.sales[!is.na(link.sales$draw),] # rm 111 obs w missing draw
+link.patents <- link.patents[!is.na(link.patents$draw),] # rm 111 obs w missing draw
 
 if(patient){
+  
+  ## Sale
   # Get randomization p value
-  perm.sale <- PermutationTest(y=link.sales$sale,
-                             treat=link.sales$draw,
+  perm.sale <- PermutationTest(y=link.patents$sale,
+                             treat=link.patents$draw,
                              L=5000) 
   print(perm.sale$p)
 
  
   # Get randomization CIs 
-  perm.sale.CI <- PermutationTest(y=link.sales$sale,
-                                  treat=link.sales$draw)
+  perm.sale.CI <- PermutationCI(y=link.patents$sale,
+                                  treat=link.patents$draw)
   print(perm.sale.CI$CI)
   print(perm.sale.CI$MeanDR) # observed t stat is mean DR
   
-  # Plot randomization distribution
-  obs.t.stat <- MeanDR(y=link.sales$sale,
-                       treat=link.sales$draw)
-  perm.plot <- qplot(perm.sale$perm.t.stats, geom="histogram",xlab="Randomization test statistics", ylab="Count",binwidth=0.0001) + 
-    geom_vline(aes(xintercept=  obs.t.stat), colour="red", linetype = "longdash") + 
-    scale_x_continuous(breaks=c(0.246, 0.248,0.250,0.252,0.254),
-                       labels=c("0.246", "0.248","0.250","0.252","0.254"))
+  ## homestead
+  # Get randomization p value
+  perm.homestead <- PermutationTest(y=link.patents$homestead,
+                               treat=link.patents$draw,
+                               L=5000) 
+  print(perm.homestead$p)
   
-  ggsave(paste0(data.directory,"plots/perm-plot.png"), perm.plot, width=8.5, height=11)  
   
+  # Get randomization CIs 
+  perm.homestead.CI <- PermutationCI(y=link.patents$homestead,
+                                treat=link.patents$draw)
+  print(perm.homestead.CI$CI)
+  print(perm.homestead.CI$MeanDR) # observed t stat is mean DR
+
 }

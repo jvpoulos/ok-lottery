@@ -2,29 +2,47 @@
 ### Link participant records to GLO Records###
 #####################################
 
-## Link participants to GLO sales records
-# Merge by surname, middle, and first name
+# Import patents data
+unzip(paste0(data.directory,'patents.csv.zip'),exdir=data.directory)
+patents <- read.csv(paste0(data.directory,"patents.csv"), stringsAsFactors = FALSE)
 
-link.sales <- merge(hs,
-                    sales,
-                    by = c("surname", "middle.name", "first"),
+## Link participants to GLO sales records
+
+# Create participant state code
+
+hs$state_code <- state.abb[hs$state]
+hs$state_code[hs$state=="Oklahoma Territory" | hs$state=="Indian Territory"] <- "OK"
+
+# Merge by name and state
+
+link.patents <- merge(hs,
+                    patents,
+                    by = c("surname", "middle.name", "first","state_code"),
                     all.x = TRUE)
 
-link.sales <- link.sales[!duplicated(link.sales$hs.id), ] # remove dups
+link.patents <- link.patents[!duplicated(link.patents$hs.id), ] # remove dups
 
-# Make binary response =1 if sale record
+# Make binary response =1 if sale/homestead record
 
-link.sales$sale <- ifelse(!is.na(link.sales$Date),1, 0)
+link.patents$sale <- ifelse(is.na(link.patents$sales) | link.patents$sales==0,0,1)
+link.patents$homestead <- ifelse(is.na(link.patents$homesteads) | link.patents$homesteads==0,0,1)
 
-# Make NA n.sales 0
+# Make NA counts 0
 
-link.sales$n.sales[is.na(link.sales$n.sales)] <- 0
+outcome.vars <- c(grep("total_acres",colnames(link.patents), value=TRUE),grep("homesteads",colnames(link.patents), value=TRUE),grep("sales",colnames(link.patents), value=TRUE))
+
+for(x in outcome.vars){
+  link.patents[,x][is.na(link.patents[,x])] <- 0
+}
+
+link.patents$sales[is.na(link.patents$sales)] <- 0
+link.patents$homesteads[is.na(link.patents$homesteads)] <- 0
+link.patents$total_acres[is.na(link.patents$total_acres)] <- 0
 
 # Drop link vars
-drops <- c("sound.surname.x","sound.first.x","surname.length","first.length","sound.surname.y","sound.first.y")
+drops <- c("sound.surname.x","sound.first.x","surname.length","first.length","sound.surname.y","sound.first.y","id")
 
-link.sales <- link.sales[!names(link.sales) %in% drops]
+link.patents <- link.patents[!names(link.patents) %in% drops]
 
 # Save workspace
 save.image(paste0(data.directory,"sales-link.RData"))
-
