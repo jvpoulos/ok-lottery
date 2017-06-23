@@ -22,6 +22,7 @@ library(parallel)
 library(doParallel)
 library(reldist)
 library(randomForest)
+library(noncensus)
 
 install.packages("Rcpp") # need to update before loading dplyr
 

@@ -106,21 +106,27 @@ ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height
 
 ## Plot county-level time-series outcomes by group
 
+c.county.out <- RbindMatchColumns(df1, df8) 
+
+# Get state codes
+data(counties)
+counties$state_fips <- as.numeric(counties$state_fips)
+counties$state_abbr <- counties$state
+
+c.county.out <- merge(c.county.out, counties[c("state_fips","state_abbr")], by.x ="state", by.y="state_fips", all.x=TRUE)
+
+c.county.out <- c.county.out %>% 
+  filter(state_abbr %in% c("CA","CO","MN","MT","ND","NE","OK")) %>%
+  group_by(year,state_abbr) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, tenancy) 
+
 # land inequality
 
-gini.county <- ggplot(c.county[!c.county$cat==0,], aes(x=year, y = G)) + 
-  geom_point() + 
-  geom_point(data=c.county[c.county$cat==1,]) +
-  geom_point(data=c.county[c.county$cat==2,]) +
-  geom_point(data=c.county[c.county$cat==3,]) +
-  geom_point(data=c.county[c.county$cat==4,]) +
-  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
+tenancy.county <- ggplot(c.county.out, aes(x=year, y = G, colour=state_abbr)) + 
+  geom_line() + 
   scale_x_continuous(breaks= years) +
   scale_y_continuous(labels = scales::percent) +
+  scale_colour_discrete(name= "State") +
   ylab("Land Gini") +
   xlab("")
 
@@ -129,62 +135,55 @@ ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=8.5, h
 
 # tenancy
 
-county.tenancy <- ggplot(c.county[!c.county$cat==0,], aes(x=year, y = tenancy)) + 
-  geom_point() + 
-  geom_point(data=c.county[c.county$cat==1,]) +
-  geom_point(data=c.county[c.county$cat==2,]) +
-  geom_point(data=c.county[c.county$cat==3,]) +
-  geom_point(data=c.county[c.county$cat==4,]) +
-  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
-  geom_smooth(data=c.county[c.county$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
+tenancy.county <- ggplot(c.county.out, aes(x=year, y = tenancy, colour=state_abbr)) + 
+  geom_line() + 
   scale_x_continuous(breaks= years) +
   scale_y_continuous(labels = scales::percent) +
-  ylab("Share of tenant farms") +
+  scale_colour_discrete(name= "State") +
+  ylab("Land tenancy") +
   xlab("")
 
-ggsave(paste0(data.directory,"plots/county-tenancy.png"), county.tenancy, width=8.5, height=11)
-
-# avg farm sizes 
-
-county.farmsize <- ggplot(c.county2[!c.county2$cat==0,], aes(x=year, y = farmsize)) + 
-  geom_point() + 
-  geom_point(data=c.county2[c.county2$cat==1,]) +
-  geom_point(data=c.county2[c.county2$cat==2,]) +
-  geom_point(data=c.county2[c.county2$cat==3,]) +
-  geom_point(data=c.county2[c.county2$cat==4,]) +
-  geom_smooth(method="lm",se=FALSE, colour="red",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$cat==1,],method="loess",se=FALSE, colour="green",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$cat==2,],method="loess",se=FALSE, colour="blue",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$cat==3,],method="loess",se=FALSE, colour="orange",size=0.5) +
-  geom_smooth(data=c.county2[c.county2$cat==4,],method="loess",se=FALSE, colour="yellow",size=0.5) +
-  scale_x_continuous(breaks= years) +
-#  scale_y_continuous(limits=c(0,2000)) +
-  coord_cartesian(ylim=c(0, 10000)) +
-  ylab("Average farm size") +
-  xlab("")
-
-ggsave(paste0(data.directory,"plots/county-farmsize.png"), county.farmsize, width=8.5, height=11)
-
+ggsave(paste0(data.directory,"plots/tenancy-county.png"), tenancy.county, width=8.5, height=11)
 
 ## Plot county-level time-series pretreatment covariates by group
 
-bin.melt <- melt(c.county[c("year","totpop","mtot","ftot","farm100","farm500","farm1000","farms","faval","cat")],
+c.county.cov <- RbindMatchColumns(df1, df8)
+
+# Bind farm values time series
+
+farmvals <- read.csv(paste0(data.directory,"census-county/farmval.csv"), stringsAsFactors=FALSE)
+
+farmvals$year <- farmvals$year +1000
+
+farmvals <- farmvals[farmvals$year %in% years,][c(1:5)] # keep decenial years
+
+c.county.cov <- merge(c.county.cov, farmvals, by=c("county","state","year"),
+                  all.x=TRUE)
+
+c.county.cov <- c.county.cov[!names(c.county.cov) %in% c("beta","name.y","level")]
+names(c.county.cov)[4] <- c("name")
+
+c.county.cov <- c.county.cov[!is.na(c.county.cov$county),] # drop if missing county
+
+# Categories
+
+c.county.cov$cat <- ifelse(c.county.cov$state==53 & c.county.cov$county %in% c(ok.lottery), "Treated", "Control") # compare lottery counties vs. all other
+
+# Prepare plot data
+bin.melt <- melt(data.frame(c.county.cov[c("year","totpop","mtot","ftot","farm100","farm500","farm1000","farms","faval","cat")]),
                  id.vars=c("year","cat"))
 
-county.pretreatment <- ggplot(data=na.omit(bin.melt[bin.melt$year==1900,]),aes(x=variable,y=value,colour=as.factor(cat))) + 
-  scale_x_discrete(labels=c("Total pop.", "Urban pop.","Total males","Total females", 
-                            "# farms 100-499 acres" , "# farms 500-999 acres", "# farms 1000+ acres","# farms","Farm value")) +
+county.pretreatment <- ggplot(data=bin.melt[bin.melt$year <= 1900,],aes(x=variable,y=value,colour=as.factor(cat))) + 
+  scale_x_discrete(labels=c("Total pop.", "Total males","Total females", 
+                            "# farms 100-499 acres" , "# farms 500-999 acres", "# farms 1000+ acres","# farms", "Farm value")) +
   geom_boxplot() +
   scale_y_log10() +
 #  facet_wrap(~year,  nrow=1) +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y="Value (common logarithm)",x="") +
+  labs(y="Value (common log)",x="") +
   scale_color_discrete("Group",
-                       labels=c("KS/TX contiguous", "OK other", "OK land run", "OK lottery", "Other"))
+                       labels=c("Other U.S.", "OK lottery"))
 
 ggsave(paste0(data.directory,"plots/county-pretreatment.png"), county.pretreatment, width=8.5, height=11)
