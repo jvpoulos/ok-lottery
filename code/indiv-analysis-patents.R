@@ -3,6 +3,7 @@
 #####################################
 
 patient <- FALSE
+rand.p <- FALSE
 
 ## OLS without covariates
 
@@ -85,30 +86,38 @@ link.patents <- link.patents[!is.na(link.patents$draw),] # rm 111 obs w missing 
 if(patient){
   
   ## Sale
+  if(rand.p){
   # Get randomization p value
   perm.sale <- PermutationTest(y=link.patents$sale,
                              treat=link.patents$draw,
                              L=5000) 
   print(perm.sale$p)
+  }
 
- 
   # Get randomization CIs 
   perm.sale.CI <- PermutationCI(y=link.patents$sale,
-                                  treat=link.patents$draw)
+                                  treat=link.patents$draw,
+                                L=1000,
+                                l=100,
+                                c.range=c(0,0.75))
   print(perm.sale.CI$CI)
   print(perm.sale.CI$MeanDR) # observed t stat is mean DR
   
   ## homestead
+  if(rand.p){
   # Get randomization p value
   perm.homestead <- PermutationTest(y=link.patents$homestead,
                                treat=link.patents$draw,
                                L=5000) 
   print(perm.homestead$p)
-  
+  }
   
   # Get randomization CIs 
   perm.homestead.CI <- PermutationCI(y=link.patents$homestead,
-                                treat=link.patents$draw)
+                                treat=link.patents$draw,
+                                L=1000,
+                                l=100,
+                                c.range=c(0,0.75))
   print(perm.homestead.CI$CI)
   print(perm.homestead.CI$MeanDR) # observed t stat is mean DR
 

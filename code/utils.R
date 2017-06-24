@@ -471,7 +471,7 @@ PermutationTest<-function(y,treat,L=10000,alternative="two.sided",allow.parallel
   return(list("p" = pvalue, "perm.t.stats" = new.t.stats))
 }
 
-PermutationCI <- function(y,treat,c.range=c(0,1),L=100,alpha=0.025,l=100) { 
+PermutationCI <- function(y,treat,c.range=c(-1,1),L=100,alpha=0.025,l=100) { 
   # Calculate randomization confidence interval for ITT weighted difference-in-means.
   #
   # Args:
