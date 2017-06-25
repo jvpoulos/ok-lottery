@@ -90,15 +90,13 @@ if(patient){
   # Get randomization p value
   perm.sale <- PermutationTest(y=link.patents$sale,
                              treat=link.patents$draw,
-                             L=5000) 
+                             L=1000) 
   print(perm.sale$p)
   }
 
   # Get randomization CIs 
   perm.sale.CI <- PermutationCI(y=link.patents$sale,
                                   treat=link.patents$draw,
-                                L=1000,
-                                l=100,
                                 c.range=c(0,0.75))
   print(perm.sale.CI$CI)
   print(perm.sale.CI$MeanDR) # observed t stat is mean DR
@@ -108,15 +106,13 @@ if(patient){
   # Get randomization p value
   perm.homestead <- PermutationTest(y=link.patents$homestead,
                                treat=link.patents$draw,
-                               L=5000) 
+                               L=1000) 
   print(perm.homestead$p)
   }
   
   # Get randomization CIs 
   perm.homestead.CI <- PermutationCI(y=link.patents$homestead,
                                 treat=link.patents$draw,
-                                L=1000,
-                                l=100,
                                 c.range=c(0,0.75))
   print(perm.homestead.CI$CI)
   print(perm.homestead.CI$MeanDR) # observed t stat is mean DR
