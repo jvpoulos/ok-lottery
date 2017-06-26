@@ -44,9 +44,9 @@ TsPlotPatents <- function(df, main = "") {
   geom_hline(yintercept = 0, size = 0.5, colour = "black") +
   
  # horizontal ticks
-  scale_x_datetime(limits=c(as.POSIXct("1892-08-01 06:00:00",tz="UTC"), as.POSIXct("1940-08-01 18:00:00",tz="UTC")),
-                    date_breaks="10 years",labels=date_format("%Y"),
-                    time_trans(tz="UTC"))+
+  # scale_x_datetime(limits=c(as.POSIXct("1892-08-01 06:00:00",tz="UTC"), as.POSIXct("1940-08-01 18:00:00",tz="UTC")),
+  #                   date_breaks="10 years",labels=date_format("%Y"),
+  #                   time_trans(tz="UTC"))+
 
   # main y-axis title
   ylab("") +

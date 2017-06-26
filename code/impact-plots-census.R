@@ -75,9 +75,9 @@ time.vars <- c("date","G.Treated","gini.mean","tenancy.Treated", "tenancy.mean")
 
 ts.means <- ts.dat[time.vars]  %>%
   mutate(pointwise.gini = G.Treated-gini.mean,
-         cumulative.gini = cumsum(pointwise.gini),
+         cumulative.gini = rollmean(pointwise.gini,2,fill=NA, align='right'),
          pointwise.tenancy = tenancy.Treated-tenancy.mean,
-         cumulative.tenancy = cumsum(pointwise.tenancy)) 
+         cumulative.tenancy = rollmean(pointwise.tenancy,2,fill=NA, align='right')) 
 
 ts.means.m <- melt(as.data.frame(ts.means), id.var=c("date"))
 
@@ -106,14 +106,14 @@ sds <- ts.dat  %>%
          pred.gini.max = gini.mean + gini.sd,
          pointwise.gini.min = G.Treated-pred.gini.min,
          pointwise.gini.max = G.Treated-pred.gini.max,
-         cumulative.gini.min = cumsum(pointwise.gini.min),
-         cumulative.gini.max = cumsum(pointwise.gini.max),
+         cumulative.gini.min = rollmean(pointwise.gini.min,2,fill=NA, align='right'),
+         cumulative.gini.max = rollmean(pointwise.gini.max,2,fill=NA, align='right'),
          pred.tenancy.min = tenancy.mean - tenancy.sd,
          pred.tenancy.max = tenancy.mean + tenancy.sd,
          pointwise.tenancy.min = tenancy.Treated-pred.tenancy.min,
          pointwise.tenancy.max = tenancy.Treated-pred.tenancy.max,
-         cumulative.tenancy.min = cumsum(pointwise.tenancy.min),
-         cumulative.tenancy.max = cumsum(pointwise.tenancy.max))
+         cumulative.tenancy.min = rollmean(pointwise.tenancy.min,2,fill=NA, align='right'),
+         cumulative.tenancy.max = rollmean(pointwise.tenancy.max,2,fill=NA, align='right'))
 
 pred.vars <- c("gini.mean", "gini.sd", "pred.gini.min", "pred.gini.max", "pointwise.gini.min", "pointwise.gini.max", "cumulative.gini.min", "cumulative.gini.max",
                "tenancy.mean", "tenancy.sd", "pred.tenancy.min", "pred.tenancy.max", "pointwise.tenancy.min", "pointwise.tenancy.max", "cumulative.tenancy.min", "cumulative.tenancy.max")
@@ -123,4 +123,5 @@ ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 # Plot
 ts.plot <- TsPlotCensus(ts.means.m)
 
+data.directory <- "~/Dropbox/github/ok-lottery/data/"
 ggsave(paste0(data.directory,"plots/census-ts-plot.png"), ts.plot, width=11, height=8.5)

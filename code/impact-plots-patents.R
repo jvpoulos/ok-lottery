@@ -123,4 +123,5 @@ ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 # Plot
 ts.plot <- TsPlotPatents(ts.means.m)
 
+data.directory <- "~/Dropbox/github/ok-lottery/data/"
 ggsave(paste0(data.directory,"plots/patents-ts-plot.png"), ts.plot, width=11, height=8.5)
