@@ -80,4 +80,5 @@ if(run.appendix){ # appendix plots
   
   source("descriptive.R")
   source("balance-plot.R")
+  source("synth.R")
 }
