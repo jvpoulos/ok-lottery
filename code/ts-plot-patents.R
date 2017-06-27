@@ -78,10 +78,10 @@ TsPlotPatents <- function(df, main = "") {
          , legend.text=element_text(size=12, family = "serif")
          , legend.box = "horizontal" # not working?)
   ) + geom_text(data = ann_text,aes(y = value, label =lab), family="serif", fontface="italic",  size=5) +
-   scale_colour_manual(name="", values = c("Observed sales" = "#E69F00","Predicted sales" = "#E69F00", "Observed homesteads" = "#56B4E9", "Predicted homesteads" = "#56B4E9"),
-                       labels=c("Observed sales", "Predicted sales", "Observed homesteads", "Predicted homesteads")) +
+   scale_colour_manual(name="", values = c("Observed sales" = "#E69F00", "Observed homesteads" = "#56B4E9","Predicted sales" = "#E69F00", "Predicted homesteads" = "#56B4E9"),
+                       labels=c("Observed sales", "Observed homesteads", "Predicted sales", "Predicted homesteads")) +
    scale_linetype_manual(name="", values = c("Predicted sales" = "dashed","Predicted homesteads" = "dashed", "Observed sales" = "solid", "Observed homesteads" = "solid"),
-                         labels=c("Observed sales", "Predicted sales", "Observed homesteads", "Predicted homesteads"))  + 
+                         labels=c("Observed sales", "Observed homesteads", "Predicted sales", "Predicted homesteads"))  + 
   theme(legend.key.width=unit(3,"line")) 
 return(gg.xts)
 }
