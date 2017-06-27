@@ -1,6 +1,7 @@
 TsPlotCensus <- function(df, main = "") {
   library(ggplot2)
   library(scales)
+  library(wesanderson)
   
   gg.xts <- ggplot(df, aes(x = date)) +
   
@@ -75,7 +76,7 @@ TsPlotCensus <- function(df, main = "") {
          , legend.position = "top"
   ) + 
     geom_text(data = ann_text,aes(y = value, label =lab), family="serif", fontface="italic",  size=5) +
-   scale_colour_manual(name="", values = c("Observed gini" = "#E69F00","Predicted gini" = "#E69F00", "Observed tenancy" = "#56B4E9", "Predicted tenancy" = "#56B4E9"),
+   scale_colour_manual(name="", values = c("Observed gini" = wes_palette("Darjeeling")[4],"Predicted gini" = wes_palette("Darjeeling")[4], "Observed tenancy" = wes_palette("Darjeeling")[5], "Predicted tenancy" = wes_palette("Darjeeling")[5]),
                        labels=c("Observed Gini", "Observed tenancy", "Predicted Gini", "Predicted tenancy")) +
    scale_linetype_manual(name="", values = c("Predicted gini" = "dashed","Predicted tenancy" = "dashed", "Observed gini" = "solid", "Observed tenancy" = "solid"),
                          labels=c("Observed Gini", "Observed tenancy", "Predicted Gini", "Predicted tenancy"))  + 

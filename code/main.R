@@ -66,13 +66,15 @@ source("indiv-analysis.R") # individual-level analyses (patents outcomes)
 
 ## County-level data
 
-source("census-county-clean.R")
+detach("package:plyr", unload=TRUE) # make sure plyr is not loaded
+source("census-county-clean.R") 
 
 source("impact-plots-census.R")
 
 # glo-patents-county.R
 source("impact-plots-patents.R")
 
+source("did.R")
 
 if(run.appendix){ # appendix plots
   library(devtools)
@@ -80,5 +82,4 @@ if(run.appendix){ # appendix plots
   
   source("descriptive.R")
   source("balance-plot.R")
-  source("synth.R")
 }
