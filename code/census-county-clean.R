@@ -207,3 +207,43 @@ write.csv(tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")], paste0(dat
 write.csv(tenancy.x.test[!colnames(tenancy.x.test) %in% c("date")] , paste0(data.directory,"tenancy-x-test.csv"), row.names=FALSE) 
 write.csv(tenancy.y.train[!colnames(tenancy.y.train) %in% c("date")], paste0(data.directory,"tenancy-y-train.csv"), row.names=FALSE) 
 write.csv(tenancy.y.test[!colnames(tenancy.y.test) %in% c("date")], paste0(data.directory,"tenancy-y-test.csv"), row.names=FALSE) 
+
+## Placebo
+
+# Splits
+
+gini.x.train.p <- gini[gini$date <= "Dec 1890",]
+gini.x.test.p <- gini[gini$date >= "Dec 1900",]
+
+gini.y.train.p <- gini.y[gini.y$date <= "Dec 1890",]
+gini.y.test.p <- gini.y[gini.y$date >= "Dec 1900",]
+
+tenancy.x.train.p <- tenancy[tenancy$date <= "Dec 1890",]
+tenancy.x.test.p <- tenancy[tenancy$date >= "Dec 1900",]
+
+tenancy.y.train.p <- tenancy.y[tenancy.y$date <= "Dec 1890",]
+tenancy.y.test.p <- tenancy.y[tenancy.y$date >= "Dec 1900",]
+
+# Preprocess
+gini.pre.train.p <- preProcess(gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")], method = c("medianImpute"))
+gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")] <- predict(gini.pre.train.p, gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")] )
+
+gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")] <- predict(gini.pre.train.p, gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")] ) # use training values for test set 
+
+tenancy.pre.train.p <- preProcess(tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")], method = c("medianImpute"))
+tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")] <- predict(tenancy.pre.train.p, tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")] )
+
+tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] <- predict(tenancy.pre.train.p, tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] ) # use training values for test set 
+
+# Export each as csv (labels, features)
+data.directory <- "~/Dropbox/github/drnns-prediction/data/census/"
+
+write.csv(gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")], paste0(data.directory,"gini-x-train-placebo.csv"), row.names=FALSE) 
+write.csv(gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")], paste0(data.directory,"gini-x-test-placebo.csv"), row.names=FALSE) 
+write.csv(gini.y.train.p[!colnames(gini.y.train.p) %in% c("date")], paste0(data.directory,"gini-y-train-placebo.csv"), row.names=FALSE) 
+write.csv(gini.y.test.p[!colnames(gini.y.test.p) %in% c("date")], paste0(data.directory,"gini-y-test-placebo.csv"), row.names=FALSE) 
+
+write.csv(tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")], paste0(data.directory,"tenancy-x-train-placebo.csv"), row.names=FALSE) 
+write.csv(tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] , paste0(data.directory,"tenancy-x-test-placebo.csv"), row.names=FALSE) 
+write.csv(tenancy.y.train.p[!colnames(tenancy.y.train.p) %in% c("date")], paste0(data.directory,"tenancy-y-train-placebo.csv"), row.names=FALSE) 
+write.csv(tenancy.y.test.p[!colnames(tenancy.y.test.p) %in% c("date")], paste0(data.directory,"tenancy-y-test-placebo.csv"), row.names=FALSE) 
