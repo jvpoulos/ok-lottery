@@ -11,17 +11,17 @@ TsPlotCensus <- function(df, main = "") {
   theme(strip.text= element_text(size = 12, family = "serif", face='bold')) +
   
   # line colours
-   geom_line(data = subset(df, variable == "Observed gini"), aes(y = value, colour = "Observed gini", linetype="Observed gini"), show.legend = TRUE, size=0.5) +
+   geom_line(data = subset(df, variable == "Observed gini"), aes(y = value, colour = "Observed gini", linetype="Observed gini"), show.legend = TRUE, size=0.3) +
    
-   geom_line(data = subset(df, variable == "Predicted gini"), aes(y = value, colour = "Predicted gini", linetype="Predicted gini"), show.legend = TRUE, size=0.5) +
+   geom_line(data = subset(df, variable == "Predicted gini"), aes(y = value, colour = "Predicted gini", linetype="Predicted gini"), show.legend = TRUE, size=0.3) +
    
    geom_line(data = subset(df, variable == "Pointwise gini"), aes(y = value, colour = "Predicted gini", linetype="Predicted gini"), show.legend = FALSE, size=1) +
    
    geom_line(data = subset(df, variable == "Cumulative gini"), aes(y = value ,colour = "Predicted gini", linetype="Predicted gini"), show.legend = FALSE, size=1) +
     
-    geom_line(data = subset(df, variable == "Observed tenancy"), aes(y = value, colour = "Observed tenancy", linetype="Observed tenancy"), show.legend = FALSE, size=0.5) +
+    geom_line(data = subset(df, variable == "Observed tenancy"), aes(y = value, colour = "Observed tenancy", linetype="Observed tenancy"), show.legend = FALSE, size=0.3) +
     
-    geom_line(data = subset(df, variable == "Predicted tenancy"), aes(y = value, colour = "Predicted tenancy", linetype="Predicted tenancy"), show.legend = FALSE, size=0.5) +
+    geom_line(data = subset(df, variable == "Predicted tenancy"), aes(y = value, colour = "Predicted tenancy", linetype="Predicted tenancy"), show.legend = FALSE, size=0.3) +
     
     geom_line(data = subset(df, variable == "Pointwise tenancy"), aes(y = value, colour = "Predicted tenancy" , linetype="Predicted tenancy"), show.legend = FALSE, size=1) +
     
@@ -39,7 +39,7 @@ TsPlotCensus <- function(df, main = "") {
   
     # vertical line to indicate intervention
   
-  geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-01-01 06:00:00",tz="UTC"))), linetype=4) + 
+    geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-07-311 06:00:00",tz="UTC"))), linetype=4) + 
     
   # horizontal line to indicate zero values
     geom_hline(yintercept = 0, size = 0.5, colour = "black") +

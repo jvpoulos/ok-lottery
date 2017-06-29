@@ -11,17 +11,17 @@ TsPlotPatents <- function(df, main = "") {
   theme(strip.text= element_text(size = 12, family = "serif", face='bold')) +
   
   # line colours
-    geom_line(data = subset(df, variable == "Observed sales"), aes(y = value, colour = "Observed sales", linetype="Observed sales"), show.legend = TRUE, size=0.5) +
+    geom_line(data = subset(df, variable == "Observed sales"), aes(y = value, colour = "Observed sales", linetype="Observed sales"), show.legend = TRUE, size=0.3) +
    
-    geom_line(data = subset(df, variable == "Predicted sales"), aes(y = value, colour = "Predicted sales", linetype="Predicted sales"), show.legend = TRUE, size=0.5) +
+    geom_line(data = subset(df, variable == "Predicted sales"), aes(y = value, colour = "Predicted sales", linetype="Predicted sales"), show.legend = TRUE, size=0.3) +
    
     geom_line(data = subset(df, variable == "Pointwise sales"), aes(y = value, colour = "Predicted sales", linetype="Predicted sales"), show.legend = FALSE, size=1) +
    
     geom_line(data = subset(df, variable == "Cumulative sales"), aes(y = value ,colour = "Predicted sales", linetype="Predicted sales"), show.legend = FALSE, size=1) +
     
-    geom_line(data = subset(df, variable == "Observed homesteads"), aes(y = value, colour = "Observed homesteads", linetype="Observed homesteads"), show.legend = FALSE, size=0.5) +
+    geom_line(data = subset(df, variable == "Observed homesteads"), aes(y = value, colour = "Observed homesteads", linetype="Observed homesteads"), show.legend = FALSE, size=0.3) +
     
-    geom_line(data = subset(df, variable == "Predicted homesteads"), aes(y = value, colour = "Predicted homesteads", linetype="Predicted homesteads"), show.legend = FALSE, size=0.5) +
+    geom_line(data = subset(df, variable == "Predicted homesteads"), aes(y = value, colour = "Predicted homesteads", linetype="Predicted homesteads"), show.legend = FALSE, size=0.3) +
     
     geom_line(data = subset(df, variable == "Pointwise homesteads"), aes(y = value, colour = "Predicted homesteads", linetype="Predicted homesteads"), show.legend = FALSE, size=1) +
     
@@ -39,7 +39,7 @@ TsPlotPatents <- function(df, main = "") {
     
     # vertical line to indicate intervention
   
-  geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-01-01 06:00:00",tz="UTC"))), linetype=4) + 
+  geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-07-311 06:00:00",tz="UTC"))), linetype=4) + 
     
   # horizontal line to indicate zero values
   geom_hline(yintercept = 0, size = 0.5, colour = "black") +

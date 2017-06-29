@@ -73,6 +73,7 @@ source("impact-plots-census.R")
 
 # glo-patents-county.R
 source("impact-plots-patents.R")
+source("impact-plots-patents-placebo.R")
 
 source("did.R")
 
