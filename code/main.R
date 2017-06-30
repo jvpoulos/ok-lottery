@@ -39,7 +39,6 @@ data.directory <- "~/Dropbox/github/ok-lottery/data/"
 code.directory <- "~/Dropbox/github/ok-lottery/code/"
 
 setwd(code.directory)
-
 source("utils.R")
 
 ## Individual-level analyses 

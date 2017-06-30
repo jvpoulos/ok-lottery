@@ -39,7 +39,7 @@ TsPlotPatents <- function(df, main = "") {
     
     # vertical line to indicate intervention
   
-  geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-07-311 06:00:00",tz="UTC"))), linetype=4) + 
+  geom_vline(xintercept=c(as.numeric(as.POSIXct("1901-07-31 06:00:00",tz="UTC"))), linetype=4) + 
     
   # horizontal line to indicate zero values
   geom_hline(yintercept = 0, size = 0.5, colour = "black") +
