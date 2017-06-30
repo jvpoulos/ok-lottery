@@ -125,3 +125,27 @@ ts.plot <- TsPlotCensus(ts.means.m)
 
 data.directory <- "~/Dropbox/github/ok-lottery/data/"
 ggsave(paste0(data.directory,"plots/census-ts-plot.png"), ts.plot, width=11, height=8.5)
+
+# Calculate avg. pointwise impact: 1910-1950
+
+# tenancy
+mean(ts.means.m$value[ts.means.m$variable=="Pointwise tenancy" & (ts.means.m$date>="1910-11-30 19:00:00")])
+
+mean(sds$tenancy.sd[(sds$date>="Jul 1901")])
+
+# gini
+mean(ts.means.m$value[ts.means.m$variable=="Pointwise gini" & (ts.means.m$date>="1910-11-30 19:00:00")])
+
+mean(sds$gini.sd[(sds$date>="Dec 1910")])
+
+# Calculate cumulative impact: 1910:1950
+
+# tenancy
+ts.means.m$value[ts.means.m$variable=="Cumulative tenancy" & ts.means.m$date=="1950-11-30 19:00:00"]- ts.means.m$value[ts.means.m$variable=="Cumulative tenancy" & ts.means.m$date=="1910-11-30 19:00:00"]
+
+rollmean(abs(sds$cumulative.tenancy.min[(sds$date>="Dec 1910")]-sds$cumulative.tenancy.max[(sds$date>="Dec 1910")])/2,2,fill=NA, align='right')[5]
+
+# gini
+ts.means.m$value[ts.means.m$variable=="Cumulative gini" & ts.means.m$date=="1950-11-30 19:00:00"]-ts.means.m$value[ts.means.m$variable=="Cumulative gini" & ts.means.m$date=="1910-11-30 19:00:00"]
+
+rollmean(abs(sds$cumulative.gini.min[(sds$date>="Dec 1910")]-sds$cumulative.gini.max[(sds$date>="Dec 1910")])/2,2,fill=NA, align='right')[5]

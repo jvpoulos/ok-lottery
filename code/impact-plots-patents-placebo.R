@@ -125,3 +125,27 @@ ts.plot <- TsPlotPatents(ts.means.m) + geom_vline(xintercept=c(as.numeric(as.POS
 
 data.directory <- "~/Dropbox/github/ok-lottery/data/"
 ggsave(paste0(data.directory,"plots/patents-ts-plot-placebo.png"), ts.plot, width=11, height=8.5) 
+
+# Calculate avg. pointwise impact: July 1898-June 1901
+
+# sales
+mean(ts.means.m$value[ts.means.m$variable=="Pointwise sales" & (ts.means.m$date>="1898-07-31 19:00:00" & ts.means.m$date<="1901-06-30 19:00:00")])
+
+mean(sds$sales.sd[(sds$date>="Jul 1898" & sds$date<="Jun 1901")])
+
+# homesteads
+mean(ts.means.m$value[ts.means.m$variable=="Pointwise homesteads" & (ts.means.m$date>="1898-07-31 19:00:00" & ts.means.m$date<="1901-06-30 19:00:00")])
+
+mean(sds$homesteads.sd[(sds$date>="Jul 1898" & sds$date<="Jun 1901")])
+
+# Calculate cumulative impact: July 1898-June 1901
+
+# sales
+abs(ts.means.m$value[ts.means.m$variable=="Cumulative sales" & ts.means.m$date=="1898-07-31 19:00:00"] -ts.means.m$value[ts.means.m$variable=="Cumulative sales" & ts.means.m$date=="1901-06-30 19:00:00"])
+
+abs((abs(sds$cumulative.sales.min[(sds$date=="Jul 1898")] -sds$cumulative.sales.max[(sds$date=="Jul 1898")])/2) -(abs(sds$cumulative.sales.min[(sds$date=="Jun 1901")] -sds$cumulative.sales.max[(sds$date=="Jun 1901")])/2))
+
+# homesteads
+abs(ts.means.m$value[ts.means.m$variable=="Cumulative homesteads" & ts.means.m$date=="1898-07-31 19:00:00"] -ts.means.m$value[ts.means.m$variable=="Cumulative homesteads" & ts.means.m$date=="1901-06-30 19:00:00"])
+
+abs((abs(sds$cumulative.homesteads.min[(sds$date=="Jul 1898")] -sds$cumulative.homesteads.max[(sds$date=="Jul 1898")])/2) -(abs(sds$cumulative.homesteads.min[(sds$date=="Jun 1901")] -sds$cumulative.homesteads.max[(sds$date=="Jun 1901")])/2))
