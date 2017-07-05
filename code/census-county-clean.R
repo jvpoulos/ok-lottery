@@ -50,6 +50,8 @@ census.county[[4]] <- census.county[[4]] %>%
          S= 0.2, # by construction, S is 20% in 1890
          tenancy = (sum(fa09te,fa1019te,fa2049te,fa5099te,fa100te,fa500te,fa1000te,
                         fa09sc,fa1019sc,fa2049sc,fa5099sc,fa100sc,fa500sc,fa1000sc))/(farms),
+         p = farms/sum(nbwm21,fbwm21,colm21), # ratio of farms to adult males
+         aG = p*G + (1-p),
          farmsize = farmsize)
 
 top.farms.90 <- census.county[[4]]$top.farms
@@ -62,21 +64,25 @@ census.county[[5]] <- census.county[[5]] %>%
   mutate(G = gini(c((farm12*1.5),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
          beta = (1+G)/(1-G),
          tenancy=(sum(farmwhct,farmcoct,farmwhst,farmcost)/(farms)),
+         p = farms/m21, 
+         aG = p*G + (1-p),
          farmsize = farmsize)
 
 census.county[[5]]$top.farms.90 <- NA
 census.county[[5]]$top.farms.90[interaction(census.county[[5]]$county, census.county[[5]]$state) %in% interaction(census.county[[4]]$county, census.county[[4]]$state)] <-top.farms.90[interaction(census.county[[4]]$county, census.county[[4]]$state) %in% interaction(census.county[[5]]$county, census.county[[5]]$state)]
 census.county[[5]]$S <- 1-(1-census.county[[5]]$top.farms.90/census.county[[5]]$farms)^(census.county[[5]]$beta)
 
-
 # 1910, 1920
+census.county[[6]]$m21 <- census.county[[6]]$mvote # voting age is 21
 for(i in c(6:7)){ 
 census.county[[i]] <- census.county[[i]] %>%
   filter(!is.na(farms)) %>%
   group_by(state,county) %>%
   mutate(G = gini(c((farm02*1),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000)*1000)),
          beta = (1+G)/(1-G),
-         tenancy=(farmten)/(farms))
+         tenancy=(farmten)/(farms),
+         p = farms/m21, 
+         aG = p*G + (1-p))
 
 census.county[[i]]$top.farms.90 <- NA
 census.county[[i]]$top.farms.90[interaction(census.county[[i]]$county, census.county[[i]]$state) %in% interaction(census.county[[4]]$county, census.county[[4]]$state)] <-top.farms.90[interaction(census.county[[4]]$county, census.county[[4]]$state) %in% interaction(census.county[[i]]$county, census.county[[i]]$state)]
@@ -90,6 +96,8 @@ census.county[[8]] <- census.county[[8]] %>%
   mutate(G = gini(c((farm02*1),(farm39*6),(farm1019*14.5),(farm2049*34.5),(farm5099*74.5),(farm100*299.5),(farm175*217),(farm260*379.5),(farm500*749.5),(farm1000*2999.5),(farm5000)*5000)),
          beta = (1+G)/(1-G),
          tenancy=(farmten)/(farms),
+         p = farms/m21, 
+         aG = p*G + (1-p),
          farmsize = farmsize)
 
 census.county[[8]]$top.farms.90 <- NA
@@ -105,6 +113,8 @@ census.county[[9]] <- census.county[[9]] %>%
                     (farm220*239.5),(farm260*319.5),(farm380*439.5),(farm500*599.5),(farm700*849.5),(farm1000*1000))),
          beta = (1+G)/(1-G),
          tenancy=(farmten)/(farms),
+         p = farms/m21, 
+         aG = p*G + (1-p),
          farmsize = farmsize)
 
 census.county[[9]]$top.farms.90 <- NA
@@ -122,6 +132,8 @@ census.county[[10]] <- census.county[[10]] %>%
          farms = farms2,
          beta = (1+G)/(1-G),
          tenancy=(farmten)/(farms),
+         p = farms/m25, # m21 NA
+         aG = p*G + (1-p),
          farmsize = farmsize)
 
 census.county[[10]]$top.farms.90 <- NA
@@ -141,7 +153,7 @@ df6 <- RbindMatchColumns(df5, census.county[[8]])
 df7 <- RbindMatchColumns(df6, census.county[[9]]) 
 df8 <- RbindMatchColumns(df7, census.county[[10]]) 
 
-c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "tenancy")] #1890-1950 # Gini & Tenancy
+c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "aG", "tenancy")] #1890-1950 # Gini & Tenancy
 
 # Year to time
 
@@ -156,7 +168,7 @@ c.county$cat <- ifelse(c.county$state==53 & c.county$county %in% c(ok.lottery), 
 # Create control and treated sums
 cats.sums <- c.county %>% 
   group_by(date,cat) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE)),G, tenancy) 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, aG, tenancy) 
 
 cats.sums <- reshape(data.frame(cats.sums), idvar = "date", timevar = "cat", direction = "wide")
 
@@ -168,11 +180,15 @@ c.county <- c.county[c.county$cat=="Control",] # discard treated since we have t
 
 gini <- reshape(data.frame(c.county[c("date","id","G")]), idvar = "date", timevar = "id", direction = "wide")
 
+agini <- reshape(data.frame(c.county[c("date","id","aG")]), idvar = "date", timevar = "id", direction = "wide")
+
 tenancy <- reshape(data.frame(c.county[c("date","id","tenancy")]), idvar = "date", timevar = "id", direction = "wide")
 
 # Labels
 
 gini.y <- cats.sums[c("date", "G.Treated")]
+
+agini.y <- cats.sums[c("date", "aG.Treated")]
 
 tenancy.y <- cats.sums[c("date", "tenancy.Treated")]
 
@@ -183,6 +199,12 @@ gini.x.test <- gini[gini$date %in% gini.y$date & gini$date > "Dec 1900",]
 
 gini.y.train <- gini.y[gini.y$date <= "Dec 1900",]
 gini.y.test <- gini.y[gini.y$date > "Dec 1900",]
+
+agini.x.train <- agini[agini$date %in% agini.y$date & agini$date <= "Dec 1900",]
+agini.x.test <- agini[agini$date %in% agini.y$date & agini$date > "Dec 1900",]
+
+agini.y.train <- agini.y[agini.y$date <= "Dec 1900",]
+agini.y.test <- agini.y[agini.y$date > "Dec 1900",]
 
 tenancy.x.train <- tenancy[tenancy$date %in% tenancy.y$date & tenancy$date <= "Dec 1900",]
 tenancy.x.test <- tenancy[tenancy$date %in% tenancy.y$date & tenancy$date > "Dec 1900",]
@@ -195,6 +217,11 @@ gini.pre.train <- preProcess(gini.x.train[!colnames(gini.x.train) %in% c("date")
 gini.x.train[!colnames(gini.x.train) %in% c("date")] <- predict(gini.pre.train, gini.x.train[!colnames(gini.x.train) %in% c("date")] )
 
 gini.x.test[!colnames(gini.x.test) %in% c("date")] <- predict(gini.pre.train, gini.x.test[!colnames(gini.x.test) %in% c("date")] ) # use training values for test set 
+
+agini.pre.train <- preProcess(agini.x.train[!colnames(agini.x.train) %in% c("date")], method = c("medianImpute"))
+agini.x.train[!colnames(agini.x.train) %in% c("date")] <- predict(agini.pre.train, agini.x.train[!colnames(agini.x.train) %in% c("date")] )
+
+agini.x.test[!colnames(agini.x.test) %in% c("date")] <- predict(agini.pre.train, agini.x.test[!colnames(agini.x.test) %in% c("date")] ) # use training values for test set 
 
 tenancy.pre.train <- preProcess(tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")], method = c("medianImpute"))
 tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")] <- predict(tenancy.pre.train, tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")] )
@@ -209,47 +236,12 @@ write.csv(gini.x.test[!colnames(gini.x.test) %in% c("date")], paste0(data.direct
 write.csv(gini.y.train[!colnames(gini.y.train) %in% c("date")], paste0(data.directory,"gini-y-train.csv"), row.names=FALSE) 
 write.csv(gini.y.test[!colnames(gini.y.test) %in% c("date")], paste0(data.directory,"gini-y-test.csv"), row.names=FALSE) 
 
+write.csv(agini.x.train[!colnames(agini.x.train) %in% c("date")], paste0(data.directory,"agini-x-train.csv"), row.names=FALSE) 
+write.csv(agini.x.test[!colnames(agini.x.test) %in% c("date")], paste0(data.directory,"agini-x-test.csv"), row.names=FALSE) 
+write.csv(agini.y.train[!colnames(agini.y.train) %in% c("date")], paste0(data.directory,"agini-y-train.csv"), row.names=FALSE) 
+write.csv(agini.y.test[!colnames(agini.y.test) %in% c("date")], paste0(data.directory,"agini-y-test.csv"), row.names=FALSE) 
+
 write.csv(tenancy.x.train[!colnames(tenancy.x.train) %in% c("date")], paste0(data.directory,"tenancy-x-train.csv"), row.names=FALSE) 
 write.csv(tenancy.x.test[!colnames(tenancy.x.test) %in% c("date")] , paste0(data.directory,"tenancy-x-test.csv"), row.names=FALSE) 
 write.csv(tenancy.y.train[!colnames(tenancy.y.train) %in% c("date")], paste0(data.directory,"tenancy-y-train.csv"), row.names=FALSE) 
 write.csv(tenancy.y.test[!colnames(tenancy.y.test) %in% c("date")], paste0(data.directory,"tenancy-y-test.csv"), row.names=FALSE) 
-
-## Placebo
-
-# Splits
-
-gini.x.train.p <- gini[gini$date <= "Dec 1890",]
-gini.x.test.p <- gini[gini$date >= "Dec 1900",]
-
-gini.y.train.p <- gini.y[gini.y$date <= "Dec 1890",]
-gini.y.test.p <- gini.y[gini.y$date >= "Dec 1900",]
-
-tenancy.x.train.p <- tenancy[tenancy$date <= "Dec 1890",]
-tenancy.x.test.p <- tenancy[tenancy$date >= "Dec 1900",]
-
-tenancy.y.train.p <- tenancy.y[tenancy.y$date <= "Dec 1890",]
-tenancy.y.test.p <- tenancy.y[tenancy.y$date >= "Dec 1900",]
-
-# Preprocess
-gini.pre.train.p <- preProcess(gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")], method = c("medianImpute"))
-gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")] <- predict(gini.pre.train.p, gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")] )
-
-gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")] <- predict(gini.pre.train.p, gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")] ) # use training values for test set 
-
-tenancy.pre.train.p <- preProcess(tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")], method = c("medianImpute"))
-tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")] <- predict(tenancy.pre.train.p, tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")] )
-
-tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] <- predict(tenancy.pre.train.p, tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] ) # use training values for test set 
-
-# Export each as csv (labels, features)
-data.directory <- "~/Dropbox/github/drnns-prediction/data/census/"
-
-write.csv(gini.x.train.p[!colnames(gini.x.train.p) %in% c("date")], paste0(data.directory,"gini-x-train-placebo.csv"), row.names=FALSE) 
-write.csv(gini.x.test.p[!colnames(gini.x.test.p) %in% c("date")], paste0(data.directory,"gini-x-test-placebo.csv"), row.names=FALSE) 
-write.csv(gini.y.train.p[!colnames(gini.y.train.p) %in% c("date")], paste0(data.directory,"gini-y-train-placebo.csv"), row.names=FALSE) 
-write.csv(gini.y.test.p[!colnames(gini.y.test.p) %in% c("date")], paste0(data.directory,"gini-y-test-placebo.csv"), row.names=FALSE) 
-
-write.csv(tenancy.x.train.p[!colnames(tenancy.x.train.p) %in% c("date")], paste0(data.directory,"tenancy-x-train-placebo.csv"), row.names=FALSE) 
-write.csv(tenancy.x.test.p[!colnames(tenancy.x.test.p) %in% c("date")] , paste0(data.directory,"tenancy-x-test-placebo.csv"), row.names=FALSE) 
-write.csv(tenancy.y.train.p[!colnames(tenancy.y.train.p) %in% c("date")], paste0(data.directory,"tenancy-y-train-placebo.csv"), row.names=FALSE) 
-write.csv(tenancy.y.test.p[!colnames(tenancy.y.test.p) %in% c("date")], paste0(data.directory,"tenancy-y-test-placebo.csv"), row.names=FALSE) 
