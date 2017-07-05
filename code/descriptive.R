@@ -1,6 +1,11 @@
 #####################################
 ### Descriptive statistics         ###
 #####################################
+library(scales)
+library(ggplot2)
+library(dplyr)
+library(reshape)
+library(reshape2)
 
 ## Plot densities of time lag in filing grants (Lawton)
 
@@ -51,7 +56,7 @@ patents.time <- ggplot(patents.tab, aes(x=Date,y=Sales)) +
   scale_colour_manual(name="Patent type",
                       values=c(Sales="red", Homesteads="blue"))
 
-ggsave(paste0(data.directory,"plots/patents-time.png"), patents.time, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/patents-time.png"), patents.time, width=11, height=8.5)
 
 # By time x state (sales)
 
@@ -76,7 +81,7 @@ sales.state.time <- ggplot(patents.state.tab, aes( Date, Sales ,color=State )) +
   scale_y_continuous(name="Number of sales", labels = comma) +
   xlab("")
 
-ggsave(paste0(data.directory,"plots/sales-state-time.png"), sales.state.time, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/sales-state-time.png"), sales.state.time, width=11, height=8.5)
 
 # By time x state (homesteads)
 
@@ -86,7 +91,7 @@ homesteads.state.time <- ggplot(patents.state.tab, aes( Date, Homesteads ,color=
   scale_y_continuous(name="Number of homesteads", labels = comma) +
   xlab("")
 
-ggsave(paste0(data.directory,"plots/homesteads-state-time.png"), homesteads.state.time, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/homesteads-state-time.png"), homesteads.state.time, width=11, height=8.5)
 
 ## Bar chart of homesteader states
 
@@ -109,6 +114,7 @@ ggsave(paste0(data.directory,"plots/hs-states.png"), hs.state, width=8.5, height
 c.county.out <- RbindMatchColumns(df1, df8) 
 
 # Get state codes
+library(noncensus)
 data(counties)
 counties$state_fips <- as.numeric(counties$state_fips)
 counties$state_abbr <- counties$state
@@ -118,11 +124,11 @@ c.county.out <- merge(c.county.out, counties[c("state_fips","state_abbr")], by.x
 c.county.out <- c.county.out %>% 
   filter(state_abbr %in% c("CA","CO","MN","MT","ND","NE","OK")) %>%
   group_by(year,state_abbr) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE)),G, tenancy) 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, S, tenancy) 
 
 # land inequality
 
-tenancy.county <- ggplot(c.county.out, aes(x=year, y = G, colour=state_abbr)) + 
+gini.county <- ggplot(c.county.out, aes(x=year, y = G, colour=state_abbr)) + 
   geom_line() + 
   scale_x_continuous(breaks= years) +
   scale_y_continuous(labels = scales::percent) +
@@ -130,8 +136,17 @@ tenancy.county <- ggplot(c.county.out, aes(x=year, y = G, colour=state_abbr)) +
   ylab("Land Gini") +
   xlab("")
 
-ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=11, height=8.5)
 
+S.county <- ggplot(c.county.out, aes(x=year, y = S, colour=state_abbr)) + 
+  geom_line() + 
+  scale_x_continuous(breaks= years) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_colour_discrete(name= "State") +
+  ylab("Share of land held by the largest number of farms") +
+  xlab("")
+
+ggsave(paste0(data.directory,"plots/S-county.png"), S.county, width=11, height=8.5)
 
 # tenancy
 
@@ -143,7 +158,7 @@ tenancy.county <- ggplot(c.county.out, aes(x=year, y = tenancy, colour=state_abb
   ylab("Land tenancy") +
   xlab("")
 
-ggsave(paste0(data.directory,"plots/tenancy-county.png"), tenancy.county, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/tenancy-county.png"), tenancy.county, width=11, height=8.5)
 
 ## Plot county-level time-series pretreatment covariates by group
 
@@ -186,4 +201,4 @@ county.pretreatment <- ggplot(data=bin.melt[bin.melt$year <= 1900,],aes(x=variab
   scale_color_discrete("Group",
                        labels=c("Other U.S.", "OK lottery"))
 
-ggsave(paste0(data.directory,"plots/county-pretreatment.png"), county.pretreatment, width=8.5, height=11)
+ggsave(paste0(data.directory,"plots/county-pretreatment.png"), county.pretreatment, width=11, height=8.5)
