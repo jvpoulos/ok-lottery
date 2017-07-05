@@ -124,7 +124,7 @@ c.county.out <- merge(c.county.out, counties[c("state_fips","state_abbr")], by.x
 c.county.out <- c.county.out %>% 
   filter(state_abbr %in% c("CA","CO","MN","MT","ND","NE","OK")) %>%
   group_by(year,state_abbr) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE)),G, S, tenancy) 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, S, tenancy, ls) 
 
 # land inequality
 
@@ -133,7 +133,7 @@ gini.county <- ggplot(c.county.out, aes(x=year, y = G, colour=state_abbr)) +
   scale_x_continuous(breaks= years) +
   scale_y_continuous(labels = scales::percent) +
   scale_colour_discrete(name= "State") +
-  ylab("Land Gini") +
+  ylab("Land share of smallest farms") +
   xlab("")
 
 ggsave(paste0(data.directory,"plots/gini-county.png"), gini.county, width=11, height=8.5)
@@ -143,7 +143,7 @@ S.county <- ggplot(c.county.out, aes(x=year, y = S, colour=state_abbr)) +
   scale_x_continuous(breaks= years) +
   scale_y_continuous(labels = scales::percent) +
   scale_colour_discrete(name= "State") +
-  ylab("Share of land held by the largest number of farms") +
+  ylab("Land share of largest farms") +
   xlab("")
 
 ggsave(paste0(data.directory,"plots/S-county.png"), S.county, width=11, height=8.5)
