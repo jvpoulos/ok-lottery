@@ -32,6 +32,39 @@ gini.train <- cbind(gini.y.train,
                           "gini.mean"=gini.train.mean, 
                           "gini.sd"=gini.train.sd) 
 
+## agini data
+setwd("~/Dropbox/github/drnns-prediction/results/ok-weights/agini")
+
+# Import test results
+
+test.files <- list.files(pattern = "*test.csv")
+
+agini.test.pred <- do.call(cbind,lapply(test.files,read.csv, 
+                                       header=FALSE,
+                                       col.names="agini.pred"))
+agini.test.mean <-rowMeans(agini.test.pred)
+agini.test.sd <- matrixStats::rowSds(as.matrix(agini.test.pred))
+
+# Import training fit
+
+train.files <- list.files(pattern = "*train.csv")
+
+agini.train.pred <- do.call(cbind,lapply(train.files,read.csv, 
+                                        header=FALSE,
+                                        col.names="agini.pred"))
+agini.train.mean <- rowMeans(as.matrix(agini.train.pred))
+agini.train.sd <- matrixStats::rowSds(as.matrix(agini.train.pred))
+
+
+# Bind to splits
+agini.test <- cbind(agini.y.test, 
+                   "agini.mean"= agini.test.mean, 
+                   "agini.sd"= agini.test.sd) 
+agini.train <- cbind(agini.y.train, 
+                    "agini.mean"=agini.train.mean, 
+                    "agini.sd"=agini.train.sd) 
+
+
 ## tenancy data 
 setwd("~/Dropbox/github/drnns-prediction/results/ok-weights/tenancy")
 
@@ -68,14 +101,17 @@ tenancy.train <- cbind(tenancy.y.train,
 setwd(code.directory)
 
 ts.dat <- merge(rbind(gini.train,gini.test), rbind(tenancy.train,tenancy.test), by="date")
+ts.dat <- merge(ts.dat, rbind(agini.train,agini.test), by="date", all.x=TRUE)
 
 ## Plot time series 
 
-time.vars <- c("date","G.Treated","gini.mean","tenancy.Treated", "tenancy.mean")
+time.vars <- c("date","G.Treated","gini.mean","aG.Treated","agini.mean","tenancy.Treated", "tenancy.mean")
 
 ts.means <- ts.dat[time.vars]  %>%
   mutate(pointwise.gini = G.Treated-gini.mean,
          cumulative.gini = rollmean(pointwise.gini,2,fill=NA, align='right'),
+         pointwise.agini = aG.Treated-agini.mean,
+         cumulative.agini = rollmean(pointwise.agini,2,fill=NA, align='right'),
          pointwise.tenancy = tenancy.Treated-tenancy.mean,
          cumulative.tenancy = rollmean(pointwise.tenancy,2,fill=NA, align='right')) 
 
@@ -89,14 +125,15 @@ ts.means.m$date <- as.POSIXct(ts.means.m$date, tz="UTC")
 # Labels
 
 ts.means.m$series <- NA
-ts.means.m$series[ts.means.m$variable=="G.Treated" | ts.means.m$variable=="gini.mean" | ts.means.m$variable=="tenancy.Treated" | ts.means.m$variable=="tenancy.mean"] <- "Time-series"
-ts.means.m$series[ts.means.m$variable=="pointwise.gini" | ts.means.m$variable=="pointwise.tenancy"] <- "Pointwise impact"
-ts.means.m$series[ts.means.m$variable=="cumulative.gini" | ts.means.m$variable=="cumulative.tenancy"] <- "Cumulative impact"
+ts.means.m$series[ts.means.m$variable=="G.Treated" | ts.means.m$variable=="gini.mean" | ts.means.m$variable=="aG.Treated" | ts.means.m$variable=="agini.mean" | ts.means.m$variable=="tenancy.Treated" | ts.means.m$variable=="tenancy.mean"] <- "Time-series"
+ts.means.m$series[ts.means.m$variable=="pointwise.gini" | ts.means.m$variable=="pointwise.agini" | ts.means.m$variable=="pointwise.tenancy"] <- "Pointwise impact"
+ts.means.m$series[ts.means.m$variable=="cumulative.gini" | ts.means.m$variable=="cumulative.agini" |  ts.means.m$variable=="cumulative.tenancy"] <- "Cumulative impact"
 
 ts.means.m$series<- factor(ts.means.m$series, levels=c("Time-series","Pointwise impact", "Cumulative impact")) # reverse order
 
-levels(ts.means.m$variable) <- c("Observed gini","Predicted gini", "Observed tenancy", "Predicted tenancy",
+levels(ts.means.m$variable) <- c("Observed gini","Predicted gini", "Observed adjusted gini","Predicted adjusted gini", "Observed tenancy", "Predicted tenancy",
                                  "Pointwise gini", "Cumulative gini", 
+                                 "Pointwise adjusted gini", "Cumulative adjusted gini", 
                                  "Pointwise tenancy", "Cumulative tenancy")
 
 # SDs
@@ -108,6 +145,12 @@ sds <- ts.dat  %>%
          pointwise.gini.max = G.Treated-pred.gini.max,
          cumulative.gini.min = rollmean(pointwise.gini.min,2,fill=NA, align='right'),
          cumulative.gini.max = rollmean(pointwise.gini.max,2,fill=NA, align='right'),
+         pred.agini.min = agini.mean - agini.sd,
+         pred.agini.max = agini.mean + agini.sd,
+         pointwise.agini.min = aG.Treated-pred.agini.min,
+         pointwise.agini.max = aG.Treated-pred.agini.max,
+         cumulative.agini.min = rollmean(pointwise.agini.min,2,fill=NA, align='right'),
+         cumulative.agini.max = rollmean(pointwise.agini.max,2,fill=NA, align='right'),
          pred.tenancy.min = tenancy.mean - tenancy.sd,
          pred.tenancy.max = tenancy.mean + tenancy.sd,
          pointwise.tenancy.min = tenancy.Treated-pred.tenancy.min,
@@ -116,15 +159,16 @@ sds <- ts.dat  %>%
          cumulative.tenancy.max = rollmean(pointwise.tenancy.max,2,fill=NA, align='right'))
 
 pred.vars <- c("gini.mean", "gini.sd", "pred.gini.min", "pred.gini.max", "pointwise.gini.min", "pointwise.gini.max", "cumulative.gini.min", "cumulative.gini.max",
+               "pred.agini.min", "pred.agini.max", "pointwise.agini.min", "pointwise.agini.max", "cumulative.agini.min", "cumulative.agini.max",
                "tenancy.mean", "tenancy.sd", "pred.tenancy.min", "pred.tenancy.max", "pointwise.tenancy.min", "pointwise.tenancy.max", "cumulative.tenancy.min", "cumulative.tenancy.max")
 ts.means.m <- cbind(ts.means.m, sds[pred.vars])
 ts.means.m[pred.vars][ts.means.m$variable=="Observed",] <- NA
 
 # Plot
-ts.plot <- TsPlotCensus(ts.means.m)
+census.ts.plot <- TsPlotCensus(ts.means.m)
 
 data.directory <- "~/Dropbox/github/ok-lottery/data/"
-ggsave(paste0(data.directory,"plots/census-ts-plot.png"), ts.plot, width=11, height=8.5)
+ggsave(paste0(data.directory,"plots/tenancy-plot.png"), census.ts.plot, width=11, height=8.5)
 
 # Calculate avg. pointwise impact: 1910-1950
 
@@ -138,6 +182,11 @@ mean(ts.means.m$value[ts.means.m$variable=="Pointwise gini" & (ts.means.m$date>=
 
 mean(sds$gini.sd[(sds$date>="Dec 1910")])
 
+# adjusted gini
+mean(ts.means.m$value[ts.means.m$variable=="Pointwise adjusted gini" & (ts.means.m$date>="1910-11-30 19:00:00")])
+
+mean(sds$agini.sd[(sds$date>="Dec 1910")])
+
 # Calculate cumulative impact: 1910:1950
 
 # tenancy
@@ -149,3 +198,8 @@ rollmean(abs(sds$cumulative.tenancy.min[(sds$date>="Dec 1910")]-sds$cumulative.t
 ts.means.m$value[ts.means.m$variable=="Cumulative gini" & ts.means.m$date=="1950-11-30 19:00:00"]-ts.means.m$value[ts.means.m$variable=="Cumulative gini" & ts.means.m$date=="1910-11-30 19:00:00"]
 
 rollmean(abs(sds$cumulative.gini.min[(sds$date>="Dec 1910")]-sds$cumulative.gini.max[(sds$date>="Dec 1910")])/2,2,fill=NA, align='right')[5]
+
+# adjusted gini
+ts.means.m$value[ts.means.m$variable=="Cumulative adjusted gini" & ts.means.m$date=="1950-11-30 19:00:00"]-ts.means.m$value[ts.means.m$variable=="Cumulative adjusted gini" & ts.means.m$date=="1910-11-30 19:00:00"]
+
+rollmean(abs(sds$cumulative.agini.min[(sds$date>="Dec 1910")]-sds$cumulative.agini.max[(sds$date>="Dec 1910")])/2,2,fill=NA, align='right')[5]

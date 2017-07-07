@@ -38,7 +38,7 @@ confint(did.homesteads)[4,]
 
 ## Census
 
-c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "tenancy")] #1890-1950 # Gini & Tenancy
+c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "aG", "tenancy")] #1890-1950 # Gini & Tenancy
 
 # Year to time
 
@@ -50,7 +50,7 @@ c.county$cat <- ifelse(c.county$state==53 & c.county$county %in% c(ok.lottery), 
 
 cats.sums.did <- c.county %>% 
   group_by(date,cat) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE)),G, tenancy) 
+  summarise_each(funs(mean(., na.rm = TRUE)),G, aG, tenancy) 
 
 # Create var for when treatment started
 
@@ -63,6 +63,14 @@ did.gini <- lm(G ~ cat*time, data = cats.sums.did) # subset to when treated coun
 summary(did.gini)
 
 confint(did.gini)[4,]
+
+# adjusted gini 
+did.agini <- lm(aG ~ cat*time, data = cats.sums.did) # subset to when treated counties exist
+
+summary(did.agini)
+
+confint(did.agini)[4,]
+
 
 # tenancy 
 did.tenancy <- lm(tenancy ~ cat*time, data = cats.sums.did) # subset to when treated counties exist
