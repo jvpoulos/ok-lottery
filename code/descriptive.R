@@ -245,6 +245,27 @@ ggsave(paste0(data.directory,"plots/taxpc2-county.png"), taxpc2.county, width=11
 # 
 # ggsave(paste0(data.directory,"plots/taxpc1-county.png"), taxpc1.county, width=11, height=8.5)
 
+# Education spending
+
+educ.years <- c(1890,1932,1957,1962,1967,1972,1977,1982,1987,1992)
+
+educ.out <- reshape(educ, direction="long", varying=list(names(educ)[2:11]), v.names="educpc", 
+                    idvar=c("fips"), timevar="year", times=educ.years) # reshape long
+
+educ.out <- educ.out %>% 
+  filter(state.fips %in% c(6,8,27,30,38,31,40)) %>% 
+  group_by(year,state.fips) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE)),educpc) 
+
+educpc.county <- ggplot(educ.out, aes(x=year, y = educpc, colour=as.factor(state.fips))) + 
+  geom_line() + 
+  scale_x_continuous(breaks= educ.years) +
+  scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
+  ylab("Per-capita education spending ($)") +
+  xlab("") 
+
+ggsave(paste0(data.directory,"plots/educpc-county.png"), educpc.county, width=11, height=8.5)
+
 ## Plot county-level time-series pretreatment covariates by group
 
 c.county.cov <- RbindMatchColumns(df1, df8)
