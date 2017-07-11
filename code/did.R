@@ -36,7 +36,7 @@ summary(did.homesteads)
 
 confint(did.homesteads)[4,]
 
-## Census
+## Inequality/tenancy
 
 c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county", "G", "aG", "tenancy")] #1890-1950 # Gini & Tenancy
 

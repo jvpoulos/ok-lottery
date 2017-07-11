@@ -117,7 +117,9 @@ c.county.out <- RbindMatchColumns(df1, df8)
 library(noncensus)
 data(counties)
 counties$state_fips <- as.numeric(counties$state_fips)
+counties$county_fips <- as.numeric(counties$county_fips)
 counties$state_abbr <- counties$state
+counties$fips <- counties$state_fips*1000 + counties$county_fips
 
 c.county.out <- merge(c.county.out, counties[c("state_fips","state_abbr")], by.x ="state", by.y="state_fips", all.x=TRUE)
 
@@ -159,6 +161,89 @@ tenancy.county <- ggplot(c.county.out, aes(x=year, y = tenancy, colour=state_abb
   xlab("")
 
 ggsave(paste0(data.directory,"plots/tenancy-county.png"), tenancy.county, width=11, height=8.5)
+
+# # revenue (1)
+# rev1.years <- c(1890,1902,1913,1932,1942)
+# 
+# rev1.out <- reshape(rev1, direction="long", varying=list(names(rev1)[2:6]), v.names="revpc1", 
+#                     idvar=c("fips"), timevar="year", times=rev1.years) # reshape long
+# 
+# rev1.out <- rev1.out %>% 
+#   filter(state.fips %in% c(6,8,27,30,38,31,40)) %>%
+#   group_by(year,state.fips) %>% 
+#   summarise_each(funs(mean(., na.rm = TRUE)),revpc1) 
+# 
+# revpc1.county <- ggplot(rev1.out, aes(x=year, y = revpc1, colour=as.factor(state.fips))) + 
+#   geom_line() + 
+#   scale_x_continuous(breaks= rev1.years) +
+#   scale_colour_discrete(name= "State", labels = c("CA","CO","MN","MT","ND","NE","OK")) +
+#   ylab("Per-capita revenue collected by counties") +
+#   xlab("") 
+# 
+# ggsave(paste0(data.directory,"plots/revpc1-county.png"), revpc1.county, width=11, height=8.5)
+
+# revenue (2)
+
+rev2.years <- c(1932,1957,1962,1967,1972,1977,1982,1987,1992)
+
+rev2.out <- reshape(rev2, direction="long", varying=list(names(rev2)[2:10]), v.names="revpc2", 
+                    idvar=c("fips"), timevar="year", times=rev2.years) # reshape long
+
+rev2.out <- rev2.out %>% 
+  filter(state.fips %in% c(6,8,27,30,38,31,40)) %>%
+  group_by(year,state.fips) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE)),revpc2) 
+
+revpc2.county <- ggplot(rev2.out, aes(x=year, y = revpc2, colour=as.factor(state.fips))) + 
+  geom_line() + 
+  scale_x_continuous(breaks= rev2.years) +
+  scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
+  ylab("Per-capita revenues collected by all local governments within counties ($)") +
+  xlab("") 
+
+ggsave(paste0(data.directory,"plots/revpc2-county.png"), revpc2.county, width=11, height=8.5)
+
+# tax (2)
+
+tax2.years <- c(1870,1880, 1932,1962,1967,1972,1977,1982,1987,1992)
+
+tax2.out <- reshape(tax2, direction="long", varying=list(names(tax2)[2:11]), v.names="taxpc2", 
+                    idvar=c("fips"), timevar="year", times=tax2.years) # reshape long
+
+tax2.out <- tax2.out %>% 
+  filter(state.fips %in% c(6,8,27,30,38,31,40)) %>% 
+  group_by(year,state.fips) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE)),taxpc2) 
+
+taxpc2.county <- ggplot(tax2.out, aes(x=year, y = taxpc2, colour=as.factor(state.fips))) + 
+  geom_line() + 
+  scale_x_continuous(breaks= tax2.years) +
+  scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
+  ylab("Per-capita taxes collected by all local governments within counties ($)") +
+  xlab("") 
+
+ggsave(paste0(data.directory,"plots/taxpc2-county.png"), taxpc2.county, width=11, height=8.5)
+
+# # tax (1)
+# 
+# tax1.years <- c(1870,1880,1922,1932,1942)
+# 
+# tax1.out <- reshape(tax1, direction="long", varying=list(names(tax1)[2:6]), v.names="taxpc1", 
+#                     idvar=c("fips"), timevar="year", times=tax1.years) # reshape long
+# 
+# tax1.out <- tax1.out %>% 
+#   filter(state.fips %in% c(6,8,27,30,38,31,40)) %>% 
+#   group_by(year,state.fips) %>% 
+#   summarise_each(funs(mean(., na.rm = TRUE)),taxpc1) 
+# 
+# taxpc1.county <- ggplot(tax1.out, aes(x=year, y = taxpc1, colour=as.factor(state.fips))) + 
+#   geom_line() + 
+#   scale_x_continuous(breaks= tax1.years) +
+#   scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
+#   ylab("Per-capita taxes collected by counties") +
+#   xlab("") 
+# 
+# ggsave(paste0(data.directory,"plots/taxpc1-county.png"), taxpc1.county, width=11, height=8.5)
 
 ## Plot county-level time-series pretreatment covariates by group
 
