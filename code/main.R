@@ -74,6 +74,7 @@ source("impact-plots-patents.R")
 source("impact-plots-patents-placebo.R")
 
 source("did.R")
+source("iv.R")
 
 if(run.appendix){ # appendix plots
   library(devtools)

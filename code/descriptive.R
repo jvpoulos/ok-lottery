@@ -189,12 +189,12 @@ rev2.years <- c(1932,1957,1962,1967,1972,1977,1982,1987,1992)
 rev2.out <- reshape(rev2, direction="long", varying=list(names(rev2)[2:10]), v.names="revpc2", 
                     idvar=c("fips"), timevar="year", times=rev2.years) # reshape long
 
-rev2.out <- rev2.out %>% 
+rev2.out2 <- rev2.out %>% 
   filter(state.fips %in% c(6,8,27,30,38,31,40)) %>%
   group_by(year,state.fips) %>% 
   summarise_each(funs(mean(., na.rm = TRUE)),revpc2) 
 
-revpc2.county <- ggplot(rev2.out, aes(x=year, y = revpc2, colour=as.factor(state.fips))) + 
+revpc2.county <- ggplot(rev2.out2, aes(x=year, y = revpc2, colour=as.factor(state.fips))) + 
   geom_line() + 
   scale_x_continuous(breaks= rev2.years) +
   scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
@@ -210,12 +210,12 @@ tax2.years <- c(1870,1880, 1932,1962,1967,1972,1977,1982,1987,1992)
 tax2.out <- reshape(tax2, direction="long", varying=list(names(tax2)[2:11]), v.names="taxpc2", 
                     idvar=c("fips"), timevar="year", times=tax2.years) # reshape long
 
-tax2.out <- tax2.out %>% 
+tax2.out2 <- tax2.out %>% 
   filter(state.fips %in% c(6,8,27,30,38,31,40)) %>% 
   group_by(year,state.fips) %>% 
   summarise_each(funs(mean(., na.rm = TRUE)),taxpc2) 
 
-taxpc2.county <- ggplot(tax2.out, aes(x=year, y = taxpc2, colour=as.factor(state.fips))) + 
+taxpc2.county <- ggplot(tax2.out2, aes(x=year, y = taxpc2, colour=as.factor(state.fips))) + 
   geom_line() + 
   scale_x_continuous(breaks= tax2.years) +
   scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
@@ -252,12 +252,12 @@ educ.years <- c(1890,1932,1957,1962,1967,1972,1977,1982,1987,1992)
 educ.out <- reshape(educ, direction="long", varying=list(names(educ)[2:11]), v.names="educpc", 
                     idvar=c("fips"), timevar="year", times=educ.years) # reshape long
 
-educ.out <- educ.out %>% 
+educ.out2 <- educ.out %>% 
   filter(state.fips %in% c(6,8,27,30,38,31,40)) %>% 
   group_by(year,state.fips) %>% 
   summarise_each(funs(mean(., na.rm = TRUE)),educpc) 
 
-educpc.county <- ggplot(educ.out, aes(x=year, y = educpc, colour=as.factor(state.fips))) + 
+educpc.county <- ggplot(educ.out2, aes(x=year, y = educpc, colour=as.factor(state.fips))) + 
   geom_line() + 
   scale_x_continuous(breaks= educ.years) +
   scale_colour_discrete(name= "State", labels =c("CA","CO","MN","MT","ND","NE","OK")) +
@@ -265,6 +265,43 @@ educpc.county <- ggplot(educ.out, aes(x=year, y = educpc, colour=as.factor(state
   xlab("") 
 
 ggsave(paste0(data.directory,"plots/educpc-county.png"), educpc.county, width=11, height=8.5)
+
+## Plot pc taxes/revenues vs. inequality (OK counties)
+
+c.county <- RbindMatchColumns(df1, df8)[c("year","state", "county","fips", "G", "aG", "tenancy")] #1890-1950 # Gini & Tenancy
+
+c.county$cat <- ifelse(c.county$state==53 & c.county$county %in% c(ok.lottery), "Treated", "Control") # compare lottery counties vs. all other
+
+# inequality (1900) vs. pc taxes (1992)
+
+tax2$fips <- round(tax2$fips)
+
+tax2.ineq <- merge(tax2, c.county[c('fips','G','aG','cat','year')], by='fips')
+tax2.ineq <- subset(tax2.ineq, aG>0) 
+
+tax2.ineq.fit <- lm(taxpc2.1992 ~ aG, data = subset(tax2.ineq, year==1900 & taxpc2.1992<6000))
+tax2.ineq.plot <- ggplotRegression(tax2.ineq.fit) + xlab("Adjusted land Gini in 1900")  +ylab("Per-capita taxes in 1992 ($)")
+
+ggsave(paste0(data.directory,"plots/tax2-ineq.png"),tax2.ineq.plot, width=11, height=8.5)
+
+# inequality (1900) vs. pc revenue (1992)
+rev2.ineq <- merge(rev2, c.county[c('fips','G','aG','cat','year')], by='fips')
+rev2.ineq <- subset(rev2.ineq, aG>0)
+
+rev2.ineq.fit <- lm(revpc2.1992 ~ aG, data = subset(rev2.ineq, year==1900 & revpc2.1992 < 10000))
+rev2.ineq.plot <- ggplotRegression(rev2.ineq.fit) + xlab("Adjusted land Gini in 1900")  +ylab("Per-capita revenues in 1992 ($)")
+
+ggsave(paste0(data.directory,"plots/rev2-ineq.png"),rev2.ineq.plot, width=11, height=8.5)
+
+# inequality (1900) vs. pc education spending (1992)
+
+educ.ineq <- merge(educ, c.county[c('fips','G','aG','cat','year')], by='fips')
+educ.ineq <- subset(educ.ineq, aG>0) #rm outliers
+
+educ.ineq.fit <- lm(educpc.1992 ~ aG, data = subset(educ.ineq, year==1900 & educpc.1992<4000 & educpc.1992>0))
+educ.ineq.plot <- ggplotRegression(educ.ineq.fit) + xlab("Adjusted land Gini in 1900")  +ylab("Per-capita education spending in 1992 ($)")
+
+ggsave(paste0(data.directory,"plots/educ-ineq.png"),educ.ineq.plot, width=11, height=8.5)
 
 ## Plot county-level time-series pretreatment covariates by group
 
