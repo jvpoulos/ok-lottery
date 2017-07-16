@@ -21,7 +21,6 @@ library(weights)
 library(parallel)
 library(doParallel)
 library(reldist)
-library(randomForest)
 
 install.packages("Rcpp") # need to update before loading dplyr
 

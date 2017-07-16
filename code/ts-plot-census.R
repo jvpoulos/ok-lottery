@@ -29,7 +29,7 @@ TsPlotCensus <- function(df, main = "") {
    # 
    # geom_line(data = subset(df, variable == "Cumulative gini"), aes(y = value ,colour = "Predicted gini", linetype="Predicted gini"), show.legend = FALSE, size=1) +
     
-     geom_line(data = subset(df, variable == "Observed tenancy"), aes(y = value, colour = "Observed tenancy", linetype="Observed tenancy"), show.legend = FALSE, size=0.3) +
+     geom_line(data = subset(df, variable == "Observed tenancy"), aes(y = value, colour = "Observed tenancy", linetype="Observed tenancy"), show.legend = TRUE, size=0.3) +
    
      geom_line(data = subset(df, variable == "Predicted tenancy"), aes(y = value, colour = "Predicted tenancy", linetype="Predicted tenancy"), show.legend = FALSE, size=0.3) +
      
