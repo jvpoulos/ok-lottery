@@ -7,9 +7,9 @@
 # Collect bivariate p values
 balance.states <- sapply(levels(hs$state), function(x) summary(lm(hs$draw.scale ~ I(hs$state==x)))$"coefficients"[2,4]) 
 
-exclude.loc <- c("Burneyville, Texas","Connerville, Indian Territory","Cosby, Missouri","Crafton, Texas","Dexil, Indian Territory","Fryburg, Texas",
-"Garner, Texas","Greinvi Lle, Texas","Havana, Kansas","Horton, Nebraska","Lamad, Missouri","Lomax, Illinois","Maryanville, Kansas","Olloway, Kansas",
-"Paige, Texas","Rising Sun, Ohio","River, Ohio","Russett, Indian Territory","Silverville, Indiana", "NA NA")
+#exclude.loc <- c("Burneyville, Texas","Connerville, Indian Territory","Cosby, Missouri","Crafton, Texas","Dexil, Indian Territory","Fryburg, Texas",
+#"Garner, Texas","Greinvi Lle, Texas","Havana, Kansas","Horton, Nebraska","Lamad, Missouri","Lomax, Illinois","Maryanville, Kansas","Olloway, Kansas",
+#"Paige, Texas","Rising Sun, Ohio","River, Ohio","Russett, Indian Territory","Silverville, Indiana", "NA NA")
 
 #balance.loc <- sapply(levels(hs$loc)[!levels(hs$loc) %in% exclude.loc], function(x) summary(lm(hs$draw.scale ~ I(hs$loc==x)))$"coefficients"[2,4]) 
 

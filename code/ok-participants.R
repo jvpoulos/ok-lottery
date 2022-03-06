@@ -123,9 +123,6 @@ hs$county <- trimws(gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(hs$county), perl=T
 hs$county <- gsub("  ", "", hs$county)
 hs$county[hs$county==""] <- NA
 
-# Scale draw #
-hs$draw.scale <- (hs$draw-mean(hs$draw,na.rm=TRUE))/(2*sd(hs$draw,na.rm=TRUE)) # center and divide by 2 sds
-
 # Concatenate city + state
 hs$loc <- paste(hs$county,hs$state,sep=", ")
 

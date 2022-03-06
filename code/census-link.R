@@ -220,7 +220,7 @@ link.1900.1910 <- merge(hs.link.df, link.df, by=c("hs.id"), all.x=TRUE)
 write.csv(link.1900.1910, paste0(data.directory,"linked-sample-00-10.csv"))
 
 # Merge 1910 transcriptions
-trans.1910 <- read.csv("~/Dropbox/github/ok-lottery/data/trans-1910.csv",
+trans.1910 <- read.csv(paste0(data.directory("trans-1910.csv")),
                        stringsAsFactors=FALSE)[-c(1)]
 
 link.1900.1910 <- merge(link.1900.1910, trans.1910, 
