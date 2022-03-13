@@ -6,6 +6,8 @@
 
 link.patents <- link.patents[!is.na(link.patents$draw),]
 
+## there should be 13,000 participants (minus those with missing draw #s)- 6500x2 - remove draw numbers >6500
+
 # Create dummy var for gender based on census first names
 # https://github.com/SocialHarvest/harvester/blob/master/data/census-female-names.csv
 
@@ -16,13 +18,17 @@ female.census.names <- female.census.names[!female.census.names%in%male.census.n
 
 link.patents$female <- ifelse(link.patents$first %in% female.census.names, 1, 0)
 
+lawton$female <- ifelse(lawton$first %in% female.census.names, 1, 0)
+
 # etc.
 
 link.patents$comply <- as.numeric(link.patents$comply)
 
 link.patents$lawton <- ifelse(!is.na(link.patents$comply),1,0) 
+
+link.patents$first.draw <- ifelse(link.patents$draw <= quantile(link.patents$draw)[2],1,0) # draw within first quantile
   
 # state and location dummies
 
-state.dummies <- dummify(link.patents$state)[,names(sort(table(hs$state),TRUE)[sort(table(hs$state),TRUE)>200])]
-loc.dummies <- dummify(link.patents$loc)[,names(sort(table(hs$loc),TRUE)[sort(table(hs$loc),TRUE)>200])]
+state.dummies <- dummify(link.patents$state)[,names(sort(table(link.patents$state),TRUE)[sort(table(link.patents$state),TRUE)>200])]
+loc.dummies <- dummify(link.patents$loc)[,names(sort(table(link.patents$loc),TRUE)[sort(table(link.patents$loc),TRUE)>=200])]

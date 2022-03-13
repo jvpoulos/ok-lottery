@@ -15,6 +15,10 @@ library(caret)
 library(stringr)
 library(zoo)
 library(plyr)
+library(gbm)
+
+library(parallel)
+ncores<- detectCores()
 
 #install.packages('survival')# need to update before loading weights
 
@@ -67,8 +71,5 @@ if(run.appendix){ # appendix summaries
   source("code/balance-plot.R")
 }
 
-source("code/indiv-analysis.R") # individual-level analyses (patents outcomes)
+source("code/indiv-analysis-patents.R") # individual-level analyses (patents outcomes)
 source("code/indiv-analysis-census.R") # individual-level analyses (census outcomes)
-
-
-

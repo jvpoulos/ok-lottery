@@ -2,119 +2,68 @@
 ### Individual-level analysis    ###
 #####################################
 
-patient <- FALSE
-rand.p <- FALSE
 
-## OLS without covariates
+# Est. balancing weights
 
-# Sale (binary/continuous)
+draw.fit <- gbm(draw ~ ., data = cbind(link.patents,state.dummies,loc.dummies)[c("draw",balance.vars)],
+               distribution = "gaussian", n.trees = 100, shrinkage = 0.1,             
+               interaction.depth = 3, bag.fraction = 0.5, train.fraction = 0.8,  
+               n.minobsinnode = 10, cv.folds = 5, keep.data = TRUE, 
+               verbose = FALSE, n.cores = ncores)
 
-lm.sale <- lm(sale~ draw.scale, data=link.patents)
-summary(lm.sale)
-confint(lm.sale)
+best.iter <- gbm.perf(draw.fit, method = "cv") # 5 fold cv
+print(best.iter)
 
-lm.sales <- lm(sales~ draw.scale, data=link.patents)
-summary(lm.sales)
-confint(lm.sales)
+# Plot relative influence of each variable
+summary(draw.fit, n.trees = best.iter)  # using estimated best number of trees
 
-# Homestead (binary/continuous)
+# calculate propensity scores
+p.scores <- predict(draw.fit, n.trees = best.iter, type = "response")
 
-lm.homestead <- lm(homestead~ draw.scale, data=link.patents)
+## Estimate dose-response curves
+
+# Sale (binary)
+
+lm.sale <- lm(sale~draw + I(draw^2) + I(draw^3) + p.scores + I(p.scores^2) + I(p.scores^3) + I(draw^2)*p.scores + draw*I(p.scores^2), data=data.frame("p.scores"=p.scores,
+                                     "sale"=link.patents$sale,
+                                     "draw"=link.patents$draw))
+
+lm.sale.preds <- lapply(sort(unique(link.patents$draw)), function (j) predict(lm.sale, newdata=data.frame("p.scores"=p.scores,
+                                    "sale"=link.patents$sale,
+                                    "draw"=j), type="response", se.fit = TRUE))
+
+lm.sale.curve <- sapply(lm.sale.preds, function(x) mean(x$fit))
+lm.sale.curve.se <- sapply(lm.sale.preds, function(x) mean(x$se.fit))
+
+lm.sale.curve.female <- sapply(lm.sale.preds, function(x) mean(x$fit[which(link.patents$female==1)]))
+lm.sale.curve.female.se <- sapply(lm.sale.preds, function(x) mean(x$se.fit[which(link.patents$female==1)]))
+
+lm.sale.curve.df <- data.frame("fit"=lm.sale.curve,
+                               "upper"= lm.sale.curve + 1.96*lm.sale.curve.se,
+                               "lower"=lm.sale.curve - 1.96*lm.sale.curve.se,
+                               "fit.female"=lm.sale.curve.female,
+                               "upper.female"= lm.sale.curve.female + 1.96*lm.sale.curve.female.se,
+                               "lower.female"=lm.sale.curve.female - 1.96*lm.sale.curve.female.se,
+                               "draw"=sort(unique(link.patents$draw)))
+
+colors <- c("All" = "blue", "Female" = "red")
+
+sale.plot <- ggplot(lm.sale.curve.df, aes(x = draw)) +
+  theme_bw() +
+  geom_line(aes(y = fit, color="All")) +
+  geom_line(aes(y = fit.female, color="Female")) +
+#  ylab("Estimated average dose-response") +
+  labs(y="Probability of land patent purchase",
+       x="Draw number",
+       color="Group") +
+  geom_smooth(aes(y=fit, ymin = lower, ymax = upper, color="All"), stat = "identity",alpha=0.1) +
+  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.1) +
+  scale_color_manual(values = colors)
+
+ggsave(paste0(data.directory,"plots/sale-plot.png"), sale.plot, scale = 1.25)
+
+# Homestead (binary)
+
+lm.homestead <- lm(homestead~draw, data=link.patents)
 summary(lm.homestead)
 confint(lm.homestead)
-
-lm.homesteads <- lm(homesteads ~ draw.scale, data=link.patents)
-summary(lm.homesteads)
-confint(lm.homesteads)
-
-# Total acres
-
-lm.acres <- lm(total_acres ~ draw.scale, data=link.patents)
-summary(lm.acres)
-confint(lm.acres)
-
-# estimates by year
-
-for(x in c(grep('total_acres', colnames(link.patents), value=TRUE), 
-    grep('sales', colnames(link.patents), value=TRUE),
-    grep('homesteads', colnames(link.patents), value=TRUE))){ # Scale total acres to 0 -to 1
-  link.patents[,x] <-  scales:::rescale(link.patents[,x] , to = c(0, 1))
-}
-
-lm.year <- lapply(outcome.vars,
-                       function(x){
-                         formula <- paste(x, "~ draw.scale")
-                         lm <- lm(formula, data=link.patents)
-                         return(data.frame("Est" = lmtest::coeftest(lm)[,1]["draw.scale"],
-                                           "p"= lmtest::coeftest(lm)[,4]["draw.scale"],
-                                           "CI" = confint(lm)[2,],
-                                           "N" = summary(lm)$df[2]))
-                       })
-
-  
-# Create data for plot 
-plot.data.year <- data.frame(variable= outcome.vars,
-                             y = sapply(lm.year, "[[", "Est")[1,],
-                            y.lo = sapply(lm.year, "[[", "CI")[1,],
-                            y.hi = sapply(lm.year, "[[", "CI")[2,])
-
-plot.data.year <- plot.data.year[!plot.data.year$variable %in% c('sales','homesteads','total_acres'),] # rm totals
-plot.data.year$x <- as.numeric(str_sub(plot.data.year$variable, start= -4))
-
-plot.data.year$variable <- as.character(plot.data.year$variable)
-plot.data.year$variable[grep('total_acres',plot.data.year$variable)] <- "Total acres"
-plot.data.year$variable[grep('homesteads',plot.data.year$variable)] <- "Homesteads"
-plot.data.year$variable[grep('sales',plot.data.year$variable)] <- "Sales"
-
-# Plot forest plots
-plot.data.year$x <- factor(plot.data.year$x, levels=sort(plot.data.year$x)) 
-summary.plot.year <- ForestPlot2(plot.data.year,ylab="Treatment effect",xlab="Year of patent", leglab="Outcome") 
-
-ggsave(paste0(data.directory,"plots/forest-year.png"), summary.plot.year, width=11, height=8.5)  
-
-## Nonparametric estimation
-
-# Setup parallel processing 
-cores <- detectCores() # specify number of cores to use
-
-registerDoParallel(cores) # register cores
-
-RNGkind("L'Ecuyer-CMRG") # ensure random number generation
-
-link.patents <- link.patents[!is.na(link.patents$draw),] # rm 111 obs w missing draw
-
-if(patient){
-  
-  ## Sale
-  if(rand.p){
-  # Get randomization p value
-  perm.sale <- PermutationTest(y=link.patents$sale,
-                             treat=link.patents$draw,
-                             L=1000) 
-  print(perm.sale$p)
-  }
-
-  # Get randomization CIs 
-  perm.sale.CI <- PermutationCI(y=link.patents$sale,
-                                  treat=link.patents$draw,
-                                c.range=c(0,0.75))
-  print(perm.sale.CI$CI)
-  print(perm.sale.CI$MeanDR) # observed t stat is mean DR
-  
-  ## homestead
-  if(rand.p){
-  # Get randomization p value
-  perm.homestead <- PermutationTest(y=link.patents$homestead,
-                               treat=link.patents$draw,
-                               L=1000) 
-  print(perm.homestead$p)
-  }
-  
-  # Get randomization CIs 
-  perm.homestead.CI <- PermutationCI(y=link.patents$homestead,
-                                treat=link.patents$draw,
-                                c.range=c(0,0.75))
-  print(perm.homestead.CI$CI)
-  print(perm.homestead.CI$MeanDR) # observed t stat is mean DR
-
-}
