@@ -431,6 +431,12 @@ RbindMatchColumns <- function(input1, input2) {
   return(rbind(input1[, column.names], input2[, column.names]))
 }
 
+quintileCut <- function(x){
+  cuts <- cut(x, quantile(x, probs = seq(0, 1, 0.1)), 
+                    labels = c("0-10","10-20","20-30","30-40","40-50","50-60","60-70","70-80","80-90","90-100"), include.lowest = TRUE)
+  return(cuts)
+}
+
 ## Plot functions
 
 # Function for balance plot theme

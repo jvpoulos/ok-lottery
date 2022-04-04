@@ -2,6 +2,7 @@
 ### Individual-level analysis    ###
 #####################################
 
+## randomization inference - first vs. fifth quantile
 
 # Est. balancing weights
 

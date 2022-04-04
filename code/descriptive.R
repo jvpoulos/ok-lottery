@@ -2,16 +2,22 @@
 ### Descriptive statistics         ###
 #####################################
 
-# Summary plot
+## Summary plot
 
 binary.covars <-c("lawton", colnames(state.dummies), colnames(loc.dummies))
 
 binary.outcomes <- c("sale","homestead")
 continuous.outcomes <-c("sales","homesteads","total_acres")
 
-tableNominal(cbind(link.patents,state.dummies,loc.dummies)[c("female",binary.covars, binary.outcomes)], group=link.patents$female, cumsum=FALSE, longtable = FALSE, prec=2)
+# by gender
+print(tableNominal(cbind(link.patents,state.dummies,loc.dummies)[c("female",binary.covars, binary.outcomes)], group=link.patents$female, cumsum=FALSE, longtable = FALSE, prec=3))
 
 print(tableContinuous(data.frame(link.patents)[continuous.outcomes], group=link.patents$female, cumsum=FALSE, stats= c("n", "min", "mean", "max", "s"), longtable = FALSE, prec=2))
+
+# by quintile
+print(tableNominal(cbind(link.patents,state.dummies,loc.dummies)[c("female",binary.covars, binary.outcomes)], group=link.patents$quintile, cumsum=FALSE, longtable = FALSE, prec=3))
+
+print(tableContinuous(data.frame(link.patents)[continuous.outcomes], group=link.patents$quintile, cumsum=FALSE, stats= c("n", "min", "mean", "max", "s"), longtable = FALSE, prec=2))
 
 ## Plot densities of time lag in filing grants (Lawton)
 

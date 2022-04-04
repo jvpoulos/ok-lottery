@@ -5,8 +5,7 @@
 # Rm participants with missing draw number
 
 link.patents <- link.patents[!is.na(link.patents$draw),]
-
-## there should be 13,000 participants (minus those with missing draw #s)- 6500x2 - remove draw numbers >6500
+## there should be 13,000 participants (minus those with missing draw #s)- 6500x2
 
 # Create dummy var for gender based on census first names
 # https://github.com/SocialHarvest/harvester/blob/master/data/census-female-names.csv
@@ -26,8 +25,10 @@ link.patents$comply <- as.numeric(link.patents$comply)
 
 link.patents$lawton <- ifelse(!is.na(link.patents$comply),1,0) 
 
-link.patents$first.draw <- ifelse(link.patents$draw <= quantile(link.patents$draw)[2],1,0) # draw within first quantile
-  
+link.patents$quintile <- quintileCut(link.patents$draw) # quintiles
+
+link.patents$first.quintile <- ifelse(link.patents$quintile=="0-10",1,0)
+
 # state and location dummies
 
 state.dummies <- dummify(link.patents$state)[,names(sort(table(link.patents$state),TRUE)[sort(table(link.patents$state),TRUE)>200])]
