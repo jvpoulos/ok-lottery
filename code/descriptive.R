@@ -4,11 +4,6 @@
 
 ## Summary plot
 
-binary.covars <-c("lawton", colnames(state.dummies), colnames(loc.dummies))
-
-binary.outcomes <- c("sale","homestead")
-continuous.outcomes <-c("sales","homesteads","total_acres")
-
 # by gender
 print(tableNominal(cbind(link.patents,state.dummies,loc.dummies)[c("female",binary.covars, binary.outcomes)], group=link.patents$female, cumsum=FALSE, longtable = FALSE, prec=3))
 

@@ -2,10 +2,6 @@
 ### Balance plot ###
 #####################################
 
-# Balance vars are state + city/state
-
-balance.vars <- c("female",binary.covars)
-
 # Collect bivariate p values
 balance.p.values <- sapply(balance.vars, function(x) summary(lm(link.patents$first.quintile ~ cbind(link.patents,state.dummies,loc.dummies)[,x]))$"coefficients"[2,4]) 
 

@@ -450,17 +450,3 @@ ThemeBw1 <- function(base_size = 8, base_family = "") {
       legend.position = "none"
     )
 }
-
-ggplotRegression <- function (fit) {
-  
-  require(ggplot2)
-  
-  ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
-    geom_point() +
-    stat_smooth(method = "lm", col = "red") +
-    labs(title = paste0("y = ",signif(fit$coef[[1]],2 ), " + ",
-                       signif(fit$coef[[2]], 2), "x, ",
-                       " p-value = ",signif(summary(fit)$coef[2,4], 2), ", ",
-                       " R^2 = ",signif(summary(fit)$r.squared, 2), ", ",
-                       " N = ",summary(fit)$df[2]+summary(fit)$df[1]))
-}

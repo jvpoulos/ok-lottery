@@ -25,7 +25,7 @@ link.patents$comply <- as.numeric(link.patents$comply)
 
 link.patents$lawton <- ifelse(!is.na(link.patents$comply),1,0) 
 
-link.patents$quintile <- quintileCut(link.patents$draw) # quintiles
+link.patents$quintile <- quintileCut(link.patents$draw) # deciles
 
 link.patents$first.quintile <- ifelse(link.patents$quintile=="0-10",1,0)
 
@@ -33,3 +33,13 @@ link.patents$first.quintile <- ifelse(link.patents$quintile=="0-10",1,0)
 
 state.dummies <- dummify(link.patents$state)[,names(sort(table(link.patents$state),TRUE)[sort(table(link.patents$state),TRUE)>200])]
 loc.dummies <- dummify(link.patents$loc)[,names(sort(table(link.patents$loc),TRUE)[sort(table(link.patents$loc),TRUE)>=200])]
+
+# for descriptive plots
+binary.covars <-c("lawton", colnames(state.dummies), colnames(loc.dummies))
+
+binary.outcomes <- c("sale","homestead")
+continuous.outcomes <-c("sales","homesteads","total_acres")
+
+# Balance vars are state + city/state
+
+balance.vars <- c("female",binary.covars)
