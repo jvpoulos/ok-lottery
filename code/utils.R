@@ -393,26 +393,13 @@ CleanPatents <- function(patents){
 
 # Forest plot for summary figure
 ForestPlot <- function(d, xlab, ylab){
-  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=x)) + 
-    geom_pointrange(size=1, alpha=0.9) + 
+  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=Analysis)) + 
+    geom_pointrange(size=1, alpha=0.9, position = position_dodge(width = 0.3)) + 
     coord_flip() +
     geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
     theme(legend.position="none") +
     ylab(xlab) +
     xlab(ylab) #switch because of the coord_flip() above
-  return(p)
-}
-
-# Forest plot for year figure
-ForestPlot2 <- function(d, xlab, ylab,leglab){
-  p <- ggplot(d, aes(x=x, y = y, ymin=y.lo, ymax=y.hi,colour=variable)) + 
-    geom_pointrange(size=1, alpha=0.9) + 
-  #  coord_flip() +
-    geom_hline(data=data.frame(x=0, y = 1), aes(x=x, yintercept=0), colour="black", lty=2) +
-    scale_y_continuous(labels = scales::percent) +
-    labs(colour = leglab) +
-    ylab(ylab) +
-    xlab(xlab) #switch because of the coord_flip() above
   return(p)
 }
 
@@ -437,6 +424,58 @@ quintileCut <- function(x){
   return(cuts)
 }
 
+MeanDR <- function(y,treat,w=NULL,x=NULL){ 
+  # Calculate avg. dose-response fn
+  #
+  # Args:
+  #   y: Response vector.
+  #   treat: Treatment assignment vector.
+  #   x: covariate to condition on. 
+  #
+  # Returns:
+  #   Mean of dose-response fn
+  treat.dummies <- dummify(treat)
+  if(!is.null(w)){
+    ipw <- rowSums(treat.dummies/w) # for ATE (target pop. is all units)
+  }
+  if(is.null(x) & is.null(w)){
+    dr <- ddply(data.frame("y"=y,
+                           "treat"=treat),~treat,summarise,mean=mean(y))
+  }else if(!is.null(x) & is.null(w)){
+    dr <- ddply(data.frame("y"=y[which(x==1)],
+                           "treat"=treat[which(x==1)]),~treat,summarise,mean=mean(y))
+  }else if(is.null(x) & !is.null(w)){
+    dr <- ddply(data.frame("y"=y,
+                           "w"=ipw,
+                           "treat"=treat),~treat,summarise,mean=weighted.mean(y,w))
+  } else if (!is.null(x) & !is.null(w)){
+    dr <- ddply(data.frame("y"=y[which(x==1)],
+                           "w"=ipw[which(x==1)],
+                           "treat"=treat[which(x==1)]),~treat,summarise,mean=weighted.mean(y,w))
+  }
+  
+  return(dr$mean)
+} 
+
+MeanDrBoot <- function(data, idx){
+  df <- data[idx, ]
+  if(is.null(df$x)){
+    return(outer(MeanDR(y=df$y,treat=df$treat,w=df$w), MeanDR(y=df$y,treat=df$treat,w=df$w)[1], `-`)[-1]) 
+  }else{
+    return(outer(MeanDR(y=df$y,treat=df$treat, w=df$w,x=df$x), MeanDR(y=df$y,treat=df$treat,w=df$w,x=df$x)[1], `-`)[-1]) 
+  }
+}
+
+getCI <- function(x,w) {
+  b1 <- boot.ci(x,type="norm",index=w)
+  ## extract info for all CI types
+  tab <- t(sapply(b1[-(1:3)],function(x) tail(c(x),2)))
+  ## combine with metadata: CI method, index
+  tab <- cbind(w,rownames(tab),as.data.frame(tab))
+  colnames(tab) <- c("index","method","lwr","upr")
+  tab
+}
+
 ## Plot functions
 
 # Function for balance plot theme
@@ -449,4 +488,16 @@ ThemeBw1 <- function(base_size = 8, base_family = "") {
       axis.title.y =      element_text(size = base_size,angle=90,vjust=.01,hjust=.1),
       legend.position = "none"
     )
+}
+
+# Summary figure for estimates
+ForestPlot <- function(d, xlab, ylab){
+  # Forest plot for summary figure
+  p <- ggplot(d, aes(x=x, y=y, ymin=y.lo, ymax=y.hi,colour=Analysis)) + 
+    geom_pointrange(size=1, alpha=0.5,position = position_dodge(width = 0.5)) + 
+    coord_flip() +
+    geom_hline(aes(yintercept=0), lty=2) +
+    ylab(xlab) +
+    xlab(ylab) #switch because of the coord_flip() above
+  return(p)
 }

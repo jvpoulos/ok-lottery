@@ -16,7 +16,7 @@ library(stringr)
 library(zoo)
 library(plyr)
 library(glmnet)
-library(splines)
+library(boot)
 
 library(parallel)
 ncores<- detectCores()
@@ -45,7 +45,6 @@ data.directory <- "data/"
 code.directory <- "code/"
 
 source("code/utils.R")
-source("code/dr-permutation.R")
 source("code/SuperLearner.R")
 
 ## Individual-level analyses 
