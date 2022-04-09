@@ -72,16 +72,20 @@ X.hs.test$jaro.first[is.na(X.hs.test$jaro.first)] <- jaro.first.mode
 
 # Create outcomes vector
 Y.hs.train <- as.matrix(df.hs.train$is.link)
-# 
-# Train
-# set.seed(42)
-# fitSL.hs.link <- SuperLearner(Y=Y.hs.train[,1],
-#                            X=data.frame(X.hs.train),
-#                            SL.library=SL.library.class,
-#                            family="binomial") # glmnet response is 2-level factor
-# 
-# #Save pred model
-# saveRDS(fitSL.hs.link, file = paste0(data.directory,"census-hs-link.rds"))
+
+train.SL <- FALSE
+
+if(train.SL){
+  #Train
+  set.seed(42)
+  fitSL.hs.link <- SuperLearner(Y=Y.hs.train[,1],
+                             X=data.frame(X.hs.train),
+                             SL.library=SL.library.class,
+                             family="binomial") # glmnet response is 2-level factor
+
+  #Save pred model
+  saveRDS(fitSL.hs.link, file = paste0(data.directory,"census-hs-link.rds"))
+}
 
 # Open model & print summary table
 fitSL.hs.link <- readRDS(paste0(data.directory,"census-hs-link.rds"))
@@ -179,15 +183,17 @@ X.test <-df.test[features]
 # Create outcomes vector
 Y.train <- as.matrix(df.train$is.link)
 
+if(train.SL){
 # Train
-# set.seed(42)
-# fitSL.link <- SuperLearner(Y=Y.train[,1],
-#                            X=data.frame(X.train),
-#                            SL.library=SL.library.class,
-#                            family="binomial") # glmnet response is 2-level factor
-#
-# #Save pred model
-# saveRDS(fitSL.link, file = paste0(data.directory,"census-link.rds"))
+set.seed(42)
+fitSL.link <- SuperLearner(Y=Y.train[,1],
+                           X=data.frame(X.train),
+                           SL.library=SL.library.class,
+                           family="binomial") # glmnet response is 2-level factor
+
+#Save pred model
+saveRDS(fitSL.link, file = paste0(data.directory,"census-link.rds"))
+}
 
 # Print summary table
 fitSL.link <- readRDS(paste0(data.directory,"census-link.rds"))

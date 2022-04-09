@@ -17,6 +17,7 @@ library(zoo)
 library(plyr)
 library(glmnet)
 library(boot)
+ibrary(reporttools)
 
 library(parallel)
 ncores<- detectCores()
@@ -67,9 +68,10 @@ if(link.census){
 
 source("code/prepare-analyses.R")
 
+source("code/balance-plot.R")
+
 if(run.appendix){ # appendix summaries
   source("code/descriptive.R")
-  source("code/balance-plot.R")
 }
 
 source("code/indiv-analysis-patents.R") # individual-level analyses (patents outcomes)
