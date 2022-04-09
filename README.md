@@ -28,6 +28,9 @@ Instructions
 1. `cd ok-lottery`, and download Census samples into data folder:
 
 `wget -0  data/census-1900-100-sample.csv.zip "https://www.dropbox.com/s/aq7igj6sudaf73o/census-1900-100-sample.csv.zip?dl=1"`
+
+and
+
 `wget -0  data/census-1910-100-sample.csv.zip "https://www.dropbox.com/s/tj3pkzjzjx3hqp8/census-1910-100-sample.csv.zip?dl=1"`
 
 2. Open `code/main.R` and ensure libraries are installed. By default, links participants to census and land patent records. 
