@@ -17,7 +17,7 @@ library(zoo)
 library(plyr)
 library(glmnet)
 library(boot)
-ibrary(reporttools)
+library(reporttools)
 
 library(parallel)
 ncores<- detectCores()
