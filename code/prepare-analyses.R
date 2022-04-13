@@ -2,9 +2,13 @@
 ### Prepared linked dataset for analyses    ###
 ###############################################
 
-# Rm participants with missing draw number
+# Rm participants with missing or invalid draw number
 
 link.patents <- link.patents[!is.na(link.patents$draw),] #n= 13995 # there should be 13,000 participants (minus those with missing draw #s)- 6500x2
+link.patents <- link.patents[link.patents$draw<=6500,]
+
+#dup.draws <- as.numeric(names(which(sort(table(link.patents$draw[link.patents$draw<=6500]),decreasing = TRUE)>2)))
+#link.patents <- link.patents[!link.patents$draw %in% dup.draws,]
 link.1900.1910 <- link.1900.1910[!is.na(link.1900.1910$draw),] # n=2591
 
 # Create dummy var for gender based on census first names

@@ -32,7 +32,7 @@ order <- data.frame(covars= c("Gender:",
                               "    ",
                               "State at time of registration:",
                               "    ",
-                              "Place of residence at time of registration:"),order=c(.5,1.1,1.5,2.1,2.5,9.1,9.5),
+                              "Place of residence at time of registration:"),order=c(.5,1.1,1.5,2.1,2.5,8.1,8.5),
 p=NA,group=NA)
 
 covars <- rbind(covars,order)

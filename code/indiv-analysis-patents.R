@@ -6,7 +6,7 @@ slides <- TRUE
 
 # Est. balancing weights
 
-quintile.fit <- cv.glmnet(x=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), y=link.patents$quintile, family = "multinomial", type.multinomial = "grouped")
+quintile.fit <- cv.glmnet(x=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), y=link.patents$quintile, family = "multinomial")
 plot(quintile.fit)
 
 # calculate propensity scores
