@@ -4,10 +4,19 @@
 
 slides <- TRUE
 
+# Setup parallel processing 
+cores <- detectCores() # specify number of cores to use
+
+registerDoParallel(cores) # register cores
+
+set.seed(42)
+RNGkind("L'Ecuyer-CMRG") # ensure random number generation
+
 # Est. balancing weights
 
-quintile.fit <- cv.glmnet(x=as.matrix(census.covars), y=link.1900.1910.subs$quintile, family = "multinomial") # ungrouped lasso
-plot(quintile.fit)
+quintile.fit <- cv.glmnet(x=as.matrix(census.covars), y=link.1900.1910.subs$quintile, family = "multinomial", alpha=0.5) # ensure not all vars. are dropped
+
+print(coef(quintile.fit, quintile.fit$lambda.min))
 
 # calculate propensity scores
 p.scores <- predict(quintile.fit, newx=as.matrix(census.covars), s = "lambda.min", type = "response")[,,1]
@@ -18,7 +27,7 @@ print(sum(rowSums(p.scores))==length(link.1900.1910.subs$quintile)) # ensure pro
 
 # farm (binary)
 
-lm.farm <- glm(farm~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores,
+lm.farm <- glm(farm~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
                family="binomial",
                data=data.frame("p.scores"=p.scores,
                                "farm"=link.1900.1910.subs$farm,
@@ -77,7 +86,7 @@ if(slides){
 
 # own (binary)
 
-lm.own <- glm(own~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores,
+lm.own <- glm(own~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
                     family="binomial",
                     data=data.frame("p.scores"=p.scores,
                                     "own"=link.1900.1910.subs$own,
@@ -136,24 +145,14 @@ if(slides){
 
 ## Nonparametric estimation
 
-# Setup parallel processing 
-cores <- detectCores() # specify number of cores to use
-
-registerDoParallel(cores) # register cores
-
-RNGkind("L'Ecuyer-CMRG") # ensure random number generation
-
-
 ## farm
-
-set.seed(42)
 
 # Calling the boot function with the dataset
 # our function and no. of rounds
 farm.boot <- boot(data.frame("y"=link.1900.1910.subs$farm,
                              "treat"=link.1900.1910.subs$quintile,
                              "w"=p.scores), MeanDrBoot, R = 999, parallel="multicore", cl=cores)
-# farm.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=farm.boot))
+farm.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=farm.boot))
 # 
 # farm.cate.boot <- boot(data.frame("y"=link.1900.1910.subs$farm,
 #                                   "treat"=link.1900.1910.subs$quintile,

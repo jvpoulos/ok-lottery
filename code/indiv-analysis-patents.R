@@ -2,12 +2,21 @@
 ### Individual-level analysis    ###
 #####################################
 
+set.seed(42)
+RNGkind("L'Ecuyer-CMRG") # ensure random number generation
+
+# Setup parallel processing 
+cores <- detectCores() # specify number of cores to use
+
+registerDoParallel(cores) # register cores
+
 slides <- TRUE
 
 # Est. balancing weights
 
 quintile.fit <- cv.glmnet(x=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), y=link.patents$quintile, family = "multinomial")
-plot(quintile.fit)
+
+print(coef(quintile.fit, quintile.fit$lambda.min))
 
 # calculate propensity scores
 p.scores <- predict(quintile.fit, newx=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), s = "lambda.min", type = "response")[,,1]
@@ -18,7 +27,7 @@ print(sum(rowSums(p.scores))==length(link.patents$quintile)) # ensure probs. sum
 
 # Sale (binary)
 
-lm.sale <- glm(sale~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores,
+lm.sale <- glm(sale~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
                     family="binomial",
                     data=data.frame("p.scores"=p.scores,
                                     "sale"=link.patents$sale,
@@ -50,11 +59,11 @@ sale.plot <- ggplot(lm.sale.curve.df, aes(x = as.numeric(quintile))) +
   theme_bw() +
   geom_line(aes(y = fit, color="All")) +
   geom_line(aes(y = fit.female, color="Female")) +
-  geom_line(aes(y = obs.adr, color="All"),linetype="dashed") +
-  geom_line(aes(y = obs.cadr, color="Female"),linetype="dashed") +
+  geom_line(aes(y = obs.adr, color="All"), linetype="dashed") +
+  geom_line(aes(y = obs.cadr, color="Female"), linetype="dashed") +
   labs(y="Probability of land patent purchase",
        x="Draw number decile (%)",
-       color="Group") +
+       color="Sample:") +
   geom_smooth(aes(y=fit, ymin = lower, ymax = upper, color="All"), stat = "identity",alpha=0.3) +
   geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.1) +
   scale_x_continuous(breaks=seq(1,10,1),labels=levels(sort(unique(link.patents$quintile)))) +
@@ -77,7 +86,7 @@ if(slides){
 
 # Homestead (binary)
 
-lm.homestead <- glm(homestead~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores,
+lm.homestead <- glm(homestead~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
                     family="binomial",
                data=data.frame("p.scores"=p.scores,
                                "homestead"=link.patents$homestead,
@@ -136,17 +145,7 @@ if(slides){
 
 ## Nonparametric estimation
 
-# Setup parallel processing 
-cores <- detectCores() # specify number of cores to use
-
-registerDoParallel(cores) # register cores
-
-RNGkind("L'Ecuyer-CMRG") # ensure random number generation
-
-
 ## Sale
-
-set.seed(42)
 
 # Calling the boot function with the dataset
 # our function and no. of rounds

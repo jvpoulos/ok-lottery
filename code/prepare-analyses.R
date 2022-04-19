@@ -27,8 +27,6 @@ link.1900.1910$female <- ifelse(link.1900.1910$first.hs %in% female.census.names
 
 link.patents$comply <- as.numeric(link.patents$comply)
 
-link.patents$lawton <- ifelse(!is.na(link.patents$comply),1,0) 
-
 link.patents$quintile <- quintileCut(link.patents$draw) # deciles
 link.1900.1910$quintile <- quintileCut(link.1900.1910$draw) # deciles
 
