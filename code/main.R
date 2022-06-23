@@ -45,6 +45,12 @@ library(scales)
 data.directory <- "data/"
 code.directory <- "code/"
 
+output_dir <- "plots/"
+if(!dir.exists(output_dir)){
+  print(paste0('create folder for outputs at: ', output_dir))
+  dir.create(output_dir)
+}
+
 source("code/utils.R")
 source("code/SuperLearner.R")
 

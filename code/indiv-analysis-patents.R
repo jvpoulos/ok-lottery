@@ -14,60 +14,73 @@ slides <- TRUE
 
 # Est. balancing weights
 
-quintile.fit <- cv.glmnet(x=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), y=link.patents$quintile, family = "multinomial")
+colnames(state.dummies) <- make.names(colnames(state.dummies), unique=TRUE) # rm spaces
+colnames(loc.dummies) <- make.names(colnames(loc.dummies), unique=TRUE)
+balance.vars <- make.names(balance.vars, unique=TRUE)
 
-print(coef(quintile.fit, quintile.fit$lambda.min))
+treatment.fit <- SuperLearner(Y=link.patents$draw,
+                              X=cbind(link.patents,state.dummies,loc.dummies)[balance.vars],
+                              SL.library=SL.library.reg,
+                              family="gaussian")
+#Save pred model
+saveRDS(treatment.fit, file = paste0(data.directory,"treatment-fit.rds"))
+
+# summarize ensemble
+print(treatment.fit)
 
 # calculate propensity scores
-p.scores <- predict(quintile.fit, newx=as.matrix(cbind(link.patents,state.dummies,loc.dummies)[balance.vars]), s = "lambda.min", type = "response")[,,1]
-
-print(sum(rowSums(p.scores))==length(link.patents$quintile)) # ensure probs. sum to 1
+p.scores <- predict(treatment.fit, type = "response")$pred[,1]
 
 ## Estimate dose-response curves
 
 # Sale (binary)
 
-lm.sale <- glm(sale~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
-                    family="binomial",
-                    data=data.frame("p.scores"=p.scores,
-                                    "sale"=link.patents$sale,
-                                    "quintile"=link.patents$quintile))
+sale.fit <- SuperLearner(Y=link.patents$sale,
+                            X=data.frame("draw"=link.patents$draw, "p.scores"=p.scores),
+                            SL.library=SL.library.class,
+                            family="binomial")
 
-lm.sale.preds <- lapply(1:length(unique(link.patents$quintile)), function (j) predict(lm.sale, newdata=data.frame("p.scores"=p.scores,
-                                                                                                                            "sale"=link.patents$sale,
-                                                                                                                            "quintile"=factor(rep(levels(link.patents$quintile)[j],times=length(link.patents$quintile)))), type="response", se.fit = TRUE))
+#Save pred model
+saveRDS(sale.fit, file = paste0(data.directory,"sale-fit.rds"))
 
-lm.sale.curve <- sapply(lm.sale.preds, function(x) mean(x$fit))
-lm.sale.curve.upper <- lm.sale.curve + (qnorm(0.975)*sapply(lm.sale.preds, function(x) mean(x$se.fit)))
-lm.sale.curve.lower <- lm.sale.curve - (qnorm(0.975)*sapply(lm.sale.preds, function(x) mean(x$se.fit)))
+print(sale.fit)
 
-lm.sale.curve.female <- sapply(lm.sale.preds, function(x) mean(x$fit[which(link.patents$female==1)]))
-lm.sale.curve.female.upper <- lm.sale.curve.female + (qnorm(0.975)*sapply(lm.sale.preds, function(x) mean(x$se.fit[which(link.patents$female==1)])))
-lm.sale.curve.female.lower <- lm.sale.curve.female - (qnorm(0.975)*sapply(lm.sale.preds, function(x) mean(x$se.fit[which(link.patents$female==1)])))
+draw.max <- 6500
+sale.preds <- lapply(1:draw.max, function (j) predict(sale.fit, newdata=data.frame("p.scores"=p.scores,
+                                                                                "sale"=link.patents$sale,
+                                                                                "draw"=rep(j,times=length(link.patents$draw))), type="response", onlySL = FALSE))
+saveRDS(sale.preds, file = paste0(data.directory,"sale-preds.rds"))
 
-lm.sale.curve.df <- data.frame("fit"=lm.sale.curve,
-                                    "lower"=lm.sale.curve.lower,
-                                    "upper"= lm.sale.curve.upper,
-                                    "fit.female"=lm.sale.curve.female,
-                                    "lower.female"=lm.sale.curve.female.lower,
-                                    "upper.female"= lm.sale.curve.female.upper,
-                                    "obs.adr"=MeanDR(link.patents$sale,link.patents$quintile),
-                                    "obs.cadr"=MeanDR(link.patents$sale,link.patents$quintile,x=link.patents$female),
-                                    "quintile"=sort(unique(link.patents$quintile)))
+sale.curve <- sapply(sale.preds, function(x) mean(x$pred))
+sale.curve.upper <- sale.curve + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7]))) # rm NN
+sale.curve.lower <- sale.curve - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7])))
 
-sale.plot <- ggplot(lm.sale.curve.df, aes(x = as.numeric(quintile))) +
+sale.curve.female <- sapply(sale.preds, function(x) mean(x$pred[which(link.patents$female==1)]))
+sale.curve.female.upper <- sale.curve.female + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+sale.curve.female.lower <- sale.curve.female - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+
+sale.curve.male <- sapply(sale.preds, function(x) mean(x$pred[which(link.patents$female==0)]))
+sale.curve.male.upper <- sale.curve.male + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+sale.curve.male.lower <- sale.curve.male - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+
+sale.curve.df <- data.frame("fit.male"=sale.curve.male,
+                                    "lower.male"=sale.curve.male.lower,
+                                    "upper.male"= sale.curve.male.upper,
+                                    "fit.female"=sale.curve.female,
+                                    "lower.female"=sale.curve.female.lower,
+                                    "upper.female"= sale.curve.female.upper,
+                                    "draw"=1:draw.max)
+
+sale.plot <- ggplot(sale.curve.df, aes(x = as.numeric(draw))) +
   theme_bw() +
-  geom_line(aes(y = fit, color="All")) +
+  geom_line(aes(y = fit.male, color="Male")) +
   geom_line(aes(y = fit.female, color="Female")) +
-  geom_line(aes(y = obs.adr, color="All"), linetype="dashed") +
-  geom_line(aes(y = obs.cadr, color="Female"), linetype="dashed") +
   labs(y="Probability of land patent purchase",
-       x="Draw number decile (%)",
-       color="Sample:") +
-  geom_smooth(aes(y=fit, ymin = lower, ymax = upper, color="All"), stat = "identity",alpha=0.3) +
-  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.1) +
-  scale_x_continuous(breaks=seq(1,10,1),labels=levels(sort(unique(link.patents$quintile)))) +
-  theme(legend.position="top") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
+       x="Draw number",
+       color="Subgroup:") +
+  geom_smooth(aes(y=fit.male, ymin = lower.male, ymax = upper.male, color="Male"), stat = "identity",alpha=0.1) +
+  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.3) +
+  theme(legend.position="bottom") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
   theme(axis.title=element_text(family="serif", size=16)) +
   theme(axis.text.y=element_text(family="serif", size=14)) +
   theme(axis.text.x=element_text(family="serif", size=14)) +
@@ -77,56 +90,114 @@ sale.plot <- ggplot(lm.sale.curve.df, aes(x = as.numeric(quintile))) +
   theme(strip.text.y = element_text(family="serif", size = 14)) +
   theme(panel.spacing = unit(1, "lines"))
 
-ggsave(paste0(data.directory,"plots/sale-plot.png"), sale.plot, scale = 1.25)
+ggsave("plots/sale-plot.png", sale.plot, scale = 1.25)
 
 if(slides){
-  sale.plot <- sale.plot + ggtitle(paste0("Estimated average dose-response"))
-  ggsave(paste0(data.directory,"plots/sale-plot-slides.png"),sale.plot,scale=1.25)
+  sale.plot <- sale.plot + ggtitle(paste0("Conditional average dose-response function"))
+  ggsave("plots/sale-plot-slides.png",sale.plot,scale=1.25)
+}
+
+# Mann-Whitney U test for difference
+
+print(wilcox.test(x=sale.curve.male,y=sale.curve.female,alternative="two.sided", exact=FALSE, conf.int = TRUE))
+ 
+# MTE
+lags <-1000
+sale.mte <-  sapply((1+lags):length(sale.curve), function(j) sale.curve[j] - sale.curve[j-lags])/lags 
+sale.mte.upper <- sale.mte + (sale.curve.upper-sale.curve)[(1+lags):length(sale.curve)]
+sale.mte.lower <- sale.mte - (sale.curve.upper-sale.curve)[(1+lags):length(sale.curve)]
+
+sale.mte.female <-  sapply((1+lags):length(sale.curve.female), function(j) sale.curve.female[j] - sale.curve.female[j-lags])/lags 
+sale.mte.female.upper <- sale.mte.female + sapply((1+lags):length(sale.curve), function(j) (sale.curve.female.upper-sale.curve.female)[j] - (sale.curve.female.upper-sale.curve.female)[j-lags])/lags 
+sale.mte.female.lower <- sale.mte.female - sapply((1+lags):length(sale.curve), function(j) (sale.curve.female.upper-sale.curve.female)[j] - (sale.curve.female.upper-sale.curve.female)[j-lags])/lags 
+
+sale.mte.male <-  sapply((1+lags):length(sale.curve.male), function(j) sale.curve.male[j] - sale.curve.male[j-lags])/lags 
+sale.mte.male.upper <- sale.mte.male + sapply((1+lags):length(sale.curve), function(j) (sale.curve.male.upper-sale.curve.male)[j] - (sale.curve.male.upper-sale.curve.male)[j-lags])/lags 
+sale.mte.male.lower <- sale.mte.male - sapply((1+lags):length(sale.curve), function(j) (sale.curve.male.upper-sale.curve.male)[j] - (sale.curve.male.upper-sale.curve.male)[j-lags])/lags
+
+sale.mte.df <- data.frame("fit.male"=sale.mte.male,
+                          "lower.male"=sale.mte.male.lower,
+                          "upper.male"= sale.mte.male.upper,
+                          "fit.female"=sale.mte.female,
+                          "lower.female"=sale.mte.female.lower,
+                          "upper.female"= sale.mte.female.upper,
+                          "draw"=(1+lags):length(sale.curve))
+
+sale.mte.plot <- ggplot(sale.mte.df, aes(x = (1+lags):length(sale.curve))) +
+  theme_bw() +
+  labs(y="Probability of land purchase",
+       x="Draw number",
+       color="Subgroup:") +
+  geom_hline(yintercept=0) +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
+  #geom_smooth(aes(y=fit.male, color="Male"), stat = "smooth",method = stats::loess, n = 100, span = 0.5, alpha=0.1) +
+  #geom_smooth(aes(y=fit.female, color="Female"), stat = "smooth", method =stats::loess, n = 100, span = 0.5,alpha=0.3) +
+  geom_smooth(aes(y=fit.male, ymin = lower.male, ymax = upper.male, color="Male"), stat = "identity",alpha=0.1) +
+  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.3) +
+  theme(legend.position="bottom") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
+  theme(axis.title=element_text(family="serif", size=16)) +
+  theme(axis.text.y=element_text(family="serif", size=14)) +
+  theme(axis.text.x=element_text(family="serif", size=14)) +
+  theme(legend.text=element_text(family="serif", size = 14)) +
+  theme(legend.title=element_text(family="serif", size = 14)) +
+  theme(strip.text.x = element_text(family="serif", size = 14)) +
+  theme(strip.text.y = element_text(family="serif", size = 14)) +
+  theme(panel.spacing = unit(1, "lines"))
+
+ggsave("plots/sale-mte-plot.png", sale.mte.plot, scale = 1.25)
+
+if(slides){
+  sale.mte.plot <- sale.mte.plot + ggtitle(paste0("Conditional marginal treatment effect function"))
+  ggsave("plots/sale-mte-plot-slides.png",sale.mte.plot,scale=1.25)
 }
 
 # Homestead (binary)
 
-lm.homestead <- glm(homestead~ I(quintile) + p.scores  + p.scores**2 + I(quintile)*p.scores + I(quintile)*p.scores**2,
-                    family="binomial",
-               data=data.frame("p.scores"=p.scores,
-                               "homestead"=link.patents$homestead,
-                               "quintile"=link.patents$quintile))
+homestead.fit <- SuperLearner(Y=link.patents$homestead,
+                         X=data.frame("draw"=link.patents$draw, "p.scores"=p.scores),
+                         SL.library=SL.library.class,
+                         family="binomial")
 
-lm.homestead.preds <- lapply(1:length(unique(link.patents$quintile)), function (j) predict(lm.homestead, newdata=data.frame("p.scores"=p.scores,
-                                                                                                              "homestead"=link.patents$homestead,
-                                                                                                              "quintile"=factor(rep(levels(link.patents$quintile)[j],times=length(link.patents$quintile)))), type="response", se.fit = TRUE))
+#Save pred model
+saveRDS(homestead.fit, file = paste0(data.directory,"homestead-fit.rds"))
 
-lm.homestead.curve <- sapply(lm.homestead.preds, function(x) mean(x$fit))
-lm.homestead.curve.upper <- lm.homestead.curve + (qnorm(0.975)*sapply(lm.homestead.preds, function(x) mean(x$se.fit)))
-lm.homestead.curve.lower <- lm.homestead.curve - (qnorm(0.975)*sapply(lm.homestead.preds, function(x) mean(x$se.fit)))
+print(homestead.fit)
 
-lm.homestead.curve.female <- sapply(lm.homestead.preds, function(x) mean(x$fit[which(link.patents$female==1)]))
-lm.homestead.curve.female.upper <- lm.homestead.curve.female + (qnorm(0.975)*sapply(lm.homestead.preds, function(x) mean(x$se.fit[which(link.patents$female==1)])))
-lm.homestead.curve.female.lower <- lm.homestead.curve.female - (qnorm(0.975)*sapply(lm.homestead.preds, function(x) mean(x$se.fit[which(link.patents$female==1)])))
+homestead.preds <- lapply(1:draw.max, function (j) predict(homestead.fit, newdata=data.frame("p.scores"=p.scores, 
+                                                                                         "homestead"=link.patents$homestead,
+                                                                                         "draw"=rep(j,times=length(link.patents$draw))), type="response", onlySL = FALSE))
+saveRDS(homestead.preds, file = paste0(data.directory,"homestead-preds.rds"))
 
-lm.homestead.curve.df <- data.frame("fit"=lm.homestead.curve,
-                                "lower"=lm.homestead.curve.lower,
-                               "upper"= lm.homestead.curve.upper,
-                               "fit.female"=lm.homestead.curve.female,
-                               "lower.female"=lm.homestead.curve.female.lower,
-                               "upper.female"= lm.homestead.curve.female.upper,
-                               "obs.adr"=MeanDR(link.patents$homestead,link.patents$quintile),
-                               "obs.cadr"=MeanDR(link.patents$homestead,link.patents$quintile,x=link.patents$female),
-                               "quintile"=sort(unique(link.patents$quintile)))
+homestead.curve <- sapply(homestead.preds, function(x) mean(x))
+homestead.curve.upper <- homestead.curve + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7])))
+homestead.curve.lower <- homestead.curve - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7])))
 
-homestead.plot <- ggplot(lm.homestead.curve.df, aes(x = as.numeric(quintile))) +
+homestead.curve.female <- sapply(homestead.preds, function(x) mean(x$pred[which(link.patents$female==1)]))
+homestead.curve.female.upper <- homestead.curve.female + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+homestead.curve.female.lower <- homestead.curve.female - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+
+homestead.curve.male <- sapply(homestead.preds, function(x) mean(x$pred[which(link.patents$female==0)]))
+homestead.curve.male.upper <- homestead.curve.male + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+homestead.curve.male.lower <- homestead.curve.male - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+
+homestead.curve.df <- data.frame("fit.male"=homestead.curve.male,
+                            "lower.male"=homestead.curve.male.lower,
+                            "upper.male"= homestead.curve.male.upper,
+                            "fit.female"=homestead.curve.female,
+                            "lower.female"=homestead.curve.female.lower,
+                            "upper.female"= homestead.curve.female.upper,
+                            "draw"=1:draw.max)
+
+homestead.plot <- ggplot(homestead.curve.df, aes(x = as.numeric(1:draw.max))) +
   theme_bw() +
-  geom_line(aes(y = fit, color="All")) +
+  geom_line(aes(y = fit.male, color="Male")) +
   geom_line(aes(y = fit.female, color="Female")) +
-  geom_line(aes(y = obs.adr, color="All"),linetype="dashed") +
-  geom_line(aes(y = obs.cadr, color="Female"),linetype="dashed") +
   labs(y="Probability of homestead patent",
-       x="Draw number decile (%)",
-       color="Group") +
-  geom_smooth(aes(y=fit, ymin = lower, ymax = upper, color="All"), stat = "identity",alpha=0.3) +
-  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.1) +
-  scale_x_continuous(breaks=seq(1,10,1),labels=levels(sort(unique(link.patents$quintile)))) +
-  theme(legend.position="top") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
+       x="Draw number",
+       color="Subgroup:") +
+  geom_smooth(aes(y=fit.male, ymin = lower.male, ymax = upper.male, color="Male"), stat = "identity",alpha=0.1) +
+  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.3) +
+  theme(legend.position="bottom") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
   theme(axis.title=element_text(family="serif", size=16)) +
   theme(axis.text.y=element_text(family="serif", size=14)) +
   theme(axis.text.x=element_text(family="serif", size=14)) +
@@ -136,134 +207,63 @@ homestead.plot <- ggplot(lm.homestead.curve.df, aes(x = as.numeric(quintile))) +
   theme(strip.text.y = element_text(family="serif", size = 14)) +
   theme(panel.spacing = unit(1, "lines"))
 
-ggsave(paste0(data.directory,"plots/homestead-plot.png"), homestead.plot, scale = 1.25)
+ggsave("plots/homestead-plot.png", homestead.plot, scale = 1.25)
 
 if(slides){
-  homestead.plot <- homestead.plot + ggtitle(paste0("Estimated average dose-response"))
-  ggsave(paste0(data.directory,"plots/homestead-plot-slides.png"),homestead.plot,scale=1.25)
+  homestead.plot <- homestead.plot + ggtitle(paste0("Conditional average dose-response function"))
+  ggsave("plots/homestead-plot-slides.png",homestead.plot,scale=1.25)
 }
 
-## Nonparametric estimation
+# Mann-Whitney U test for difference
 
-## Sale
+print(wilcox.test(x=homestead.curve.male,y=homestead.curve.female,alternative="two.sided", exact=FALSE, conf.int = TRUE))
 
-# Calling the boot function with the dataset
-# our function and no. of rounds
-sale.boot <- boot(data.frame("y"=link.patents$sale,
-                            "treat"=link.patents$quintile,
-                            "w"=p.scores), MeanDrBoot, R = 999, parallel="multicore", cl=cores)
-sale.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=sale.boot))
-  
-sale.cate.boot <- boot(data.frame("y"=link.patents$sale,
-                             "treat"=link.patents$quintile,
-                             "w"=p.scores,
-                             "x"=link.patents$female), MeanDrBoot, R = 999, parallel="multicore", cl=cores)
-sale.cate.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=sale.cate.boot))
+# MTE
+lags <-1000
+homestead.mte <-  sapply((1+lags):length(homestead.curve), function(j) homestead.curve[j] - homestead.curve[j-lags])/lags 
+homestead.mte.upper <- homestead.mte + (homestead.curve.upper-homestead.curve)[(1+lags):length(homestead.curve)]
+homestead.mte.lower <- homestead.mte - (homestead.curve.upper-homestead.curve)[(1+lags):length(homestead.curve)]
 
-## Forest plot for ATEs
+homestead.mte.female <-  sapply((1+lags):length(homestead.curve.female), function(j) homestead.curve.female[j] - homestead.curve.female[j-lags])/lags 
+homestead.mte.female.upper <- homestead.mte.female + sapply((1+lags):length(homestead.curve), function(j) (homestead.curve.female.upper-homestead.curve.female)[j] - (homestead.curve.female.upper-homestead.curve.female)[j-lags])/lags 
+homestead.mte.female.lower <- homestead.mte.female - sapply((1+lags):length(homestead.curve), function(j) (homestead.curve.female.upper-homestead.curve.female)[j] - (homestead.curve.female.upper-homestead.curve.female)[j-lags])/lags 
 
-# Create data for plot
+homestead.mte.male <-  sapply((1+lags):length(homestead.curve.male), function(j) homestead.curve.male[j] - homestead.curve.male[j-lags])/lags 
+homestead.mte.male.upper <- homestead.mte.male + sapply((1+lags):length(homestead.curve), function(j) (homestead.curve.male.upper-homestead.curve.male)[j] - (homestead.curve.male.upper-homestead.curve.male)[j-lags])/lags 
+homestead.mte.male.lower <- homestead.mte.male - sapply((1+lags):length(homestead.curve), function(j) (homestead.curve.male.upper-homestead.curve.male)[j] - (homestead.curve.male.upper-homestead.curve.male)[j-lags])/lags
 
-comparisons <- sort(unique(link.patents$quintile))[-1]
+homestead.mte.df <- data.frame("fit.male"=homestead.mte.male,
+                          "lower.male"=homestead.mte.male.lower,
+                          "upper.male"= homestead.mte.male.upper,
+                          "fit.female"=homestead.mte.female,
+                          "lower.female"=homestead.mte.female.lower,
+                          "upper.female"= homestead.mte.female.upper,
+                          "draw"=(1+lags):length(homestead.curve))
 
-sale.dat <- data.frame(x =rep(comparisons,2),
-                       y = c(sale.boot$t0,sale.cate.boot$t0), 
-                       y.lo = c(sale.boot.ci$lwr,sale.cate.boot.ci$lwr), 
-                       y.hi = c(sale.boot.ci$upr,sale.cate.boot.ci$upr))
-
-sale.dat$x <- as.factor(sale.dat$x)
-
-sale.dat$Analysis <- c(rep("ATE",each=length(comparisons)), rep("CATE",each=length(comparisons))) 
-
-sale.plot <- ForestPlot(sale.dat,
-                       xlab=c("Estimated treatment effect"),ylab="Draw number decile (treatment)") +
-  scale_fill_manual(values= c("blue","red"),labels=c("ATE","CATE")) +
-  labs(color="Analysis:") +
-  scale_x_discrete(limits = rev) +
-    scale_y_continuous(limits = c(-0.25, 0.25), breaks = c(-0.2, -0.1, 0, 0.1, 0.2)) +
-  theme(legend.position = "top") +
-  theme(plot.title = element_text(hjust = 0.5, family="serif", size=16), plot.subtitle = element_text(hjust = 0.5, family="serif", size=12)) +
+homestead.mte.plot <- ggplot(homestead.mte.df, aes(x = (1+lags):length(homestead.curve))) +
+  theme_bw() +
+  labs(y="Probability of homestead patent",
+       x="Draw number",
+       color="Subgroup:") +
+  geom_hline(yintercept=0) +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
+  #geom_smooth(aes(y=fit.male, color="Male"), stat = "smooth",method = stats::loess, n = 100, span = 0.5, alpha=0.1) +
+  #geom_smooth(aes(y=fit.female, color="Female"), stat = "smooth", method =stats::loess, n = 100, span = 0.5,alpha=0.3) +
+  geom_smooth(aes(y=fit.male, ymin = lower.male, ymax = upper.male, color="Male"), stat = "identity",alpha=0.1) +
+  geom_smooth(aes(y=fit.female, ymin = lower.female, ymax = upper.female, color="Female"), stat = "identity",alpha=0.3) +
+  theme(legend.position="bottom") +   theme(plot.title = element_text(hjust = 0.5, family="serif", size=16)) +
   theme(axis.title=element_text(family="serif", size=16)) +
   theme(axis.text.y=element_text(family="serif", size=14)) +
-#  theme(axis.text.x=element_text(family="serif", size=14,angle = 45, vjust = 0.5, hjust=1)) +
+  theme(axis.text.x=element_text(family="serif", size=14)) +
+  theme(legend.text=element_text(family="serif", size = 14)) +
+  theme(legend.title=element_text(family="serif", size = 14)) +
   theme(strip.text.x = element_text(family="serif", size = 14)) +
   theme(strip.text.y = element_text(family="serif", size = 14)) +
- # theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l =0))) +
-  #theme(axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l =0))) +
   theme(panel.spacing = unit(1, "lines"))
 
-sale.plot <- sale.plot +
-  annotate("segment", x = 0.5, xend = 0.5, y = 0.005, yend = 0.1,
-           colour = "blue", size = 1, arrow = arrow(length = unit(0.1, "inches"), ends="last", type="closed")) +
-  annotate("segment", x = 0.5, xend = 0.5, y = -0.005, yend = -0.1,
-           colour = "blue", size = 1, arrow = arrow(length = unit(0.1, "inches"), ends="last", type="closed")) +
-  annotate("text", x = 0.75, y = -0.05, label = "Favors reference")
-
-sale.plot <- sale.plot + annotate("text", x = 0.75, y = 0.05, label = "Favors treatment") 
-
-ggsave(paste0(data.directory,"plots/sale-causal-plot.png"),sale.plot,scale=1.25)
+ggsave("plots/homestead-mte-plot.png", homestead.mte.plot, scale = 1.25)
 
 if(slides){
-  sale.plot <- sale.plot + ggtitle(paste0("Outcome: probability of land patent purchase"))
-  ggsave(paste0(data.directory,"plots/sale-causal-plot-slides.png"),sale.plot,scale=1.25)
-}
-
-## homestead
-
-# Calling the boot function with the dataset
-# our function and no. of rounds
-homestead.boot <- boot(data.frame("y"=link.patents$homestead,
-                             "treat"=link.patents$quintile,
-                             "w"=p.scores), MeanDrBoot, R = 999, parallel="multicore", cl=cores)
-homestead.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=homestead.boot))
-
-homestead.cate.boot <- boot(data.frame("y"=link.patents$homestead,
-                                  "treat"=link.patents$quintile,
-                                  "w"=p.scores,
-                                  "x"=link.patents$female), MeanDrBoot, R = 999, parallel="multicore", cl=cores)
-homestead.cate.boot.ci <- do.call(rbind,lapply(1:9,getCI,x=homestead.cate.boot))
-
-## Forest plot for ATEs
-
-# Create data for plot
-
-homestead.dat <- data.frame(x =rep(comparisons,2),
-                       y = c(homestead.boot$t0,homestead.cate.boot$t0), 
-                       y.lo = c(homestead.boot.ci$lwr,homestead.cate.boot.ci$lwr), 
-                       y.hi = c(homestead.boot.ci$upr,homestead.cate.boot.ci$upr))
-
-homestead.dat$x <- as.factor(homestead.dat$x)
-
-homestead.dat$Analysis <- c(rep("ATE",each=length(comparisons)), rep("CATE",each=length(comparisons))) 
-
-homestead.plot <- ForestPlot(homestead.dat,
-                        xlab=c("Estimated treatment effect"),ylab="Draw number decile (treatment)") +
-  labs(color="Analysis:") +
-  scale_x_discrete(limits = rev) +
-  scale_y_continuous(limits = c(-0.25, 0.25), breaks = c(-0.2, -0.1, 0, 0.1, 0.2)) +
-  theme(legend.position = "top") +
-  theme(plot.title = element_text(hjust = 0.5, family="serif", size=16), plot.subtitle = element_text(hjust = 0.5, family="serif", size=12)) +
-  theme(axis.title=element_text(family="serif", size=16)) +
-  theme(axis.text.y=element_text(family="serif", size=14)) +
-  #  theme(axis.text.x=element_text(family="serif", size=14,angle = 45, vjust = 0.5, hjust=1)) +
-  theme(strip.text.x = element_text(family="serif", size = 14)) +
-  theme(strip.text.y = element_text(family="serif", size = 14)) +
-  # theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l =0))) +
-  #theme(axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l =0))) +
-  theme(panel.spacing = unit(1, "lines"))
-
-homestead.plot <- homestead.plot +
-  annotate("segment", x = 0.5, xend = 0.5, y = 0.005, yend = 0.1,
-           colour = "blue", size = 1, arrow = arrow(length = unit(0.1, "inches"), ends="last", type="closed")) +
-  annotate("segment", x = 0.5, xend = 0.5, y = -0.005, yend = -0.1,
-           colour = "blue", size = 1, arrow = arrow(length = unit(0.1, "inches"), ends="last", type="closed")) +
-  annotate("text", x = 0.75, y = -0.05, label = "Favors reference")
-
-homestead.plot <- homestead.plot + annotate("text", x = 0.75, y = 0.05, label = "Favors treatment") 
-
-ggsave(paste0(data.directory,"plots/homestead-causal-plot.png"),homestead.plot,scale=1.25)
-
-if(slides){
-  homestead.plot <- homestead.plot + ggtitle(paste0("Outcome: probability of homestead patent"))
-  ggsave(paste0(data.directory,"plots/homestead-causal-plot-slides.png"),homestead.plot,scale=1.25)
+  homestead.mte.plot <- homestead.mte.plot + ggtitle(paste0("Conditional marginal treatment effect function"))
+  ggsave("plots/homestead-mte-plot-slides.png",homestead.mte.plot,scale=1.25)
 }

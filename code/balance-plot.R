@@ -5,6 +5,7 @@
 # Collect bivariate p values
 balance.p.values <- sapply(balance.vars, function(x) summary(lm(link.patents$first.quintile ~ cbind(link.patents,state.dummies,loc.dummies)[,x]))$"coefficients"[2,4]) 
 
+sapply(balance.vars, function(x) print(x))
 # Create balance plot data
 
 covars <- data.frame("covars"=balance.vars,
@@ -32,7 +33,7 @@ order <- data.frame(covars= c("Gender:",
                               "    ",
                               "State at time of registration:",
                               "    ",
-                              "Place of residence at time of registration:"),order=c(.5,1.1,1.5,2.1,2.5,8.1,8.5),
+                              "Place of residence at time of registration:"),order=c(.5,1.1,1.5,2.1,2.5,33.1,33.5),
 p=NA,group=NA)
 
 covars <- rbind(covars,order)
@@ -50,4 +51,4 @@ p <- ggplot(covars[!rownames(covars)%in% c("2","4","6"),],aes(y=p,x=covars,colou
   scale_x_discrete(name="") + 
   ThemeBw1()
 
-ggsave(paste0(data.directory,"plots/balance-plot.png"), p, scale = 1.25)
+ggsave(paste0(output_dir,"balance-plot.png"), p, scale = 1.25)
