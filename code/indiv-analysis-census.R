@@ -121,7 +121,7 @@ farm.mte.df <- data.frame("fit.male"=farm.mte.male,
                           "upper.female"= farm.mte.female.upper,
                           "draw"=(1+lags):length(farm.curve))
 
-farm.mte.plot <- ggplot(farm.mte.df, aes(x = (1+lags):length(farm.curve))) +
+farm.mte.plot <- ggplot(farm.mte.df, aes(x = draw)) +
   theme_bw() +
   labs(y="Probability of owning a farm in 1910",
        x="Draw number",
@@ -152,7 +152,7 @@ if(slides){
 
 own.fit <- SuperLearner(Y=link.1900.1910.subs$own,
                          X=data.frame("draw"=link.1900.1910.subs$draw, "p.scores"=p.scores.census),
-                         SL.library=SL.library.class,
+                         SL.library=SL.library.class[-grep("SL.glmnet",SL.library.class)],
                          family="binomial")
 
 #Save pred model

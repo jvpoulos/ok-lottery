@@ -37,7 +37,7 @@ p.scores <- predict(treatment.fit, type = "response")$pred[,1]
 
 sale.fit <- SuperLearner(Y=link.patents$sale,
                             X=data.frame("draw"=link.patents$draw, "p.scores"=p.scores),
-                            SL.library=SL.library.class,
+                            SL.library=SL.library.class[-grep("SL.nnet",SL.library.class)],
                             family="binomial")
 
 #Save pred model
@@ -52,16 +52,16 @@ sale.preds <- lapply(1:draw.max, function (j) predict(sale.fit, newdata=data.fra
 saveRDS(sale.preds, file = paste0(data.directory,"sale-preds.rds"))
 
 sale.curve <- sapply(sale.preds, function(x) mean(x$pred))
-sale.curve.upper <- sale.curve + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7]))) # rm NN
-sale.curve.lower <- sale.curve - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7])))
+sale.curve.upper <- sale.curve + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict)))
+sale.curve.lower <- sale.curve - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict)))
 
 sale.curve.female <- sapply(sale.preds, function(x) mean(x$pred[which(link.patents$female==1)]))
-sale.curve.female.upper <- sale.curve.female + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
-sale.curve.female.lower <- sale.curve.female - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+sale.curve.female.upper <- sale.curve.female + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[which(link.patents$female==1)])))
+sale.curve.female.lower <- sale.curve.female - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[which(link.patents$female==1)])))
 
 sale.curve.male <- sapply(sale.preds, function(x) mean(x$pred[which(link.patents$female==0)]))
-sale.curve.male.upper <- sale.curve.male + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
-sale.curve.male.lower <- sale.curve.male - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+sale.curve.male.upper <- sale.curve.male + (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[which(link.patents$female==0)])))
+sale.curve.male.lower <- sale.curve.male - (qnorm(0.975)*sapply(sale.preds, function(x) sd(x$library.predict[which(link.patents$female==0)])))
 
 sale.curve.df <- data.frame("fit.male"=sale.curve.male,
                                     "lower.male"=sale.curve.male.lower,
@@ -125,7 +125,7 @@ sale.mte.df <- data.frame("fit.male"=sale.mte.male,
 
 sale.mte.plot <- ggplot(sale.mte.df, aes(x = (1+lags):length(sale.curve))) +
   theme_bw() +
-  labs(y="Probability of land purchase",
+  labs(y="Probability of land patent purchase",
        x="Draw number",
        color="Subgroup:") +
   geom_hline(yintercept=0) +
@@ -155,7 +155,7 @@ if(slides){
 
 homestead.fit <- SuperLearner(Y=link.patents$homestead,
                          X=data.frame("draw"=link.patents$draw, "p.scores"=p.scores),
-                         SL.library=SL.library.class,
+                         SL.library=SL.library.class[-grep("SL.nnet",SL.library.class)],
                          family="binomial")
 
 #Save pred model
@@ -169,16 +169,16 @@ homestead.preds <- lapply(1:draw.max, function (j) predict(homestead.fit, newdat
 saveRDS(homestead.preds, file = paste0(data.directory,"homestead-preds.rds"))
 
 homestead.curve <- sapply(homestead.preds, function(x) mean(x))
-homestead.curve.upper <- homestead.curve + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7])))
-homestead.curve.lower <- homestead.curve - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7])))
+homestead.curve.upper <- homestead.curve + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict)))
+homestead.curve.lower <- homestead.curve - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict)))
 
 homestead.curve.female <- sapply(homestead.preds, function(x) mean(x$pred[which(link.patents$female==1)]))
-homestead.curve.female.upper <- homestead.curve.female + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
-homestead.curve.female.lower <- homestead.curve.female - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==1)])))
+homestead.curve.female.upper <- homestead.curve.female + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[which(link.patents$female==1)])))
+homestead.curve.female.lower <- homestead.curve.female - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[which(link.patents$female==1)])))
 
 homestead.curve.male <- sapply(homestead.preds, function(x) mean(x$pred[which(link.patents$female==0)]))
-homestead.curve.male.upper <- homestead.curve.male + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
-homestead.curve.male.lower <- homestead.curve.male - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[,-7][which(link.patents$female==0)])))
+homestead.curve.male.upper <- homestead.curve.male + (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[which(link.patents$female==0)])))
+homestead.curve.male.lower <- homestead.curve.male - (qnorm(0.975)*sapply(homestead.preds, function(x) sd(x$library.predict[which(link.patents$female==0)])))
 
 homestead.curve.df <- data.frame("fit.male"=homestead.curve.male,
                             "lower.male"=homestead.curve.male.lower,
