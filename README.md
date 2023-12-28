@@ -1,6 +1,20 @@
 # ok-lottery
-Code and data for the paper "Gender gaps in wealth and entrepreneurship? Evidence from 1901 Oklahoma land lottery winners"
+Code and data for the paper ["Gender gaps in wealth and entrepreneurship? Evidence from 1901 Oklahoma land lottery winners"](https://www.nowpublishers.com/article/Details/HPE-0042)
 
+Please cite the paper if you use this code for academic research:
+
+```
+@article{poulos2023gender,
+  title={Gender Gaps in Frontier Entrepreneurship? Evidence from 1901 Oklahoma Land Lottery Winners},
+  author={Poulos, Jason},
+  journal={Journal of Historical Political Economy},
+  volume={2},
+  number={4},
+  pages={611--634},
+  year={2023},
+  publisher={Now Publishers, Inc.}
+}
+```
 
 Prerequsites
 ------
