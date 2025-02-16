@@ -30,8 +30,8 @@ The main data files used for the study are listed below.
 * Lawton land lottery records: `data/lawton-A.csv` and  `data/lawton-B.csv`
 * El Reno land lottery records: `data/el-reno-homesteader.csv`
 * Land patents data: `data/patents.csv.zip`
-* [1900 Census sample](https://www.dropbox.com/s/aq7igj6sudaf73o/census-1900-100-sample.csv.zip?dl=1)
-* [1910 Census sample](https://www.dropbox.com/s/tj3pkzjzjx3hqp8/census-1910-100-sample.csv.zip?dl=1)
+* [1900 Census sample](https://drive.google.com/file/d/11z90wGNBJool3mY443b8ynlT_KE5wuMe/view?usp=sharing)
+* [1910 Census sample](https://drive.google.com/file/d/1nqINp1_OmR-WTAz5DZ8uWbcpsOi_Nm_v/view?usp=sharing)
 
 Instructions
 ------
